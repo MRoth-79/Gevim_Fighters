@@ -542,8 +542,7 @@
 
 		  <div class="editor-layout-row">
 			<div class="textarea-container">
-			  <textarea id="dataToAnalyze" title="נתוני משמרות לעריכה וניתוח"
-				return { error:'לא נמצאו נתונים תקינים. ודא שהטקסט מתחיל ב"יום שני".' };></textarea>
+			  <textarea id="dataToAnalyze" title="נתוני משמרות לעריכה וניתוח"></textarea>
 			</div>
 
 			<div class="guards-selection-side-panel">
@@ -754,6 +753,21 @@
     const KNOWN_NAMES = Object.keys(colorMap).map(k=>k.includes('_')? k.replace('_',' '): k);
     const splitToTokens = t => String(t||'').split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
 
+    // === NEW: שליפת כל השמות שמופיעים בטבלה (מכל התאים) ===
+    function extractAllNamesFromSchedule(scheduleData) {
+      const set = new Set();
+      scheduleData.forEach(row => {
+        row.forEach(cell => {
+          (cell || '')
+            .split(',')
+            .map(n => n.trim())
+            .filter(Boolean)
+            .forEach(n => set.add(n));
+        });
+      });
+      return set;
+    }
+
     function placeCaretAtEnd(el){
       try{ el.focus(); const r=document.createRange(); r.selectNodeContents(el); r.collapse(false);
         const s=window.getSelection(); s.removeAllRanges(); s.addRange(r); }catch{}
@@ -844,7 +858,7 @@
       });
 
       const daysFound = Object.keys(rawDayData);
-      if (!daysFound.length) return { error:'לא נמצאו נתונים תקינים. ודא שהטקסט מתחיל ב"יום ראשון".' };
+      if (!daysFound.length) return { error:'לא נמצאו נתונים תקינים. ודא שהטקסט מתחיל ב"יום שני".' };
 
       const schedule = [];
       for (let i=0;i<EXPECTED_TIME_SLOTS.length;i++){
@@ -1011,6 +1025,41 @@
 
       scheduleTableHTML += '</tbody></table>';
       lastRenderedTableHTML = scheduleTableHTML;
+
+      // === NEW: בדיקות משלימות לפני יצירת טבלת החריגות ===
+
+      // 1) האם אין "כפולות לילה" (כל אחד ממשמרות הלילה דורש 1 שומר בלבד)?
+      const noDoubleNight =
+        getRequiredPerShift(NIGHT_SHIFT_2_6_INDEX) === 1 &&
+        getRequiredPerShift(NIGHT_SHIFT_22_2_INDEX) === 1;
+
+      // 2) כל מי שמופיע בטבלת ה"מנתח" (בכל תא) — חייב להיות לו לפחות שיבוץ אחד בשבוע.
+      //    אם לא — נוסיף אזהרה ברמת "סיכום שבועי".
+      const appearedNames = extractAllNamesFromSchedule(scheduleData);
+      appearedNames.forEach(name => {
+        if (!allShifts[name]) {
+          exceptions.push({
+            day: 'סיכום שבועי',
+            slot: '—',
+            name,
+            msg: 'הוזכר בטבלה אך לא שובץ אף משמרת השבוע'
+          });
+        }
+      });
+
+      // 3) אין לעבור 5 משמרות לשומר כשאין כפולות לילה
+      if (noDoubleNight) {
+        Object.entries(allShifts).forEach(([name, count]) => {
+          if (count > MAX_ALLOWED) {
+            exceptions.push({
+              day: 'סיכום שבועי',
+              slot: '—',
+              name,
+              msg: `יותר מ‑${MAX_ALLOWED} משמרות (מותר עד ${MAX_ALLOWED} כשאין כפולות לילה)`
+            });
+          }
+        });
+      }
 
       // חריגות
       let exceptionsTableHTML = `
@@ -1300,7 +1349,8 @@
 
             let namesInSlot = [];
             if (iteration === 0) {
-                namesInSlot = (available.length >= required) ? available.slice(0, required) : [];
+                // לא נועלים מראש את הראשון/ים ברשימת הזמינות – נשאיר ריק והסבבים ימלאו בניקוד.
+                namesInSlot = [];
                 newScheduleData[shiftIdx][dayIdx] = namesInSlot;
             } else {
                 namesInSlot = newScheduleData[shiftIdx][dayIdx];
@@ -1333,18 +1383,32 @@
         shiftsToFill.sort((a,b)=> a.dayIndex!==b.dayIndex? a.dayIndex-b.dayIndex : a.shiftIndex-b.shiftIndex);
 
         function scoreEmployee(name, count, dayIdx, shiftIdx, equalizeMode=false){
-          // חסימות קשיחות
-          if (shiftIdx===NIGHT_SHIFT_2_6_INDEX && (nightShift2to6Count[name]||0)>=MAX_NIGHT_2_6) return -3_000_000;
+          // חסימות קשיחות קיימות
+          if (shiftIdx===NIGHT_SHIFT_2_6_INDEX && (nightShift2to6Count[name]||0) >= MAX_NIGHT_2_6) return -3_000_000;
           if (dailyOccupancy[dayIdx].has(name) || daily8HourBreakRequired[dayIdx].has(name)) return -1_000_000;
           if (night22_02_block[dayIdx].has(name) && (shiftIdx===MORNING_SHIFT_6_10_INDEX || shiftIdx===MORNING_SHIFT_10_14_INDEX)) return -2_000_000;
           if (night22_02_block[dayIdx].has(name) && shiftIdx===NIGHT_SHIFT_2_6_INDEX) return -2_000_000; // רצף לילות
-          if (night02_06_block[dayIdx].has(name) && (shiftIdx<=AFTERNOON_SHIFT_14_18_INDEX)) return -2_000_000;
-          if ((employeeShiftsCount[name]||0) >= MAX_ALLOWED) return -500_000;
+          if (night02_06_block[dayIdx].has(name) && (shiftIdx <= AFTERNOON_SHIFT_14_18_INDEX)) return -2_000_000;
+
+          // === NEW: חסימה קשיחה מעל 5 כשאין כפולות לילה ===
+          const noDoubleNightHardCap =
+            getRequiredPerShift(NIGHT_SHIFT_2_6_INDEX) === 1 &&
+            getRequiredPerShift(NIGHT_SHIFT_22_2_INDEX) === 1;
+
+          if (noDoubleNightHardCap && (employeeShiftsCount[name] || 0) >= MAX_ALLOWED) {
+            return -3_000_000; // חסימה קשיחה - לא נשבץ מעל 5 במצב "אין כפולות לילה"
+          }
+
+          // אחרת (כשכן יש כפולות לילה): קנס חזק אך לא חסימה מוחלטת
+          if ((employeeShiftsCount[name] || 0) >= MAX_ALLOWED) {
+            return -500_000;
+          }
 
           // ניקוד: סבב ראשון דוחף אל היעד האישי; סבב שני מאזן "שווה בשווה"
-          let score = 0; const target = guardsFor5Set.has(name)? 5 : MIN_REQUIRED;
-          if (!equalizeMode && count<target) score += 100_000 * (target - count);
-          score += (MAX_ALLOWED - count)*1_000;
+          let score = 0;
+          const target = guardsFor5Set.has(name) ? 5 : MIN_REQUIRED;
+          if (!equalizeMode && count < target) score += 100_000 * (target - count);
+          score += (MAX_ALLOWED - count) * 1_000;
           return score;
         }
 
@@ -1920,21 +1984,20 @@
 			
 			// 1. קורא את השמות שהקלדת (מפריד לפי פסיק או אנטר)
 			const rawText = cell.innerText;
-			const names = rawText.split(/[,\n]/).map(n => n.trim()).filter(Boolean);
-			
-			// 2. שואב מידע על היום והשעה מהתא (כדי שהבועה תדע מה היא)
-			const dayLabel = cell.dataset.day || cell.dataset.dayName || "";
-			const isAssist = cell.classList.contains('assist-cell');
-			const timeLabel = isAssist ? 'ליווי 07:40' : (cell.dataset.time || "").replace('<br>', ' ');
-			
-			// 3. מחליף את הטקסט הגולמי בבועות צבעוניות מעוצבות
-			cell.innerHTML = renderPersonBubbles(names, dayLabel, timeLabel);
-			
-			// 4. מוציא את הפוקוס מהתא (Blur) כדי "לנעול" את השינוי
-			cell.blur();
-			
-			// 5. מעדכן את ה-Textarea המוסתר כדי שהשינוי יישמר אם תוריד קובץ
-			if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
+            const names = rawText.split(/[,\n]/).map(n => n.trim()).filter(Boolean);
+            const dayName = cell.dataset.dayName || "";
+            const dayIdx = parseInt(cell.dataset.dayIndex, 10) || 0;
+
+            cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
+            cell.blur();
+
+            try {
+            const arr = loadAssistArray();
+            arr[dayIdx] = names.join(', ');
+            saveAssistArray(arr);
+            } catch {}
+
+            if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
 		  }
 		});
 	  });
