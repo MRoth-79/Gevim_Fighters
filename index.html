@@ -44,6 +44,26 @@
     #button-group, #main-button-wrapper{
       display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; margin:25px auto; width:100%;
     }
+
+    .shift-req-row {
+        display: contents;
+    }
+    .shift-req-label {
+        background:#f8fbfb; border:1px solid #eef2f5; border-radius:10px;
+        padding:10px; font-weight:700; color:#263238;
+    }
+    .shift-req-control {
+        display:flex; align-items:center; gap:8px; justify-content:flex-end;
+        background:#fff; border:1px solid #eef2f5; border-radius:10px; padding:10px;
+    }
+    .shift-req-control .opt {
+        display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:8px;
+        border:1px solid #e0e0e0; cursor:pointer; user-select:none; font-weight:700; color:#37474F;
+    }
+    .shift-req-control .opt.active {
+        background:#E3F2FD; color:#0D47A1; border-color:#90CAF9;
+    }
+
 	
 	/* פאנל השליטה - רחב וברור */
 	.tech-control-panel { 
@@ -409,7 +429,7 @@
 		  <div class="editor-layout-row">
 			<div class="textarea-container">
 			  <textarea id="dataToAnalyze" title="נתוני משמרות לעריכה וניתוח"
-				placeholder="הדבק את נתוני המשמרות כאן (יום ראשון → שעות → עובד1 עובד2...)"></textarea>
+				placeholder="הדבק את נתוני המשמרות כאן (יום שני → שעות → עובד1 עובד2...)"></textarea>
 			</div>
 
 			<div class="guards-selection-side-panel">
@@ -433,6 +453,33 @@
 				<span class="icon">🔍</span> נתח נתונים
 			  </button>
 			</div>
+
+           <!-- כפתור לפתיחת הגדרות דרישות משמרות -->
+            <button id="openShiftReqBtn" class="excel-btn tertiary" style="margin:0 auto; display:block; max-width:220px;">
+            ⚙️ הגדרות דרישות משמרות
+            </button>
+
+            <!-- פאנל הגדרות דרישות משמרות -->
+            <div id="shift-req-panel" class="excel-card" style="display:none; max-width:840px; margin:16px auto;">
+            <div class="excel-card-header">
+                <div class="title">דרישות משמרות (כמה שומרים בכל משבצת)</div>
+                <div class="actions">
+                <label style="font-size:.9rem; color:#455a64;">
+                    <input id="shiftReqScopeWeek" type="checkbox" />
+                    שמור לפי שבוע (תאריך התחלה)
+                </label>
+                <button id="shiftReqClose" type="button" class="excel-btn">סגור</button>
+                </div>
+            </div>
+
+            <div id="shift-req-grid" style="display:grid; grid-template-columns: 1fr auto; gap:10px;">
+                <!-- ימולא דינמית ע"י JS: כל שורה = תווית זמן + מתג 1/2 -->
+            </div>
+
+            <div style="margin-top:12px; text-align:center; color:#607d8b; font-size:.9rem;">
+                ברירת מחדל: 1 שומר בכל משמרת. שנה ל‑2 היכן שצריך. נשמר אוטומטית.
+            </div>
+            </div>
 
 		  <div id="results-container" style="text-align:center;">
 			<p id="initial-message">הטעינה הראשונית תפעיל את הניתוח אוטומטית.</p>
@@ -484,6 +531,34 @@
       '18:00 - 22:00',         // 4
       '22:00 - 02:00 (Night)'  // 5
     ];
+
+        /* ========= דרישות למשמרות – מפה דינמית מה-UI ========= */
+    // ברירות מחדל: 1 לכל משמרת
+    const DEFAULT_SHIFT_REQ = { 0:1, 1:1, 2:1, 3:1, 4:1, 5:1 };
+
+    function getShiftReqStorageKey(){
+    const useWeek = !!document.getElementById('shiftReqScopeWeek')?.checked;
+    if (useWeek){
+        const d = document.getElementById('startDate')?.value || 'no-date';
+        return 'shift_requirements__' + d; // נשמר לפי שבוע
+    }
+    return 'shift_requirements__global';
+    }
+    function loadShiftRequirements(){
+    try {
+        const raw = localStorage.getItem(getShiftReqStorageKey());
+        const m = raw ? JSON.parse(raw) : null;
+        return (m && typeof m==='object') ? { ...DEFAULT_SHIFT_REQ, ...m } : { ...DEFAULT_SHIFT_REQ };
+    } catch { return { ...DEFAULT_SHIFT_REQ }; }
+    }
+    function saveShiftRequirements(map){
+    try { localStorage.setItem(getShiftReqStorageKey(), JSON.stringify(map)); } catch {}
+    }
+    function getRequiredPerShift(idx){
+    const m = loadShiftRequirements();
+    return Number(m[idx] ?? 1) === 2 ? 2 : 1;
+    }
+
 
     // אינדקסים לשימוש מהיר
     const NIGHT_SHIFT_2_6_INDEX = 0;
@@ -655,7 +730,7 @@
       });
 
       const daysFound = Object.keys(rawDayData);
-      if (!daysFound.length) return { error:'לא נמצאו נתונים תקינים. ודא שהטקסט מתחיל ב"יום ראשון".' };
+      if (!daysFound.length) return { error:'לא נמצאו נתונים תקינים. ודא שהטקסט מתחיל ב"יום שני".' };
 
       const schedule = [];
       for (let i=0;i<EXPECTED_TIME_SLOTS.length;i++){
@@ -687,8 +762,21 @@
       const guardsFor5Text = document.getElementById('guardsFor5Shifts').value;
       const guardsFor5Set = new Set(guardsFor5Text.split(/[,\n]/).map(n=>n.trim()).filter(Boolean));
 
-      let tableHTML = '<h3 style="text-align:center;">טבלת משמרות</h3>';
-      tableHTML += `<p class="file-format-info" style="text-align:center; color:var(--primary-blue);">הגדרות: לילות (22–06) = 1 שומר, משמרת יום = 1. מינימום ${MIN_REQUIRED} לאדם.</p>`;
+      // כותרת + טקסט הגדרות דינמי לפי ה‑GUI
+    const twosList = EXPECTED_TIME_SLOTS
+        .map((s, idx) => ({ idx, label: s.replace(' (Night)', '') }))
+        .filter(x => getRequiredPerShift(x.idx) === 2)
+        .map(x => x.label.replace(' - ', '–'))
+        .join(', ');
+
+    const rulesText = twosList
+        ? `משמרות עם 2 שומרים: ${twosList}. כל היתר = 1.`
+        : `כל המשמרות = 1 שומר.`;
+
+    let headerHTML = '<h3 style="text-align:center;">טבלת משמרות</h3>';
+    headerHTML += `<p class="file-format-info" style="text-align:center; color:var(--primary-blue);">
+        ${rulesText} מינימום ${MIN_REQUIRED} לאדם.
+    </p>`;  
 
 
       let scheduleTableHTML = '<table id="schedule-table"><thead><tr><th>שעות / יום</th>';
@@ -725,7 +813,7 @@
         const isNight = timeFull.includes('(Night)');
         const isNight2to6 = rowIdx===NIGHT_SHIFT_2_6_INDEX;
         const timeDisp = timeFull.replace(' (Night)','').replace(' - ', '<br>');
-        const maxInShift = 1;
+        const maxInShift = getRequiredPerShift(rowIdx);
 
         scheduleTableHTML += `<tr><td class="time-slot">${timeDisp}</td>`;
 
@@ -859,7 +947,7 @@
 
       summaryTableHTML += '</tbody></table>';
 
-      rc.innerHTML = scheduleTableHTML + '<hr>' + exceptionsTableHTML + summaryTableHTML;
+      rc.innerHTML = headerHTML + scheduleTableHTML + '<hr>' + exceptionsTableHTML + summaryTableHTML;
       setupAssistEditors();
 	  setupTableLiveEditing();
     }
@@ -1090,18 +1178,18 @@
 
         // קריאת זמינות + שיבוץ ידני תקין (רק אם הכמות מדויקת)
         parsed.data.forEach((row, shiftIdx)=>{
-          const required = 1;
+          const required = getRequiredPerShift(shiftIdx);
           row.forEach((cell, dayIdx)=>{
             const available = cell.split(',').map(s=>s.trim()).filter(Boolean);
             if (!availabilityMap[dayIdx]) availabilityMap[dayIdx]={};
             availabilityMap[dayIdx][shiftIdx] = new Set(available);
 
             let namesInSlot = [];
-            if (iteration===0){
-              namesInSlot = (available.length===required && available.length>0) ? available : [];
-              newScheduleData[shiftIdx][dayIdx] = namesInSlot;
+            if (iteration === 0) {
+                namesInSlot = (available.length >= required) ? available.slice(0, required) : [];
+                newScheduleData[shiftIdx][dayIdx] = namesInSlot;
             } else {
-              namesInSlot = newScheduleData[shiftIdx][dayIdx];
+                namesInSlot = newScheduleData[shiftIdx][dayIdx];
             }
 
             namesInSlot.forEach(name=>{
@@ -1148,7 +1236,8 @@
 
         function fillShift(shift, onlyGuardsFor5){
           const { dayIndex, shiftIndex } = shift;
-          const maxInShift = 1;          if (newScheduleData[shiftIndex][dayIndex].length >= maxInShift) return;
+          const maxInShift = getRequiredPerShift(shiftIndex);          
+          if (newScheduleData[shiftIndex][dayIndex].length >= maxInShift) return;
 
           const available = Array.from(availabilityMap[dayIndex][shiftIndex]);
           const already = new Set(newScheduleData[shiftIndex][dayIndex]);
@@ -1192,9 +1281,9 @@
 
         // תנאי עצירה עדכני: אין חוסרים וכולם ≥ מינימום
         const belowMin = allEmployees.filter(n=> (employeeShiftsCount[n]||0) < MIN_REQUIRED);
-        const anyUnfilled = newScheduleData.some((row /* shiftIdx */)=>{
-        const req = 1; // בכל המשמרות, כולל 22:00–02:00 ו-02:00–06:00, נדרש שומר אחד
-        return row.some(arr => arr.length < req);
+        const anyUnfilled = newScheduleData.some((row, idx)=>{
+            const req = getRequiredPerShift(idx);
+            return row.some(arr => arr.length < req);
         });
         if (!anyUnfilled && !belowMin.length) break;
         if (iteration===MAX_ITERATIONS-1){ console.warn('MAX ITERATIONS REACHED. CHECKING FINAL RESULTS.'); break; }
@@ -1633,7 +1722,96 @@
       initializeData();
       generateGuardsButtons();
       ExcelGrid.init();
+      buildShiftReqPanel();
       // אין ניתוח אוטומטי: המשתמש ילחץ "משוך נתונים" / "נתח נתונים" / "סדר אוטומטי".
+    function buildShiftReqPanel(){
+    const panel = document.getElementById('shift-req-panel');
+    const grid  = document.getElementById('shift-req-grid');
+    const btnOpen = document.getElementById('openShiftReqBtn');
+    const btnClose = document.getElementById('shiftReqClose');
+    const cbWeek = document.getElementById('shiftReqScopeWeek');
+    if (!panel || !grid || !btnOpen) return;
+
+    // זכירת מצב ה-scope מהטענה קודמת
+    try {
+        const savedScope = localStorage.getItem('shiftReqScopeWeek');
+        if (savedScope !== null) cbWeek.checked = (savedScope === '1');
+    } catch {}
+
+    document.getElementById('startDate')?.addEventListener('change', ()=>{
+    const weekScope = document.getElementById('shiftReqScopeWeek')?.checked;
+    if (weekScope){
+        // בונה מחדש את הפאנל כדי שייטען מהמפתח החדש של השבוע
+        buildShiftReqPanel();
+
+        // מרענן טבלה/חישובים לפי ההגדרות של השבוע החדש
+        if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
+        const txt = document.getElementById('dataToAnalyze')?.value || '';
+        if (txt.trim()) renderSchedule(parseVerticalText(txt));
+    }
+    });
+
+
+    function renderRows(){
+        grid.innerHTML = '';
+        const reqMap = loadShiftRequirements();
+        EXPECTED_TIME_SLOTS.forEach((full, idx)=>{
+        const label = full.replace(' (Night)','');
+        const current = Number(reqMap[idx] ?? 1);
+
+        const row = document.createElement('div');
+        row.className = 'shift-req-row';
+
+        const left = document.createElement('div');
+        left.className = 'shift-req-label';
+        left.textContent = label;
+
+        const right = document.createElement('div');
+        right.className = 'shift-req-control';
+
+        // אופציות 1 / 2
+        const opt1 = document.createElement('span');
+        opt1.className = 'opt' + (current===1? ' active': '');
+        opt1.textContent = '1';
+        opt1.title = 'שומר אחד';
+        opt1.onclick = ()=>{ reqMap[idx] = 1; saveShiftRequirements(reqMap); renderRows(); refreshAfterReqChange(); };
+
+        const opt2 = document.createElement('span');
+        opt2.className = 'opt' + (current===2? ' active': '');
+        opt2.textContent = '2';
+        opt2.title = 'שני שומרים';
+        opt2.onclick = ()=>{ reqMap[idx] = 2; saveShiftRequirements(reqMap); renderRows(); refreshAfterReqChange(); };
+
+        right.appendChild(opt1);
+        right.appendChild(opt2);
+
+        grid.appendChild(left);
+        grid.appendChild(right);
+        });
+    }
+
+    function refreshAfterReqChange(){
+        // מרענן תצוגה/אוטומציה אם יש נתונים
+        if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
+        const txt = document.getElementById('dataToAnalyze')?.value || '';
+        if (txt.trim()){
+        // מרנדר מחדש את הטבלה לפי הדרישות החדשות
+        renderSchedule(parseVerticalText(txt));
+        }
+    }
+
+    btnOpen.onclick = ()=>{ panel.style.display = (panel.style.display==='none' || !panel.style.display)? 'block':'none'; renderRows(); };
+    btnClose.onclick = ()=>{ panel.style.display = 'none'; };
+    cbWeek?.addEventListener('change', ()=>{
+     renderRows();                // מרענן את הפאנל
+     refreshAfterReqChange();     // מרענן את הטבלה לפי ה-scope החדש
+     try {                        // אופציונלי: זכור את בחירת ה-scope
+        localStorage.setItem('shiftReqScopeWeek', cbWeek.checked ? '1' : '0');
+     } catch {}
+    });
+
+    renderRows();
+    }
     });
 	
 	function setupTableLiveEditing() {
