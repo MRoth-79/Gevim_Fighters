@@ -98,15 +98,18 @@
 	  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 	}
 
-	.tech-btn .icon { 
-	  font-size: 32px; 
-	  margin-bottom: 8px; 
-	}
+	.tech-btn .icon { font-size: 32px; margin-bottom: 8px;}
 
 	/* צבעי הכפתורים (Gradients) */
 	.fetch-btn { background: linear-gradient(135deg, #00d2ff, #3a7bd5); }
 	.ai-btn { background: linear-gradient(135deg, #667eea, #764ba2); }
 	.analyze-btn { background: linear-gradient(135deg, #00b09b, #96c93d); }
+
+  /* כפתור הורדת HTML */
+  .download-btn { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+
+  /* כפתור פתיחת הגיליון */
+  .sheet-btn { background: linear-gradient(135deg, #22c55e, #16a34a); }
 
 	.tech-btn:hover { 
 	  transform: translateY(-6px) scale(1.03); 
@@ -500,16 +503,11 @@
 				<input type="date" id="startDate" required />
 			  </div>
 			  <div class="actions">
-				<a
-				  href="https://docs.google.com/spreadsheets/d/1NXgjKC-0j4blUQawwzz4lMEhswA561GKxAoSJO5ie_s/edit?gid=0#gid=0"
-				  class="excel-btn tertiary" target="_blank" rel="noopener noreferrer"
-				>פתח גיליון נתונים 📄</a>
 
 				<button id="btnExcelPasteHelp" type="button" class="excel-btn tertiary">איך להדביק?</button>
 				<button id="btnExcelLoadFromText" type="button" class="excel-btn">טען מהטקסט ↩︎</button>
 				<button id="btnExcelApplyToText" type="button" class="excel-btn primary">החיל לטקסט ↪︎</button>
 				<button id="btnExcelAuto" type="button" class="excel-btn primary">סדר אוטומטי ↻</button>
-				<button id="generateLinkButton" type="button" class="excel-btn">הורד טבלת HTML 💾</button>
 				<button id="btnExcelClear" type="button" class="excel-btn danger">נקה</button>
 			  </div>
 			</div>
@@ -557,14 +555,20 @@
 
 			<div class="tech-control-panel">
 			  <button id="quickFetchButton" class="tech-btn fetch-btn">
-				<span class="icon">🔄</span> משוך נתונים
+				  <span class="icon">🔄</span> משוך נתונים
 			  </button>
 			  <button id="autoScheduleButton" class="tech-btn ai-btn">
-				<span class="icon">🤖</span> סדר אוטומטי
+				  <span class="icon">🤖</span> סדר אוטומטי
 			  </button>
 			  <button id="analyzeButton" class="tech-btn analyze-btn">
-				<span class="icon">🔍</span> נתח נתונים
+				  <span class="icon">🔍</span> נתח נתונים
 			  </button>
+        <button id="downloadHtmlButton" class="tech-btn download-btn">
+          <span class="icon">💾</span> הורד HTML
+        </button>
+        <button id="openSheetButton" class="tech-btn sheet-btn">
+          <span class="icon">📄</span> פתח גיליון נתונים
+        </button>
 			</div>
 
            <!-- כפתור לפתיחת הגדרות דרישות משמרות -->
@@ -644,6 +648,9 @@
       '18:00 - 22:00',         // 4
       '22:00 - 02:00 (Night)'  // 5
     ];
+
+    // === קישור הגיליון לפתיחה מהירה מהפאנל ===
+    const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1NXgjKC-0j4blUQawwzz4lMEhswA561GKxAoSJO5ie_s/edit?gid=0#gid=0';
 
         /* ========= דרישות למשמרות – מפה דינמית מה-UI ========= */
     // ברירות מחדל: 1 לכל משמרת
@@ -1928,6 +1935,15 @@
       if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
       autoSchedule();
     });
+    document.getElementById('downloadHtmlButton')?.addEventListener('click', () => {
+      if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
+      downloadHtmlTable();
+    });
+    // פתיחת הגיליון (כפתור גדול בפאנל)
+    document.getElementById('openSheetButton')?.addEventListener('click', () => {
+      window.open(SHEET_URL, '_blank', 'noopener,noreferrer');
+    });
+
     document.getElementById('fetchFromSheetButton').addEventListener('click', fetchFromGoogleSheet);
     document.getElementById('quickFetchButton').addEventListener('click', fetchFromGoogleSheet);
     document.getElementById('btnExcelAuto')?.addEventListener('click', ()=>{
