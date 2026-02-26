@@ -843,6 +843,50 @@
       const arr = loadAssistArray(); arr[dayIdx] = matched.join(', '); saveAssistArray(arr);
       placeCaretAtEnd(cell);
     }
+
+    // ממיר את הטבלה המוצגת (#schedule-table) בחזרה לטקסט בפורמט האנכי שלנו
+    function serializeScheduleTableToVerticalText() {
+      const table = document.getElementById('schedule-table');
+      if (!table) return null;
+
+      // כל שורות המשמרות (לא כולל שורת הליווי)
+      const bodyRows = Array.from(table.tBodies?.[0]?.rows || []);
+      const shiftRows = bodyRows.filter(r => !r.classList.contains('red-assistance-shift'));
+
+      // גיבוי: אם אין בדיוק מספר המשמרות הצפוי – לא נסכן, נחזיר null
+      if (shiftRows.length !== EXPECTED_TIME_SLOTS.length) return null;
+
+      // בניית טקסט: לכל יום (לפי EXPECTED_DAYS), כל המשמרות (לפי EXPECTED_TIME_SLOTS)
+      let out = '';
+      const timeLabels = EXPECTED_TIME_SLOTS.map(s => s.split('(')[0].trim()); // "02:00 - 06:00" ...
+
+      EXPECTED_DAYS.forEach((day, dayIdx) => {
+        out += day + '\n';
+        timeLabels.forEach((label, r) => {
+          // td המתאים: דילגנו על עמודת השעה (index 0), ימים מתחילים ב-1
+          const td = shiftRows[r]?.cells?.[dayIdx + 1];
+          const names = td
+            ? Array.from(td.querySelectorAll('.person'))
+                .map(el => el.textContent.trim())
+                .filter(Boolean)
+            : [];
+          out += `${label}\t${names.join('\t')}\n`;
+        });
+        out += '\n';
+      });
+
+      return out.trim();
+    }
+
+    // מסנכרן מהטבלה ל-Textarea + מרנדר מחדש כדי לעדכן סיכום/חריגות/יצוא
+    function syncFromRenderedTableToTextareaAndRerender() {
+      const txt = serializeScheduleTableToVerticalText();
+      if (!txt) return;
+      const ta = document.getElementById('dataToAnalyze');
+      if (ta) ta.value = txt;
+      renderSchedule(parseVerticalText(txt));
+    }
+
 	
     // =========================
     // עריכת תאי "ליווי 07:40" (assist) – ידני -> בועות
@@ -856,34 +900,40 @@
         // Enter -> המר לבועות
         cell.addEventListener('keydown', e => {
           if (e.key === 'Enter') {
-            e.preventDefault(); // לא לרדת שורה
+            e.preventDefault();
             const rawText = cell.innerText || '';
-            const names = rawText
-              .split(/[,\n]/)
-              .map(n => normalizeKey(n))  // נירמול שמות
-              .filter(Boolean);
-
+            const names = rawText.split(/[,\n]/).map(n => normalizeKey(n)).filter(Boolean);
             const dayName = cell.dataset.dayName || "";
             cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
             cell.blur();
 
-            if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
+            // שמירה ל-localStorage לפי היום
+            const dayIdx = parseInt(cell.dataset.dayIndex, 10) || 0;
+            const arr = loadAssistArray();
+            arr[dayIdx] = names.join(', ');
+            saveAssistArray(arr);
+
+            // רענון מלא של הטבלה/סיכום/חריגות/יצוא
+            syncFromRenderedTableToTextareaAndRerender();
           }
         });
 
         // יציאה מהתא -> המר לבועות
         cell.addEventListener('blur', () => {
-          const rawText = cell.innerText || '';
-          const names = rawText
-            .split(/[,\n]/)
-            .map(n => normalizeKey(n))
-            .filter(Boolean);
+        const rawText = cell.innerText || '';
+        const names = rawText.split(/[,\n]/).map(n => normalizeKey(n)).filter(Boolean);
+        const dayName = cell.dataset.dayName || "";
+        cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
 
-          const dayName = cell.dataset.dayName || "";
-          cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
+        // שמירה ל-localStorage לפי היום
+        const dayIdx = parseInt(cell.dataset.dayIndex, 10) || 0;
+        const arr = loadAssistArray();
+        arr[dayIdx] = names.join(', ');
+        saveAssistArray(arr);
 
-          if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
-        });
+        // רענון מלא של הטבלה/סיכום/חריגות/יצוא
+        syncFromRenderedTableToTextareaAndRerender();
+      });
 
         // הדבקה: טקסט בלבד (ללא HTML); ההמרה תקרה ב-Enter/Blur
         cell.addEventListener('paste', e => {
@@ -965,7 +1015,7 @@
           // אם יש לפחות שם – אין זו "משבצת ריקה"
           if (names.length > 0) cell.classList.remove('needs-selection');
 
-          if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
+          syncFromRenderedTableToTextareaAndRerender();
         } catch (e) {
           console.warn('convertCellTextToBubbles failed', e);
         }
@@ -1430,11 +1480,67 @@
           <script>${scripts}<\/script>
         </body></html>`;
 
+      // ===== עזר: שיתוף ל-WhatsApp (מובייל/דסקטופ) =====
+      async function shareViaWhatsAppFileOrText(htmlBlob, fileName, shareText) {
+        // 1) אם הדפדפן תומך ב-Web Share עם קבצים (בעיקר מובייל) – נשלח את הקובץ ישירות
+        const supportsFileShare = !!(navigator.canShare && navigator.canShare({ files: [new File(['x'], 'x.txt', { type: 'text/plain' })] }));
+
+        if (supportsFileShare) {
+          try {
+            const file = new File([htmlBlob], fileName, { type: 'text/html' });
+            await navigator.share({
+              files: [file],
+              title: 'שיתוף סידור משמרות',
+              text: shareText
+            });
+            return true;
+          } catch (err) {
+            // המשתמש ביטל או כשל – ניפול ל-Fallback של WhatsApp Web
+            console.warn('navigator.share failed, falling back to WhatsApp Web:', err);
+          }
+        }
+
+        // 2) Fallback: פתיחת WhatsApp Web עם טקסט בלבד (הקובץ כבר ירד – המשתמש יצרף ידנית)
+        const waText = encodeURIComponent(
+          shareText + '\n\n' +
+          'הקובץ הורד אצלך למכשיר בשם: ' + fileName + '\n' +
+          'צרף/י אותו להודעת ה-WhatsApp.'
+        );
+        window.open(`https://wa.me/?text=${waText}`, '_blank', 'noopener,noreferrer');
+        return false;
+      }
+
+      // ===== הקוד הראשי של ההורדה + שאלה על WhatsApp =====
       const bom = '\ufeff';
-      const blob = new Blob([bom + content], { type:'text/html;charset=utf-8' });
+      const blob = new Blob([bom + content], { type: 'text/html;charset=utf-8' });
+
+      // 1) הורדה מקומית כרגיל
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download=`sidur_${startDate}.html`;
-      document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+      const fileName = `sidur_${startDate}.html`;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      // 2) לשאול אם לשלוח ל-WhatsApp
+      const ask = confirm('האם לשלוח את הקובץ גם ל‑WhatsApp?');
+      if (ask) {
+        const [y, m, d] = startDate.split('-');
+        const sun = new Date(y, m - 1, d);
+        const sat = new Date(sun);
+        sat.setDate(sun.getDate() + 6);
+        const fmt = dt => `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`;
+
+        const shareText =
+          `טבלת משמרות ${fmt(sun)}‑${fmt(sat)}\n` +
+          `נשלח/הורד כ‑HTML. פותח/ת את הקובץ בדפדפן כדי לראות את הסידור והאינטרקציות.`;
+
+        // ננסה שיתוף קובץ (מובייל) – ואם לא אפשרי, נפתח WhatsApp Web עם טקסט
+        shareViaWhatsAppFileOrText(blob, fileName, shareText);
+      }
     }
 
     /* =========================
