@@ -1423,12 +1423,25 @@
         if (assistDayOccupancy[dayIdx].has(name)) return -1_000_000;
         // כלל חדש: לא משבצים יותר מפעם אחת באותו יום (אוטומטי בלבד)
         if (minNextAllowedByDay[dayIdx][name] !== undefined) return -2_000_000;
-
         // 8 שעות באותו יום (הגנה משלימה; תופס אם מישהו הגיע דרך מצב קצה)
         const mn = minNextAllowedByDay[dayIdx][name];
         if (mn !== undefined && shiftIdx < mn) return -2_000_000;
         // 22–02 אתמול: אסור 06–10 היום; 10–14 מותר (8 שעות)
+        // א) החסימה הרגילה בעזרת האיתות:
         if (night22_02_block[dayIdx].has(name) && shiftIdx===MORNING_SHIFT_6_10_INDEX) return -2_000_000;
+        // רצף לילות: 22–02 אתמול → 02–06 היום (חסימה קשיחה)
+        // א) החסימה הרגילה בעזרת האיתות:
+        if (shiftIdx===NIGHT_SHIFT_2_6_INDEX && night22_02_block[dayIdx].has(name)) return -2_000_000;
+        // ב) גיבוי: בדיקה ישירה מול התוצאה הנבנית של אתמול (למקרה שהאיתות טרם נכתב/נקרא):
+        if (shiftIdx === NIGHT_SHIFT_2_6_INDEX && dayIdx > 0) {
+          const prevDayNight = newScheduleData[NIGHT_SHIFT_22_2_INDEX][dayIdx - 1] || [];
+          if (prevDayNight.includes(name)) return -2_000_000;
+        }
+        // ב) גיבוי: בדיקה ישירה מול התוצאה הנבנית של אתמול (למקרה שאות לא נכתב/נקרא):
+        if (shiftIdx === MORNING_SHIFT_6_10_INDEX && dayIdx > 0) {
+          const prevDayNight = newScheduleData[NIGHT_SHIFT_22_2_INDEX][dayIdx - 1] || [];
+          if (prevDayNight.includes(name)) return -2_000_000;
+        }
         // 02–06 היום: אסור 06–10 ו‑10–14; מותר מ‑14–18 ומעלה
         if (night02_06_block[dayIdx].has(name) && shiftIdx <= MORNING_SHIFT_10_14_INDEX) return -2_000_000;
 
@@ -1929,10 +1942,6 @@
       if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
       const txt = document.getElementById('dataToAnalyze')?.value || '';
       renderSchedule(parseVerticalText(txt));
-    });
-    document.getElementById('generateLinkButton')?.addEventListener('click', ()=>{
-      if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
-      downloadHtmlTable();
     });
     document.getElementById('autoScheduleButton').addEventListener('click', ()=>{
       if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
