@@ -826,22 +826,24 @@
       placeCaretAtEnd(cell);
     }
     function convertAssistCellToBubbles(cell){
-      const dayIdx = parseInt(cell.dataset.dayIndex,10)||0;
+      const dayIdx  = Number(cell.dataset.dayIndex || 0);
       const dayName = cell.dataset.dayName || '';
+      const names = String(cell.innerText || '')
+        .split(/[,\n]/)
+        .map(normalizeKey)
+        .filter(Boolean);
 
-      const existing = Array.from(cell.querySelectorAll('.person')).map(el=>el.textContent.trim()).filter(Boolean);
+      // הפקה לבועות לכל השמות (צבע רק אם יש במפה)
+      cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
 
-      const clone = cell.cloneNode(true); clone.querySelectorAll('.person').forEach(el=>el.remove());
-      const tokens = splitToTokens(clone.innerText);
+      // שמירה פר-יום
+      const arr = loadAssistArray();
+      arr[dayIdx] = names.join(', ');
+      saveAssistArray(arr);
 
-      const matchedSet = new Set(existing); const leftovers = [];
-      tokens.forEach(tok=> KNOWN_NAMES.includes(tok)? matchedSet.add(tok): leftovers.push(tok));
-
-      const matched = Array.from(matchedSet);
-      cell.innerHTML = renderPersonBubbles(matched, dayName, 'ליווי 07:40') + (leftovers.length? (' '+escapeHtml(leftovers.join(', '))): '');
-
-      const arr = loadAssistArray(); arr[dayIdx] = matched.join(', '); saveAssistArray(arr);
       placeCaretAtEnd(cell);
+      // סנכרון לטקסט + רענון מלא (כדי לעדכן סיכום/חריגות/ייצוא)
+      syncFromRenderedTableToTextareaAndRerender();
     }
 
     // ממיר את הטבלה המוצגת (#schedule-table) בחזרה לטקסט בפורמט האנכי שלנו
@@ -901,39 +903,14 @@
         cell.addEventListener('keydown', e => {
           if (e.key === 'Enter') {
             e.preventDefault();
-            const rawText = cell.innerText || '';
-            const names = rawText.split(/[,\n]/).map(n => normalizeKey(n)).filter(Boolean);
-            const dayName = cell.dataset.dayName || "";
-            cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
+            convertAssistCellToBubbles(cell);
             cell.blur();
-
-            // שמירה ל-localStorage לפי היום
-            const dayIdx = parseInt(cell.dataset.dayIndex, 10) || 0;
-            const arr = loadAssistArray();
-            arr[dayIdx] = names.join(', ');
-            saveAssistArray(arr);
-
-            // רענון מלא של הטבלה/סיכום/חריגות/יצוא
-            syncFromRenderedTableToTextareaAndRerender();
           }
         });
 
-        // יציאה מהתא -> המר לבועות
         cell.addEventListener('blur', () => {
-        const rawText = cell.innerText || '';
-        const names = rawText.split(/[,\n]/).map(n => normalizeKey(n)).filter(Boolean);
-        const dayName = cell.dataset.dayName || "";
-        cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
-
-        // שמירה ל-localStorage לפי היום
-        const dayIdx = parseInt(cell.dataset.dayIndex, 10) || 0;
-        const arr = loadAssistArray();
-        arr[dayIdx] = names.join(', ');
-        saveAssistArray(arr);
-
-        // רענון מלא של הטבלה/סיכום/חריגות/יצוא
-        syncFromRenderedTableToTextareaAndRerender();
-      });
+            convertAssistCellToBubbles(cell);
+          });
 
         // הדבקה: טקסט בלבד (ללא HTML); ההמרה תקרה ב-Enter/Blur
         cell.addEventListener('paste', e => {
@@ -1433,7 +1410,9 @@
           const sw=document.documentElement.clientWidth-12; const tw=t.scrollWidth;
           if(tw>sw){ const s=sw/tw; c.style.transform='scale('+s+')'; c.style.width=(100/s)+'%'; }
         }
-        addEventListener('load',autoFitTable); addEventListener('resize',autoFitTable);
+        addEventListener('load', autoFitTable);
+        addEventListener('resize', autoFitTable);
+        document.addEventListener('DOMContentLoaded', autoFitTable, { once: true });
       `;
 
 
@@ -2212,6 +2191,7 @@
     const btnOpen = document.getElementById('openShiftReqBtn');
     const btnClose = document.getElementById('shiftReqClose');
     const cbWeek = document.getElementById('shiftReqScopeWeek');
+    try { cbWeek.checked = localStorage.getItem('shiftReqScopeWeek') === '1'; } catch {}
     if (!panel || !grid || !btnOpen) return;
 
     function renderRows(){
@@ -2262,18 +2242,30 @@
         }
     }
 
-    btnOpen.onclick = ()=>{ panel.style.display = (panel.style.display==='none' || !panel.style.display)? 'block':'none'; renderRows(); };
-    btnClose.onclick = ()=>{ panel.style.display = 'none'; };
-    cbWeek?.addEventListener('change', ()=>{
-     renderRows();                // מרענן את הפאנל
-     refreshAfterReqChange();     // מרענן את הטבלה לפי ה-scope החדש
-     try {                        // אופציונלי: זכור את בחירת ה-scope
-        localStorage.setItem('shiftReqScopeWeek', cbWeek.checked ? '1' : '0');
-     } catch {}
+      btnOpen.onclick = ()=>{ panel.style.display = (panel.style.display==='none' || !panel.style.display)? 'block':'none'; renderRows(); };
+      btnClose.onclick = ()=>{ panel.style.display = 'none'; };
+      cbWeek?.addEventListener('change', ()=>{
+      renderRows();                // מרענן את הפאנל
+      refreshAfterReqChange();     // מרענן את הטבלה לפי ה-scope החדש
+      try {                        // אופציונלי: זכור את בחירת ה-scope
+          localStorage.setItem('shiftReqScopeWeek', cbWeek.checked ? '1' : '0');
+      } catch {}
     });
 
-    renderRows();
+    // שינוי תאריך יום שני => טען/החלף מפה + רענון טבלה
+    const startDateInput = document.getElementById('startDate');
+    if (startDateInput) {
+      startDateInput.addEventListener('change', () => {
+        // לבנות מחדש שורות הפאנל לפי המפתח החדש (שבוע חדש או גלובלי)
+        renderRows();
+
+        // לרנדר מחדש את הטבלה עם הדרישות המעודכנות
+        refreshAfterReqChange();
+      });
     }
+
+    renderRows();
+      }
     });
 
     function autoFitMainTable() {
