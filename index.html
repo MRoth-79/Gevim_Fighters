@@ -149,7 +149,7 @@
     .excel-btn.tertiary{ background:#fafafa; border:1px solid var(--border-color); }
 
     /* ============ בחירת שומרים (פאנל צד) ============ */
-	.guard-selector-container {
+	  .guard-selector-container {
 	  display: grid;
 	  /* הגדרת 3 שורות קבועות ו-8 עמודות */
 	  grid-template-rows: repeat(3, 1fr);
@@ -357,7 +357,7 @@
     /* הודעות */
     #link-message{ display:none; }
 	
-	@keyframes tech-pulse {
+	  @keyframes tech-pulse {
 	  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(118, 75, 162, 0.7); }
 	  50% { transform: scale(1.15); box-shadow: 0 0 35px 15px rgba(118, 75, 162, 0.6); }
 	  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(118, 75, 162, 0); }
@@ -369,7 +369,7 @@
 	}
 
   /* === Mobile (<=768px) – consolidated & tuned === */
-@media (max-width: 768px) {
+    @media (max-width: 768px) {
     html, body { overflow-x: hidden; }
 
     /* טיפוגרפיה וכותרת */
@@ -717,6 +717,28 @@
       'חברוני':'color-חברוני','ויקטור':'color-ויקטור'
     };
 
+    // === Normalization helpers for manual editing ===
+    function normalizeKey(str) {
+      // מסיר סימוני כיוון, NBSP, תווי Control רלוונטיים ומנרמל רווחים
+      return String(str || '')
+        .normalize('NFKC')
+        .replace(/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, '') // LRM/RLM ואח'
+        .replace(/\u00A0/g, ' ')  // NBSP -> space
+        .replace(/\s+/g, ' ')     // רווחים מרובים -> רווח יחיד
+        .trim();
+    }
+
+    function nameToColorClass(rawName) {
+      const n = normalizeKey(rawName);
+      // ניסיון ישיר
+      if (colorMap[n]) return colorMap[n];
+      // ניסיון עם קו תחתון במקום רווח
+      const withUnderscore = n.includes(' ') ? n.replace(/\s+/g, '_') : n;
+      if (colorMap[withUnderscore]) return colorMap[withUnderscore];
+      // גיבוי: ללא צבע ייעודי
+      return null;
+    }
+
     /* =========================
        עזר ותאריך
     ========================== */
@@ -767,9 +789,10 @@
       return String(str||'').split(/[,\n]/).map(n=>n.trim()).filter(Boolean);
     }
     function renderPersonBubbles(names, dayLabel, timeSlotTitle){
-      return (names||[]).map(raw=>{
-        const clean = raw.trim(); const key = clean.includes(' ')? clean.replace(' ','_'): clean;
-        const className = colorMap[key] ? `person ${colorMap[key]}` : 'person';
+      return (names || []).map(raw => {
+        const clean = normalizeKey(raw);
+        const colorClass = nameToColorClass(clean);
+        const className = colorClass ? `person ${colorClass}` : 'person';
         const title = `${escapeHtml(clean)} - ${escapeHtml(dayLabel)}, ${escapeHtml(timeSlotTitle)}`;
         return `<span class="${className}" title="${title}">${escapeHtml(clean)}</span>`;
       }).join('');
@@ -821,35 +844,133 @@
       placeCaretAtEnd(cell);
     }
 	
-	function setupAssistEditors() {
-	  document.querySelectorAll('.assist-cell[contenteditable="true"]').forEach(cell => {
-		cell.addEventListener('keydown', e => {
-		  if (e.key === 'Enter') {
-			e.preventDefault(); // מונע ירידת שורה
-			
-			// שליפת השמות שהוקלדו
-			const rawText = cell.innerText;
-			const names = rawText.split(/[,\n]/).map(n => n.trim()).filter(Boolean);
-			const dayName = cell.dataset.dayName || "";
-			
-			// הפיכה לבועות צבעוניות בלי לרענן את כל הטבלה
-			cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
-			
-			cell.blur(); // סיום עריכה
-			
-			// עדכון ה-Textarea מאחורי הקלעים כדי שהשינוי יישמר
-			if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
-		  }
-		});
-		
-		// ניקוי אוטומטי כשיוצאים מהתא בלי ללחוץ אנטר
-		cell.addEventListener('blur', () => {
-			const names = cell.innerText.split(/[,\n]/).map(n => n.trim()).filter(Boolean);
-			const dayName = cell.dataset.dayName || "";
-			cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
-		});
-	  });
-	}
+    // =========================
+    // עריכת תאי "ליווי 07:40" (assist) – ידני -> בועות
+    // =========================
+    function setupAssistEditors() {
+      document.querySelectorAll('.assist-cell[contenteditable="true"]').forEach(cell => {
+        // לא לרשום מאזינים פעמיים ברינדורים חוזרים
+        if (cell.__hasAssistEditor) return;
+        cell.__hasAssistEditor = true;
+
+        // Enter -> המר לבועות
+        cell.addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            e.preventDefault(); // לא לרדת שורה
+            const rawText = cell.innerText || '';
+            const names = rawText
+              .split(/[,\n]/)
+              .map(n => normalizeKey(n))  // נירמול שמות
+              .filter(Boolean);
+
+            const dayName = cell.dataset.dayName || "";
+            cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
+            cell.blur();
+
+            if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
+          }
+        });
+
+        // יציאה מהתא -> המר לבועות
+        cell.addEventListener('blur', () => {
+          const rawText = cell.innerText || '';
+          const names = rawText
+            .split(/[,\n]/)
+            .map(n => normalizeKey(n))
+            .filter(Boolean);
+
+          const dayName = cell.dataset.dayName || "";
+          cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
+
+          if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
+        });
+
+        // הדבקה: טקסט בלבד (ללא HTML); ההמרה תקרה ב-Enter/Blur
+        cell.addEventListener('paste', e => {
+          const text = e.clipboardData?.getData('text/plain');
+          if (!text) return;
+          e.preventDefault();
+          document.execCommand('insertText', false, text);
+        });
+      });
+    }
+
+    /* =========================
+   עריכת תאי משמרות רגילים (ידני -> בועות)
+   — תמיד ממיר לבועות (בלי חסימות), ומתעלם מהאזהרה "בעיה! משבצת ריקה".
+    ========================== */
+    function setupScheduleEditors() {
+      const allEditable = document.querySelectorAll('#schedule-table td[contenteditable="true"]');
+
+      allEditable.forEach(td => {
+        if (td.__hasEditor) return;
+        td.__hasEditor = true;
+
+        const stripWarningSpans = () => {
+          // מסיר תגיות האזהרה מהתא (כדי שלא יתערבבו בטקסט)
+          td.querySelectorAll('.warning-text').forEach(n => n.remove());
+        };
+
+        // כשנכנסים לעריכה – נקה את האזהרה
+        td.addEventListener('focus', stripWarningSpans);
+
+        // הדבקה: טקסט נקי בלבד; המרה ב-Enter/Blur
+        td.addEventListener('paste', e => {
+          const text = e.clipboardData?.getData('text/plain');
+          if (!text) return;
+          e.preventDefault();
+          document.execCommand('insertText', false, text);
+        });
+
+        // Enter -> המר לבועות
+        td.addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            stripWarningSpans();
+            convertCellTextToBubbles(td);
+            td.blur();
+          }
+        });
+
+        // Blur -> המר לבועות
+        td.addEventListener('blur', () => {
+          stripWarningSpans();
+          convertCellTextToBubbles(td);
+        });
+      });
+
+      function convertCellTextToBubbles(cell) {
+        try {
+          // מנקה ביטויי האזהרה מהטקסט הגולמי (בטחון כפול)
+          const cleanedText = normalizeKey(
+            String(cell.innerText || '')
+              .replace(/בעיה!?/g, '')
+              .replace(/משבצת\s*ריקה/g, '')
+          );
+
+          // פירוק + נירמול + ייחודיות
+          const names = Array.from(new Set(
+            cleanedText
+              .split(/[,\n]/)
+              .map(n => normalizeKey(n))
+              .filter(Boolean)
+          ));
+
+          const dayName  = cell.getAttribute('data-day')  || cell.dataset.dayName || '';
+          const timeText = cell.getAttribute('data-time') || (cell.classList.contains('assist-cell') ? 'ליווי 07:40' : '');
+
+          // המרה לבועות
+          cell.innerHTML = renderPersonBubbles(names, dayName, timeText);
+
+          // אם יש לפחות שם – אין זו "משבצת ריקה"
+          if (names.length > 0) cell.classList.remove('needs-selection');
+
+          if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
+        } catch (e) {
+          console.warn('convertCellTextToBubbles failed', e);
+        }
+      }
+    }
 
     /* =========================
        קריאת טקסט: פורמט אנכי (ימים→שעות→שמות)
@@ -1039,14 +1160,11 @@
           }
 
           const timeTitle = timeFull.replace(' (Night)','');
-          const formatted = names.map(raw=>{
-            const clean = raw.trim(); const key = clean.includes(' ')? clean.replace(' ','_'): clean;
-            const cls = colorMap[key] || 'person'; const title = `${escapeHtml(clean)} - ${escapeHtml(day)}, ${escapeHtml(timeTitle)}`;
-            return `<span class="person ${cls}" title="${title}">${escapeHtml(clean)}</span>`;
-          }).join('');
+          // שימוש בפונקציה המנרמלת כדי לקבל צביעה עקבית
+          const formatted = renderPersonBubbles(names, day, timeTitle);
 
           scheduleTableHTML += `<td data-day="${day}" data-time="${timeDisp}" class="${cellClass}" contenteditable="true" style="outline:none;">${formatted} ${warn}</td>`;
-        });
+          });
 
         scheduleTableHTML += '</tr>';
       });
@@ -1140,7 +1258,6 @@
 
       rc.innerHTML = headerHTML + scheduleTableHTML + '<hr>' + exceptionsTableHTML + summaryTableHTML;
       setupAssistEditors();
-	  setupTableLiveEditing();
     }
 
     /* =========================
@@ -1285,7 +1402,7 @@
             #results-container{ transition:all .2s ease; width:100%; display:block; }
             #schedule-table{ margin-right:0; margin-left:auto; }
          
- </style>
+    </style>
         </head><body>
           <h1 class="modern-main-header" style="font-size:1.5em; padding:10px;">${header}</h1>
           <div id="results-container">${exportTableHTML}</div>
@@ -1626,7 +1743,7 @@
         const data = await resp.text();
         if (!data.trim()) throw new Error('טקסט ריק מהשרת');
 
-		// 1. מעדכן את הטקסט ואת הסטטוס
+		    // 1. מעדכן את הטקסט ואת הסטטוס
         dataTextArea.value = data;
         statusEl.textContent = '✅ נטען! ממלא טבלה...'; 
         statusEl.style.color = 'green';
@@ -1650,9 +1767,6 @@
                 }, 2400);
             }
         }, 300);
-		
-        if (window.ExcelGrid?.loadFromTextarea) ExcelGrid.loadFromTextarea();
-        else console.warn('ExcelGrid.loadFromTextarea() לא נמצא');
 
         const rc = document.getElementById('results-container');
         rc.innerHTML = '<p style="text-align:center; font-weight:600; color: var(--primary-blue);">✅ הנתונים נטענו לטבלת הקלט. עכשיו לחץ "סדר אוטומטי ↻".</p>';
@@ -1670,37 +1784,37 @@
     /* =========================
        בחירת “צהובים” ל‑5 משמרות
     ========================== */
-	function generateGuardsButtons() {
-	  const c = document.getElementById('guardButtonsContainer');
-	  if (!c) return;
-	  c.innerHTML = '';
+    function generateGuardsButtons() {
+      const c = document.getElementById('guardButtonsContainer');
+      if (!c) return;
+      c.innerHTML = '';
 
-	  // השמות שצריכים להיות בצד שמאל (סוף הרשימה בפריסה רוחבית)
-	  const leftSideNames = ['אמיר חורי', 'יפתח', 'חורחה', 'חגי'];
-	  
-	  const allNames = Object.keys(colorMap)
-		.map(k => k.includes('_') ? k.replace('_', ' ') : k)
-		.sort();
+      // השמות שצריכים להיות בצד שמאל (סוף הרשימה בפריסה רוחבית)
+      const leftSideNames = ['אמיר חורי', 'יפתח', 'חורחה', 'חגי'];
+      
+      const allNames = Object.keys(colorMap)
+      .map(k => k.includes('_') ? k.replace('_', ' ') : k)
+      .sort();
 
-	  // מפרידים בין ה"שמאליים" לכל השאר
-	  const others = allNames.filter(n => !leftSideNames.some(ln => n.includes(ln)));
-	  const vips = allNames.filter(n => leftSideNames.some(ln => n.includes(ln)));
+      // מפרידים בין ה"שמאליים" לכל השאר
+      const others = allNames.filter(n => !leftSideNames.some(ln => n.includes(ln)));
+      const vips = allNames.filter(n => leftSideNames.some(ln => n.includes(ln)));
 
-	  // מחברים אותם כך שה-VIPs יהיו בסוף (מה שיוצר את הטורים השמאליים)
-	  const finalOrder = [...others, ...vips];
+      // מחברים אותם כך שה-VIPs יהיו בסוף (מה שיוצר את הטורים השמאליים)
+      const finalOrder = [...others, ...vips];
 
-	  finalOrder.forEach(name => {
-		const btn = document.createElement('button');
-		btn.textContent = name;
-		btn.className = 'guard-btn';
-		btn.type = 'button';
-		btn.onclick = function() {
-		  this.classList.toggle('active');
-		  updateGuardsTextarea();
-		};
-		c.appendChild(btn);
-	  });
-	}
+      finalOrder.forEach(name => {
+      const btn = document.createElement('button');
+      btn.textContent = name;
+      btn.className = 'guard-btn';
+      btn.type = 'button';
+      btn.onclick = function() {
+        this.classList.toggle('active');
+        updateGuardsTextarea();
+      };
+      c.appendChild(btn);
+      });
+    }
 	
     function updateGuardsTextarea(){
       const act = document.querySelectorAll('.guard-btn.active');
@@ -2055,37 +2169,6 @@
     renderRows();
     }
     });
-	
-	function setupTableLiveEditing() {
-	  // מוצא את כל התאים בטבלה שניתנים לעריכה
-	  const allCells = document.querySelectorAll('#schedule-table td.assist-cell[contenteditable="true"]');
-	  
-	  allCells.forEach(cell => {
-		cell.addEventListener('keydown', e => {
-		  // אם לחצת על אנטר
-		  if (e.key === 'Enter') {
-			e.preventDefault(); // מונע מהסמן לרדת שורה בתוך התא
-			
-			// 1. קורא את השמות שהקלדת (מפריד לפי פסיק או אנטר)
-			const rawText = cell.innerText;
-            const names = rawText.split(/[,\n]/).map(n => n.trim()).filter(Boolean);
-            const dayName = cell.dataset.dayName || "";
-            const dayIdx = parseInt(cell.dataset.dayIndex, 10) || 0;
-
-            cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
-            cell.blur();
-
-            try {
-            const arr = loadAssistArray();
-            arr[dayIdx] = names.join(', ');
-            saveAssistArray(arr);
-            } catch {}
-
-            if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
-		  }
-		});
-	  });
-	}
 
     function autoFitMainTable() {
       try {
@@ -2111,8 +2194,10 @@
     const _origRenderSchedule = renderSchedule;
     renderSchedule = function(parsed) {
       _origRenderSchedule(parsed);
+      setupScheduleEditors();
       requestAnimationFrame(autoFitMainTable);
     };
+
 
     window.addEventListener('resize', autoFitMainTable);
     document.addEventListener('orientationchange', autoFitMainTable);
