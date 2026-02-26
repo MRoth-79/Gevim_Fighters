@@ -339,20 +339,94 @@
     .excel-date input[type="date"]:focus{ border-color:var(--primary-blue); box-shadow:0 0 5px rgba(0,121,107,.15); } 
                                          
     /* ============ כרטיס מידע על שם (inspector) ============ */
-    #name-inspector { position: fixed;  top: 20px;  left: 20px; z-index: 9999; width: 320px; max-height: 80vh; overflow: auto; background: #fff;
-      border: 1px solid var(--border-color); border-radius: 14px; box-shadow: var(--shadow); padding: 14px; display: none;}
-    #name-inspector .hdr { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
-    #name-inspector .hdr .title { font-weight: 800; color: var(--primary-blue); font-size: 1.05rem; }
-    #name-inspector .close-btn { background: transparent; color: #455a64; border: 1px solid #cfd8dc; padding: 4px 8px; border-radius: 8px; cursor: pointer; font-weight: 700; }
-    #name-inspector .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-    #name-inspector .kpi { background: #f8fbfb; border: 1px solid #eef2f5; border-radius: 10px; padding: 8px; text-align: center; }
-    #name-inspector .kpi .num { font-size: 1.4rem; font-weight: 900; color: #263238; }
-    #name-inspector .kpi .lbl { font-size: .85rem; color: #607d8b; }
-    #name-inspector .list { border-top: 1px dashed #e0e0e0; padding-top: 10px; }
-    #name-inspector .item { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; border: 1px solid #eef2f5; border-radius: 8px; margin-bottom: 6px; background: #fff; }
+    /* כרטיס מידע על שם – קומפקטי בדסקטופ */
+    #name-inspector {
+      position: fixed;
+      top: 16px;
+      right: 16px;               /* בצד ימין בדסקטופ */
+      left: auto;                /* מבטל left הקודם */
+      z-index: 9999;
+      width: 260px;              /* קטן יותר */
+      max-height: 70vh;          /* נמוך יותר */
+      overflow: auto;
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+      padding: 10px;             /* פדינג קטן יותר */
+      display: none;
+    }
+
+    #name-inspector .hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    #name-inspector .hdr .title {
+      font-weight: 800;
+      color: var(--primary-blue);
+      font-size: .98rem;         /* קטן יותר */
+    }
+
+    #name-inspector .close-btn {
+      background: transparent;
+      color: #455a64;
+      border: 1px solid #cfd8dc;
+      padding: 3px 7px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: .85rem;
+    }
+
+    #name-inspector .kpis {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    #name-inspector .kpi {
+      background: #f8fbfb;
+      border: 1px solid #eef2f5;
+      border-radius: 10px;
+      padding: 6px;              /* פחות פדינג */
+      text-align: center;
+    }
+
+    #name-inspector .kpi .num { font-size: 1.15rem; font-weight: 900; color: #263238; }
+    #name-inspector .kpi .lbl { font-size: .78rem; color: #607d8b; }
+
+    #name-inspector .list   { border-top: 1px dashed #e0e0e0; padding-top: 8px; }
+    #name-inspector .item   { display: flex; align-items: center; justify-content: space-between; padding: 6px 6px; border: 1px solid #eef2f5; border-radius: 8px; margin-bottom: 6px; background: #fff; }
     #name-inspector .item .left { text-align: right; }
-    #name-inspector .tag { font-size: .75rem; font-weight: 800; background: #ffe0b2; color: #e65100; border: 1px solid #ffcc80; border-radius: 999px; padding: 2px 8px; }
-    #name-inspector .muted { color: #78909c; font-size: .85rem; }
+    #name-inspector .tag    { font-size: .7rem; font-weight: 800; background: #ffe0b2; color: #e65100; border: 1px solid #ffcc80; border-radius: 999px; padding: 2px 6px; }
+    #name-inspector .muted  { color: #78909c; font-size: .8rem; }
+
+    /* כשהחלונית פתוחה – דוחפים את התוכן קצת שמאלה כדי שלא יסתתר (דסקטופ בלבד) */
+    @media (min-width: 1025px) {
+      body.inspector-open #results-container {
+        margin-right: 320px;   /* רוחב החלונית + קצת ריווח */
+        transition: margin-right .2s ease;
+      }
+    }
+
+    /* מובייל – נשאר כמו שהיה אצלך (בתחתית) */
+    @media (max-width: 768px) {
+      #name-inspector {
+        width: calc(100% - 24px) !important;
+        left: 12px !important;
+        right: 12px !important;
+        top: auto !important;
+        bottom: 12px !important;
+        max-height: 46vh !important;
+        padding: 12px !important;
+        border-radius: 12px !important;
+      }
+    }
        
     /* הודעות */
     #link-message{ display:none; }
@@ -2013,16 +2087,33 @@
       return { name: targetName, totalShifts, assistCount, items };
     }
     
+    
     function renderNameInspector(stats){
       const box = document.getElementById('name-inspector');
       if (!box) return;
-      if (!stats) { box.style.display = 'none'; box.setAttribute('aria-hidden','true'); return; }
-    
-      document.getElementById('niTotalShifts').textContent = String(stats.totalShifts);
-      document.getElementById('niAssistCount').textContent = String(stats.assistCount);
-      document.getElementById('niPersonName').textContent = stats.name;
-    
-      const list = document.getElementById('niList');
+
+      // סגירה: הסתרת החלונית + הסרת המחלקה מה-body
+      if (!stats) {
+        box.style.display = 'none';
+        box.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('inspector-open');
+        return;
+      }
+
+      // פתיחה: הוספת מחלקה כדי לפנות מקום לטבלה בדסקטופ
+      document.body.classList.add('inspector-open');
+
+      // עדכון KPIs ושם
+      const totalEl  = document.getElementById('niTotalShifts');
+      const assistEl = document.getElementById('niAssistCount');
+      const nameEl   = document.getElementById('niPersonName');
+      const list     = document.getElementById('niList');
+
+      totalEl.textContent  = String(stats.totalShifts);
+      assistEl.textContent = String(stats.assistCount);
+      nameEl.textContent   = stats.name;
+
+      // רשימת הופעות
       list.innerHTML = '';
       if (!stats.items.length) {
         list.innerHTML = '<div class="muted">אין הופעות לשבוע זה.</div>';
@@ -2033,19 +2124,19 @@
           row.innerHTML = `
             <div class="left">
               <div><strong>${it.day || ''}</strong></div>
-              <div class="muted">${(it.time || '').replace(/<br>/g,' - ')}</div>
+              <div class="muted">${(it.time || '').replace(/<br>/g, ' - ')}</div>
             </div>
-            <div>
-              ${it.type === 'assist' ? '<span class="tag">ליווי</span>' : ''}
-            </div>
+            <div>${it.type === 'assist' ? '<span class="tag">ליווי</span>' : ''}</div>
           `;
           list.appendChild(row);
         });
       }
-    
+
+      // הצגה
       box.style.display = 'block';
-      box.setAttribute('aria-hidden','false');
+      box.setAttribute('aria-hidden', 'false');
     }
+
     
     // כפתור סגירה + סגירה בלחיצה מחוץ לשמות/כרטיס
     document.getElementById('nameInspectorClose')?.addEventListener('click', () => renderNameInspector(null));
