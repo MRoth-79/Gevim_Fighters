@@ -1421,7 +1421,10 @@
         if (shiftIdx===NIGHT_SHIFT_2_6_INDEX && (nightShift2to6Count[name]||0) >= MAX_NIGHT_2_6) return -3_000_000;
         // ליווי "תופס את היום" בסידור אוטומטי (עריכה ידנית עדיין אפשרית)
         if (assistDayOccupancy[dayIdx].has(name)) return -1_000_000;
-        // 8 שעות באותו יום: אם כבר שובץ היום – בדוק אינדקס מינימלי מותר
+        // כלל חדש: לא משבצים יותר מפעם אחת באותו יום (אוטומטי בלבד)
+        if (minNextAllowedByDay[dayIdx][name] !== undefined) return -2_000_000;
+
+        // 8 שעות באותו יום (הגנה משלימה; תופס אם מישהו הגיע דרך מצב קצה)
         const mn = minNextAllowedByDay[dayIdx][name];
         if (mn !== undefined && shiftIdx < mn) return -2_000_000;
         // 22–02 אתמול: אסור 06–10 היום; 10–14 מותר (8 שעות)
