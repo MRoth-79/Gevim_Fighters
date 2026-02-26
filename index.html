@@ -707,10 +707,6 @@
       return curIdx < minNext;
     }
 
-
-    // אכיפת 8 שעות מנוחה בין משמרות עוקבות באותו יום
-    const CONSECUTIVE_SHIFT_CHECK = { 2:1, 3:2, 4:3, 5:4 };
-
     // מפה לשמות → צבעים (בועות)
     const colorMap = {
       'אמיר':'color-אמיר','נמרוד':'color-נמרוד','יובי':'color-יובי','טגניה':'color-טגניה',
@@ -1442,6 +1438,16 @@
           const prevDayNight = newScheduleData[NIGHT_SHIFT_22_2_INDEX][dayIdx - 1] || [];
           if (prevDayNight.includes(name)) return -2_000_000;
         }
+        // === "להשתדל לא" לילה אחרי לילה: 02–06 היום אם היה 02–06 אתמול ===
+        // לא חסימה מוחלטת — רק קנס חזק, כדי לבחור מועמד אחר אם אפשר.
+        // הערה: אנחנו בודקים ישירות מול התוצאה הנבנית של אתמול.
+        let backToBackNightPenalty = 0;
+        if (shiftIdx === NIGHT_SHIFT_2_6_INDEX && dayIdx > 0) {
+          const prevDayNight02_06 = newScheduleData[NIGHT_SHIFT_2_6_INDEX][dayIdx - 1] || [];
+          if (prevDayNight02_06.includes(name)) {
+            backToBackNightPenalty = -75_000; // קנס חזק, אבל עדיין מעל סף ה- -90k, כדי שיישאר אפשרי במקרי קצה
+          }
+        }
         // 02–06 היום: אסור 06–10 ו‑10–14; מותר מ‑14–18 ומעלה
         if (night02_06_block[dayIdx].has(name) && shiftIdx <= MORNING_SHIFT_10_14_INDEX) return -2_000_000;
 
@@ -1464,6 +1470,8 @@
           const target = guardsFor5Set.has(name) ? 5 : MIN_REQUIRED;
           if (!equalizeMode && count < target) score += 100_000 * (target - count);
           score += (MAX_ALLOWED - count) * 1_000;
+          score += backToBackNightPenalty;
+
           return score;
         }
 
@@ -1474,8 +1482,17 @@
 
           const available = Array.from(availabilityMap[dayIndex][shiftIndex]);
           const already = new Set(newScheduleData[shiftIndex][dayIndex]);
-          let candidates = available.filter(n=> !already.has(n));
-          if (onlyGuardsFor5) candidates = candidates.filter(n=> guardsFor5Set.has(n));
+          let candidates = available.filter(n => !already.has(n));
+          if (onlyGuardsFor5) candidates = candidates.filter(n => guardsFor5Set.has(n));
+
+          // --- עדיפות: לא לשבץ 02–06 אחרי 02–06 (סינון רך בשלב ראשון) ---
+          if (shiftIndex === NIGHT_SHIFT_2_6_INDEX && shift.dayIndex > 0) {
+            const prevDayNight02_06 = newScheduleData[NIGHT_SHIFT_2_6_INDEX][shift.dayIndex - 1] || [];
+            const preferred = candidates.filter(n => !prevDayNight02_06.includes(n));
+            if (preferred.length > 0) {
+              candidates = preferred; // מעדיף מועמדים שלא עשו 02–06 אתמול
+            }
+          }
 
           let needed = maxInShift - newScheduleData[shiftIndex][dayIndex].length;
           while (needed>0 && candidates.length>0){
