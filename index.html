@@ -263,17 +263,15 @@
        Name Inspector (כרטיס מידע על שם)
     ========================================== */
     #name-inspector {
-      position: fixed; top: 16px; right: 16px; left: auto; z-index: 9999;
-      width: 260px; max-height: 70vh; overflow: auto; background: #fff;
-      border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.12);
-      padding: 10px; display: none;
-    }
-    #name-inspector .hdr { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
-    #name-inspector .hdr .title { font-weight:800; color:var(--primary-blue); font-size:.98rem; }
+      position: fixed; top: 12px; right: 12px; left: auto; z-index: 9999;
+      width: 220px; max-height: 55vh; overflow: auto; background: #fff;
+      border: 1px solid var(--border-color); border-radius: 10px; box-shadow: 0 6px 18px rgba(0,0,0,.12); padding: 8px; display: none; }
+    #name-inspector .hdr { display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:6px; }
+    #name-inspector .hdr .title { font-weight:800; color:var(--primary-blue); font-size:.9rem; }
     #name-inspector .close-btn {
-      background: transparent; color: #455a64; border: 1px solid #cfd8dc; padding: 3px 7px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: .85rem;
+      background: transparent; color: #455a64; border: 1px solid #cfd8dc; padding: 2px 6px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: .8rem;
     }
-    #name-inspector .kpis { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px; }
+    #name-inspector .kpis { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px; }
     #name-inspector .kpi { background:#f8fbfb; border:1px solid #eef2f5; border-radius:10px; padding:6px; text-align:center; }
     #name-inspector .kpi .num { font-size:1.15rem; font-weight:900; color:#263238; }
     #name-inspector .kpi .lbl { font-size:.78rem; color:#607d8b; }
@@ -286,7 +284,7 @@
     /* כשהחלונית פתוחה – דוחפים את התוכן קצת שמאלה כדי שלא יסתתר (דסקטופ בלבד) */
     @media (min-width: 1025px) {
       body.inspector-open #results-container {
-        margin-right: 320px;
+        margin-right: 270x;
         transition: margin-right .2s ease;
       }
     }
@@ -353,11 +351,11 @@
       /* Name Inspector בתחתית במובייל */
       #name-inspector {
         width: calc(100% - 24px) !important; left: 12px !important; right: 12px !important;
-        top: auto !important; bottom: 12px !important; max-height: 46vh !important; padding: 12px !important;
-        border-radius: 12px !important;
+        top: auto !important; bottom: 12px !important; max-height: 42vh !important; padding: 10px !important;
+        border-radius: 10px !important;
       }
-      #name-inspector .kpi .num { font-size: 1.2rem; }
-      #name-inspector .kpi .lbl { font-size: .8rem; }
+      #name-inspector .kpi .num { font-size: 1.08rem; }
+      #name-inspector .kpi .lbl { font-size: .76rem; }
 
       /* Spotlight רך יותר לנייד */
       .spotlight-active .person:not(.highlight-name){ opacity: 0.45 !important; filter: none; transform: none; }
