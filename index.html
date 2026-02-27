@@ -1440,38 +1440,26 @@
       
         function renderNameInspector(stats){
           const box=document.getElementById('name-inspector'); if(!box) return;
-
-          if(!stats){
-            box.style.display='none';
-            box.setAttribute('aria-hidden','true');
-            document.body.classList.remove('inspector-open');
-            return;
-          }
-
-          document.body.classList.add('inspector-open');
-
+          if(!stats){ box.style.display='none'; box.setAttribute('aria-hidden','true'); return; }
           const byId=id=>document.getElementById(id);
           byId('niTotalShifts').textContent=String(stats.totalShifts);
           byId('niAssistCount').textContent=String(stats.assistCount);
           byId('niPersonName').textContent=stats.name;
-
           const list=byId('niList'); list.innerHTML='';
-          if(!stats.items.length){
-            list.innerHTML='<div class="muted">אין הופעות לשבוע זה.</div>';
-          }else{
+          if(!stats.items.length){ list.innerHTML='<div class="muted">אין הופעות לשבוע זה.</div>'; }
+          else{
             stats.items.forEach(it=>{
               const row=document.createElement('div');
               row.className='item';
               row.innerHTML =
                 '<div class="left">' +
                   '<div><strong>' + (it.day || '') + '</strong></div>' +
-                  '<div class="muted">' + String(it.time||'').replace(/<br\s*\/?>/gi,' - ') + '</div>' +
+                  '<div class="muted">' + String(it.time||'').replace(/<br\\s*\\/?>(?=)/gi,' - ') + '</div>' +
                 '</div>' +
                 '<div>' + (it.type==='assist' ? '<span class="tag">ליווי</span>' : '') + '</div>';
               list.appendChild(row);
             });
           }
-
           box.style.display='block';
           box.setAttribute('aria-hidden','false');
         }
@@ -2104,7 +2092,7 @@
       const box = document.getElementById('name-inspector');
       if (!box) return;
 
-      // סגירה
+      // סגירה: הסתרת החלונית + הסרת המחלקה מה-body
       if (!stats) {
         box.style.display = 'none';
         box.setAttribute('aria-hidden', 'true');
@@ -2112,9 +2100,10 @@
         return;
       }
 
-      // פתיחה
+      // פתיחה: הוספת מחלקה כדי לפנות מקום לטבלה בדסקטופ
       document.body.classList.add('inspector-open');
 
+      // עדכון KPIs ושם
       const totalEl  = document.getElementById('niTotalShifts');
       const assistEl = document.getElementById('niAssistCount');
       const nameEl   = document.getElementById('niPersonName');
@@ -2124,6 +2113,7 @@
       assistEl.textContent = String(stats.assistCount);
       nameEl.textContent   = stats.name;
 
+      // רשימת הופעות
       list.innerHTML = '';
       if (!stats.items.length) {
         list.innerHTML = '<div class="muted">אין הופעות לשבוע זה.</div>';
@@ -2134,7 +2124,7 @@
           row.innerHTML = `
             <div class="left">
               <div><strong>${it.day || ''}</strong></div>
-              <div class="muted">${(it.time || '').replace(/<br\s*\/?>/g, ' - ')}</div>
+              <div class="muted">${(it.time || '').replace(/<br>/g, ' - ')}</div>
             </div>
             <div>${it.type === 'assist' ? '<span class="tag">ליווי</span>' : ''}</div>
           `;
@@ -2142,9 +2132,11 @@
         });
       }
 
+      // הצגה
       box.style.display = 'block';
       box.setAttribute('aria-hidden', 'false');
     }
+
     
     // כפתור סגירה + סגירה בלחיצה מחוץ לשמות/כרטיס
     document.getElementById('nameInspectorClose')?.addEventListener('click', () => renderNameInspector(null));
