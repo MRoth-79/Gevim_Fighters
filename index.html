@@ -19,6 +19,34 @@
       --saturday-bg:#FFF3E0; --spotlight-dim-opacity:.2;
     }
 
+    /* === Mobile hygiene & safe area === */
+    * { -webkit-tap-highlight-color: rgba(0,0,0,0.08); }
+    html, body { overscroll-behavior: contain; }
+    body { 
+      padding-left: max(20px, env(safe-area-inset-left));
+      padding-right: max(20px, env(safe-area-inset-right));
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+      background: var(--light-bg-color);
+    }
+
+    /* iOS: position:fixed יציב + שכבת קומפוזיציה */
+    #name-inspector { 
+      -webkit-transform: translateZ(0);
+      will-change: transform;
+    }
+
+    /* טאצ' נוח לשמות/כפתורים */
+    .person { 
+      min-height: 36px; 
+      padding: 6px 12px;
+    }
+    button, .excel-btn, .guard-btn { 
+      min-height: 44px; /* Apple HIG */
+    }
+
+    /* גלילת תוכן חלקה בטבלאות במובייל */
+    #results-container { -webkit-overflow-scrolling: touch; }
+
     /* =========================================
        בסיס עמוד
     ========================================== */
@@ -348,14 +376,22 @@
       }
       .guard-btn { font-size: 0.9rem; padding: 10px 8px; min-height: 40px; }
 
-      /* Name Inspector בתחתית במובייל */
+    /* Name Inspector בתחתית במובייל — גרסה קומפקטית וקריאה */
       #name-inspector {
-        width: calc(100% - 24px) !important; left: 12px !important; right: 12px !important;
-        top: auto !important; bottom: 12px !important; max-height: 42vh !important; padding: 10px !important;
+        width: calc(100% - 24px) !important;
+        left: 12px !important;
+        right: 12px !important;
+        top: auto !important;
+        bottom: 12px !important;
+        max-height: min(42vh, 360px) !important; /* גובה קומפקטי, לא פולשני */
+        padding: 10px !important;
         border-radius: 10px !important;
+        font-size: 0.95rem;
       }
+      #name-inspector .hdr .title { font-size: .95rem; }
       #name-inspector .kpi .num { font-size: 1.08rem; }
       #name-inspector .kpi .lbl { font-size: .76rem; }
+      #name-inspector .item { padding: 6px 8px; }
 
       /* Spotlight רך יותר לנייד */
       .spotlight-active .person:not(.highlight-name){ opacity: 0.45 !important; filter: none; transform: none; }
@@ -608,6 +644,25 @@
       'ניר':'color-ניר','חורחה':'color-חורחה','שלומי':'color-שלומי','יפתח':'color-יפתח',
       'חברוני':'color-חברוני','ויקטור':'color-ויקטור'
     };
+
+    /* ==== Mobile viewport fixes (iOS 100vh, DPR scale) ==== */
+    function setVhVar() {
+      // 1vh אמיתי על iOS (כולל Dynamic Island / כלי ניווט)
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    setVhVar();
+    window.addEventListener('resize', setVhVar, { passive: true });
+    window.addEventListener('orientationchange', () => setTimeout(setVhVar, 150), { passive: true });
+
+    /* Debounce עוזר לאוטופיט חלק */
+    function debounce(fn, ms) {
+      let t;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(null, args), ms);
+      };
+    }
 
     /* =========================================
        Utilities
@@ -1947,27 +2002,45 @@
         const c = document.getElementById('results-container');
         const t = document.getElementById('schedule-table');
         if (!c || !t) return;
+
+        // איפוס
         c.style.transformOrigin = 'top right';
         c.style.transform = 'scale(1)';
         c.style.width = '100%';
 
-        const sw = document.documentElement.clientWidth - 12;
-        const tw = t.scrollWidth;
+        // רוחב זמין (נמנעים מאוברפלואו אופקי במובייל)
+        const sw = Math.floor(document.documentElement.clientWidth - 12);
+        const tw = Math.ceil(t.scrollWidth);
+
         if (tw > sw) {
-          const s = sw / tw;
-          c.style.transform = 'scale('+s+')';
+          // תיקון שבריר פיקסל ב‑Safari iOS (כולל DPR)
+          const dpr = window.devicePixelRatio || 1;
+          let s = sw / tw;
+          // עיגול עדין כדי להימנע מטשטוש
+          s = Math.floor(s * dpr * 1000) / (dpr * 1000);
+
+          c.style.transform = `scale(${s})`;
           c.style.width = (100 / s) + '%';
         }
       } catch (e) {}
     }
+
     const _origRenderSchedule = renderSchedule;
     renderSchedule = function(parsed) {
       _origRenderSchedule(parsed);
       setupScheduleEditors();
       requestAnimationFrame(autoFitMainTable);
     };
-    window.addEventListener('resize', autoFitMainTable);
-    document.addEventListener('orientationchange', autoFitMainTable);
+    // חיבורי אירועים לאוטופיט (עם debounce ו-passive)
+    const autoFitMainTableDebounced = debounce(() => {
+      requestAnimationFrame(autoFitMainTable);
+    }, 80);
+
+    window.addEventListener('resize', autoFitMainTableDebounced, { passive: true });
+    window.addEventListener('orientationchange', () => setTimeout(autoFitMainTable, 200), { passive: true });
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) setTimeout(autoFitMainTable, 120);
+    }, { passive: true });
 
     /* =========================================
        DOM Ready
@@ -1979,6 +2052,26 @@
       buildShiftReqPanel();
       // אין ניתוח אוטומטי: המשתמש ילחץ "משוך נתונים" / "נתח נתונים" / "סדר אוטומטי".
     });
+
+    /* === iOS paste/enter fixes for contenteditable === */
+    document.addEventListener('beforeinput', (e) => {
+      // מניעת הכנסת בלוקים/דיבים ב-enter במובייל (נשאר טקסט נקי)
+      if (e.inputType === 'insertParagraph' && e.target?.isContentEditable) {
+        e.preventDefault();
+        document.execCommand('insertText', false, '\n');
+      }
+    }, { passive: false });
+
+    document.addEventListener('paste', (e) => {
+      const target = e.target;
+      if (target?.isContentEditable) {
+        const text = e.clipboardData?.getData('text/plain');
+        if (text) {
+          e.preventDefault();
+          document.execCommand('insertText', false, text);
+        }
+      }
+    }, { passive: false });
   </script>
 </body>
 </html>
