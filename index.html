@@ -159,8 +159,16 @@
       background:var(--secondary-blue); color:#fff; text-shadow:0 0 3px rgba(0,0,0,.3); font-weight:700; direction:ltr !important; border-right:2px solid #90a4ae;
     }
     /* שישי/שבת */
-    #schedule-table th:nth-child(6), #schedule-table th:nth-child(7){ background:#ff8a65; }
-    #schedule-table td:nth-child(6), #schedule-table td:nth-child(7){ background:var(--saturday-bg) !important; }
+    /* שישי/שבת – מודגש לפי מחלקה, לא לפי אינדקס */
+    #schedule-table th.friday-col,
+    #schedule-table th.saturday-col {
+      background:#ff8a65;
+    }
+
+    #schedule-table td.friday-col,
+    #schedule-table td.saturday-col {
+      background:var(--saturday-bg) !important;
+    }
     /* Hover */
     #schedule-table tbody tr:hover td{ background:#eef6f8; }
     #schedule-table tbody tr:hover td.time-slot{ color:#000; background:#e6f2f4; text-shadow:none; }
@@ -235,13 +243,10 @@
        שורת ליווי 07:40
     ========================================== */
     .red-assistance-shift{ box-shadow:0 4px 10px rgba(0,0,0,.3); position:relative; z-index:5; }
-    .red-assistance-shift td{
-      background:#F3E5F5 !important; color:#000 !important; font-weight:800 !important; border-top:3px solid #000 !important; border-bottom:3px solid #000 !important;
-    }
-    #schedule-table tbody tr.red-assistance-shift td:nth-child(6),
-    #schedule-table tbody tr.red-assistance-shift td:nth-child(7){
-      background:var(--saturday-bg) !important; border-top:3px solid #000 !important; border-bottom:3px solid #000 !important;
-    }
+    .red-assistance-shift td{ background:#F3E5F5 !important; color:#000 !important; font-weight:800 !important; border-top:3px solid #000 !important; border-bottom:3px solid #000 !important; }
+    /* ליווי שישי/שבת – לפי מחלקה, לא לפי אינדקס */
+    #schedule-table tbody tr.red-assistance-shift td.friday-col,
+    #schedule-table tbody tr.red-assistance-shift td.saturday-col{ background:var(--saturday-bg) !important;}
     .red-assistance-shift td:first-child{ border-right:3px solid #000 !important; }
     .red-assistance-shift td:last-child{ border-left:3px solid #000 !important; }
     .red-assistance-shift td.time-slot{ background:var(--secondary-blue) !important; color:#fff !important; }
@@ -420,7 +425,64 @@
       display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:8px; border:1px solid #e0e0e0;
       cursor:pointer; user-select:none; font-weight:700; color:#37474F;
     }
-    .shift-req-control .opt.active { background:#E3F2FD; color:#0D47A1; border-color:#90CAF9; }
+    
+    .week-start-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .week-start-label {
+      font-size: 0.9rem;
+      color: #455a64;
+      font-weight: 600;
+    }
+
+    /* קופסה מעוגלת ל-select */
+    .week-start-select {
+      position: relative;
+    }
+
+    .week-start-select select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      padding: 4px 26px 4px 12px; /* מקום לחץ הקטן */
+      background: #ffffff;
+      font-size: 0.9rem;
+      color: #1e293b;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+    }
+
+    /* חץ מותאם */
+    .week-start-select::after {
+      content: "▾";
+      position: absolute;
+      left: 8px;           /* RTL – החץ בצד שמאל */
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.75rem;
+      color: #64748b;
+      pointer-events: none;
+    }
+
+    .week-start-select select:hover {
+      border-color: #94a3b8;
+      background-color: #f9fafb;
+    }
+
+    .week-start-select select:focus {
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 2px rgba(14,165,233,0.25);
+    }
 
     /* =========================================
        הודעות קטנות
@@ -441,7 +503,7 @@
         <div class="excel-card-header">
           <div class="title">טבלת קלט (הדבקה ישירה)</div>
           <div class="excel-date">
-            <label for="startDate">תאריך יום שני:</label>
+            <label for="startDate">תאריך תחילת שבוע:</label>
             <input type="date" id="startDate" required />
           </div>
           <div class="actions">
@@ -526,6 +588,15 @@
               <input id="shiftReqScopeWeek" type="checkbox" />
               שמור לפי שבוע (תאריך התחלה)
             </label>
+              <div class="week-start-wrapper">
+              <span class="week-start-label">יום תחילת שבוע:</span>
+              <div class="week-start-select">
+                <select id="weekStartSelect">
+                  <option value="mon">יום שני</option>
+                  <option value="sun">יום ראשון</option>
+                </select>
+              </div>
+            </div>
             <button id="shiftReqClose" type="button" class="excel-btn">סגור</button>
           </div>
         </div>
@@ -577,7 +648,21 @@
     const MAX_NIGHT_2_6 = 2;
     const MAX_ITERATIONS = 10;
 
-    const EXPECTED_DAYS = ['יום שני','יום שלישי','יום רביעי','יום חמישי','יום שישי','יום שבת','יום ראשון'];
+    function getWeekStartSetting() {
+      try {
+        return localStorage.getItem('weekStart') === 'sun' ? 'sun' : 'mon';
+      } catch {
+        return 'mon';
+      }
+    }
+
+    function computeExpectedDays(weekStart) {
+      return weekStart === 'sun'
+        ? ['יום ראשון','יום שני','יום שלישי','יום רביעי','יום חמישי','יום שישי','יום שבת']
+        : ['יום שני','יום שלישי','יום רביעי','יום חמישי','יום שישי','יום שבת','יום ראשון'];
+    }
+
+    let EXPECTED_DAYS = computeExpectedDays(getWeekStartSetting());
     const EXPECTED_TIME_SLOTS = [
       '02:00 - 06:00 (Night)',
       '06:00 - 10:00',
@@ -586,6 +671,16 @@
       '18:00 - 22:00',
       '22:00 - 02:00 (Night)'
     ];
+
+    function updateStartDateLabelBySetting() {
+      const weekStart = getWeekStartSetting();
+      const lbl = document.querySelector('label[for="startDate"]');
+      if (lbl) {
+        lbl.textContent = weekStart === 'mon'
+          ? 'תאריך יום שני:'
+          : 'תאריך יום ראשון:';
+      }
+    }
 
     const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1NXgjKC-0j4blUQawwzz4lMEhswA561GKxAoSJO5ie_s/edit?gid=0#gid=0';
 
@@ -685,10 +780,27 @@
     function initializeData(){
       document.getElementById('dataToAnalyze').value = INITIAL_SCHEDULE_DATA;
       const today = new Date();
-      const dayOfWeek = today.getDay(); // 0=Sunday, 1=Monday, ... 6=Saturday
-      const daysToNextMonday = (8 - dayOfWeek) % 7 || 7;
-      today.setDate(today.getDate() + daysToNextMonday);
+      const dayOfWeek = today.getDay(); // 0=Sunday ... 6=Saturday
+      const weekStart = getWeekStartSetting();
+
+      let daysToNext;
+      if (weekStart === 'mon') {
+        // יום שני הבא
+        daysToNext = (8 - dayOfWeek) % 7 || 7;
+      } else {
+        // יום ראשון הבא
+        daysToNext = (7 - dayOfWeek) % 7 || 7;
+      }
+      today.setDate(today.getDate() + daysToNext);
       document.getElementById('startDate').value = today.toISOString().split('T')[0];
+
+      // עדכון כותרת ליד התאריך
+      const startLbl = document.querySelector('label[for="startDate"]');
+      if (startLbl) {
+        startLbl.textContent = weekStart === 'mon'
+          ? 'תאריך יום שני:'
+          : 'תאריך יום ראשון:';
+      }
       const savedUrl = localStorage.getItem('googleSheetUrl');
       if (savedUrl) document.getElementById('googleSheetUrl').value = savedUrl;
     }
@@ -913,11 +1025,17 @@
 
       let scheduleTableHTML = '<table id="schedule-table"><thead><tr><th>שעות / יום</th>';
       dayHeaders.forEach((day,i)=>{
+        const isFriday   = day.includes('שישי');
+        const isSaturday = day.includes('שבת');
+        const colClass =
+          (isFriday   ? ' friday-col'   : '') +
+          (isSaturday ? ' saturday-col' : '');
+
         scheduleTableHTML += `
-          <th>
-            <span class="day-header-name">${day.replace('יום ','')}</span>
-            <span class="date-text">${datesForWeek[i]}</span>
-          </th>`;
+                <th class="${colClass.trim()}" data-day-name="${escapeHtml(day)}">
+                  <span class="day-header-name">${day.replace('יום ','')}</span>
+                  <span class="date-text">${datesForWeek[i]}</span>
+                </th>`;
       });
       scheduleTableHTML += '</tr></thead><tbody>';
 
@@ -928,8 +1046,13 @@
           <td class="time-slot" title="ליווי 07:40">ליווי 07:40</td>
           ${dayHeaders.map((day, idx)=>{
             const bubbles = renderPersonBubbles(toNameArray(assistValues[idx]||''), day, 'ליווי 07:40');
+            const isFriday   = day.includes('שישי');
+            const isSaturday = day.includes('שבת');
+            const weekendClass =
+              (isFriday   ? ' friday-col'   : '') +
+              (isSaturday ? ' saturday-col' : '');
             return `
-              <td class="assist-cell" contenteditable="true"
+              <td class="assist-cell${weekendClass}" contenteditable="true"
                 data-day-index="${idx}" data-day-name="${escapeHtml(day)}" data-assist-type="0740"
                 title="${escapeHtml(day)} - ליווי 07:40">${bubbles}</td>`;
           }).join('')}
@@ -1008,7 +1131,15 @@
 
           const timeTitle = timeFull.replace(' (Night)','');
           const formatted = renderPersonBubbles(names, day, timeTitle);
-          scheduleTableHTML += `<td data-day="${day}" data-time="${timeDisp}" class="${cellClass}" contenteditable="true" style="outline:none;">${formatted} ${warn}</td>`;
+          const isFriday   = day.includes('שישי');
+          const isSaturday = day.includes('שבת');
+          const weekendClass =
+            (isFriday   ? ' friday-col'   : '') +
+            (isSaturday ? ' saturday-col' : '');
+
+          scheduleTableHTML += `<td data-day="${day}" data-time="${timeDisp}"
+            class="${cellClass}${weekendClass}"
+            contenteditable="true" style="outline:none;">${formatted} ${warn}</td>`;
         });
 
         scheduleTableHTML += '</tr>';
@@ -1155,10 +1286,14 @@
         .replace(/contenteditable="true"/g,'contenteditable="false"')
         .replace(/ data-day-index="[^"]*"/g,'').replace(/ data-day-name="[^"]*"/g,'').replace(/ data-assist-type="[^"]*"/g,'');
 
+      // למעלה בתוך downloadHtmlTable, לפני ה-template
+      const daysForExport = JSON.stringify(EXPECTED_DAYS);
+
       const scripts = `
-        const EXPECTED_DAYS = ['יום שני','יום שלישי','יום רביעי','יום חמישי','יום שישי','יום שבת','יום ראשון'];
+        const EXPECTED_DAYS = ${daysForExport};
         const EXPECTED_TIME_SLOTS = [
-          '02:00 - 06:00 (Night)','06:00 - 10:00','10:00 - 14:00','14:00 - 18:00','18:00 - 22:00','22:00 - 02:00 (Night)'
+          '02:00 - 06:00 (Night)','06:00 - 10:00','10:00 - 14:00',
+          '14:00 - 18:00','18:00 - 22:00','22:00 - 02:00 (Night)'
         ];
         let lockedName=null;
         function updateHighlights(name){
@@ -1631,7 +1766,7 @@
       if (!c) return;
       c.innerHTML = '';
 
-      const leftSideNames = ['אמיר חורי', 'יפתח', 'חורחה', 'חגי'];
+      const leftSideNames = ['אמיר' , 'חורי', 'יפתח', 'חורחה', 'חגי', 'יובי'];
       const allNames = Object.keys(colorMap)
         .map(k => k.includes('_') ? k.replace('_', ' ') : k)
         .sort();
@@ -1805,12 +1940,24 @@
       const GRID_ID='excel-grid', TXT_ID='dataToAnalyze';
       let matrix = [];
 
-      const dayFull = EXPECTED_DAYS.slice();
-      const dayShort = dayFull.map(d=> d.replace('יום ',''));
+      // ימים דינמיים לפי EXPECTED_DAYS (מושפע מיום תחילת שבוע)
+      function getDayFull() {
+        return EXPECTED_DAYS.slice();
+      }
+      function getDayShort() {
+        return getDayFull().map(d => d.replace('יום ', ''));
+      }
+
+      // משמרות (כמו קודם)
       const timeLabels = EXPECTED_TIME_SLOTS.map(s=> s.split('(')[0].trim());
 
       const el = id => document.getElementById(id);
-      const buildEmpty = ()=> matrix = timeLabels.map(()=> dayFull.map(()=> ''));
+
+      const buildEmpty = ()=> {
+        const dayFull = getDayFull();
+        matrix = timeLabels.map(()=> dayFull.map(()=> ''));
+      };
+
       const esc = s => String(s).replace(/[&<>\"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
       const normalize = s => {
         const raw = String(s||'').replace(/\u00A0/g,' ').trim();
@@ -1819,28 +1966,47 @@
 
       function render(){
         const tbl = el(GRID_ID); if (!tbl) return;
-        let thead = '<thead><tr><th>שעות / יום</th>'; dayShort.forEach(d=> thead+=`<th>${d}</th>`); thead+='</tr></thead>';
+
+        const dayFull = getDayFull();
+        const dayShort = getDayShort();
+
+        let thead = '<thead><tr><th>שעות / יום</th>';
+        dayShort.forEach(d=> thead+=`<th>${d}</th>`);
+        thead+='</tr></thead>';
+
         let tbody = '<tbody>';
         timeLabels.forEach((t,r)=>{
           tbody += `<tr><td>${t}</td>`;
-          dayFull.forEach((_,c)=> tbody += `<td class="cell" contenteditable="true" data-r="${r}" data-c="${c}">${esc(matrix[r][c]||'')}</td>`);
+          dayFull.forEach((_,c)=> {
+            tbody += `<td class="cell" contenteditable="true" data-r="${r}" data-c="${c}">${esc(matrix[r][c]||'')}</td>`;
+          });
           tbody += '</tr>';
         });
-        tbody += '</tbody>'; tbl.innerHTML = thead + tbody;
+        tbody += '</tbody>';
+        tbl.innerHTML = thead + tbody;
       }
 
-      const pull = () => document.querySelectorAll(`#${GRID_ID} td.cell`).forEach(td=> matrix[td.dataset.r][td.dataset.c] = normalize(td.innerText));
-      const parseTableLike = txt => txt.replace(/\r/g,'').split('\n').map(line=>{
-        const useTab = line.split('\t').length >= line.split(',').length;
-        return (useTab? line.split('\t'): line.split(',')).map(x=>x.trim());
-      });
+      const pull = () =>
+        document
+          .querySelectorAll(`#${GRID_ID} td.cell`)
+          .forEach(td => matrix[td.dataset.r][td.dataset.c] = normalize(td.innerText));
+
+      const parseTableLike = txt =>
+        txt.replace(/\r/g,'').split('\n').map(line=>{
+          const useTab = line.split('\t').length >= line.split(',').length;
+          return (useTab? line.split('\t'): line.split(',')).map(x=>x.trim());
+        });
 
       function handlePaste(e){
         const cell = e.target.closest(`#${GRID_ID} td.cell`); if (!cell) return;
         const text = e.clipboardData?.getData('text/plain'); if (!text) return;
         e.preventDefault();
-        const rows = parseTableLike(text); const r0=Number(cell.dataset.r), c0=Number(cell.dataset.c);
-        rows.forEach((arr,r)=> arr.forEach((val,c)=> { const R=r0+r, C=c0+c; if (R<matrix.length && C<matrix[0].length) matrix[R][C] = normalize(val); }));
+        const rows = parseTableLike(text);
+        const r0 = Number(cell.dataset.r), c0 = Number(cell.dataset.c);
+        rows.forEach((arr,r)=> arr.forEach((val,c)=> {
+          const R = r0 + r, C = c0 + c;
+          if (R < matrix.length && C < matrix[0].length) matrix[R][C] = normalize(val);
+        }));
         render();
       }
 
@@ -1850,12 +2016,16 @@
         if (!parsed.error){
           buildEmpty(); parsed.data.forEach((row,r)=> row.forEach((cell,c)=> matrix[r][c] = normalize(cell))); render(); return;
         }
+
         const rows = parseTableLike(txt).filter(r=> r.some(x=>x && x.length));
         if (!rows.length){ alert('שגיאה בטעינה: הטקסט ריק/לא מזוהה'); return; }
+
         buildEmpty();
 
+        const dayFull = getDayFull();      // ⬅️ השורה החדשה
+
         const header = rows[0].map(x=>(x||'').trim());
-        const hasDayHeader = header.some(h=> EXPECTED_DAYS.some(d=> h.includes(d.replace('יום ','')) || h.includes(d)));
+        const hasDayHeader = header.some(h=> dayFull.some(d=> h.includes(d.replace('יום ','')) || h.includes(d)));
         const startRow = hasDayHeader? 1: 0;
 
         for (let r=0; r<timeLabels.length && (startRow+r)<rows.length; r++){
@@ -1871,7 +2041,9 @@
 
       function applyToTextarea(){
         pull();
-        let out=''; dayFull.forEach((day,i)=>{
+        const dayFull = getDayFull();   // ⬅️ זה השינוי החשוב
+        let out='';
+        dayFull.forEach((day,i)=>{
           out += day+'\n';
           timeLabels.forEach((t,r)=> out += `${t}\t${matrix[r][i]}\n`);
           out += '\n';
@@ -1880,14 +2052,17 @@
       }
 
       function clearGrid(){ buildEmpty(); render(); }
+
       function init(){
-        buildEmpty(); render();
+        buildEmpty();
+        render();
         el('excel-grid-wrapper').addEventListener('paste', handlePaste);
         el('btnExcelLoadFromText').onclick = loadFromTextarea;
         el('btnExcelApplyToText').onclick = applyToTextarea;
         el('btnExcelClear').onclick = clearGrid;
         el('btnExcelPasteHelp').onclick = ()=>{ const box=el('excelPasteHelp'); box.hidden=!box.hidden; };
       }
+
       window.ExcelGrid = { init, applyToTextarea, loadFromTextarea, clear: clearGrid };
     })();
 
@@ -1927,6 +2102,12 @@
       const btnOpen = document.getElementById('openShiftReqBtn');
       const btnClose = document.getElementById('shiftReqClose');
       const cbWeek = document.getElementById('shiftReqScopeWeek');
+      const selWeekStart = document.getElementById('weekStartSelect');
+      if (selWeekStart) {
+        try {
+          selWeekStart.value = getWeekStartSetting(); // 'mon' או 'sun'
+        } catch {}
+      }
       try { cbWeek.checked = localStorage.getItem('shiftReqScopeWeek') === '1'; } catch {}
       if (!panel || !grid || !btnOpen) return;
 
@@ -1991,6 +2172,25 @@
         });
       }
 
+      selWeekStart?.addEventListener('change', () => {
+        const val = selWeekStart.value === 'sun' ? 'sun' : 'mon';
+        try { localStorage.setItem('weekStart', val); } catch {}
+
+        // עדכון מערך הימים הגלובלי
+        EXPECTED_DAYS = computeExpectedDays(val);
+
+        // עדכון כותרת תאריך התחלה
+        updateStartDateLabelBySetting();
+
+        // רענון טבלת הקלט (ExcelGrid) לפי הטקסט הקיים
+        if (window.ExcelGrid?.loadFromTextarea) {
+          ExcelGrid.loadFromTextarea();
+        }
+
+        // רינדור מחדש של טבלת המשמרות אם יש טקסט
+        refreshAfterReqChange();
+      });
+
       renderRows();
     }
 
@@ -2050,7 +2250,7 @@
       generateGuardsButtons();
       ExcelGrid.init();
       buildShiftReqPanel();
-      // אין ניתוח אוטומטי: המשתמש ילחץ "משוך נתונים" / "נתח נתונים" / "סדר אוטומטי".
+      updateStartDateLabelBySetting();
     });
 
     /* === iOS paste/enter fixes for contenteditable === */
