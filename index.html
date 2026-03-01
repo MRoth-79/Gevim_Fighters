@@ -21,7 +21,13 @@
 
     /* === Mobile hygiene & safe area === */
     * { -webkit-tap-highlight-color: rgba(0,0,0,0.08); }
-    html, body { overscroll-behavior: contain; }
+    html, body {
+      height: 100%;
+      overscroll-behavior: contain;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
     body { 
       padding-left: max(20px, env(safe-area-inset-left));
       padding-right: max(20px, env(safe-area-inset-right));
@@ -340,7 +346,7 @@
 
     /* === Mobile (<=768px) – consolidated & tuned === */
     @media (max-width: 768px) {
-      html, body { overflow-x: hidden; }
+      body { overflow-x: hidden; }
 
       /* טיפוגרפיה וכותרת */
       h3 { font-size: 1.05rem; }
