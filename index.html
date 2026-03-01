@@ -2256,14 +2256,38 @@
       function clearGrid(){ buildEmpty(); render(); }
 
       function init(){
-        buildEmpty();
-        render();
-        el('excel-grid-wrapper').addEventListener('paste', handlePaste);
-        el('btnExcelLoadFromText').onclick = loadFromTextarea;
-        el('btnExcelApplyToText').onclick = applyToTextarea;
-        el('btnExcelClear').onclick = clearGrid;
-        el('btnExcelPasteHelp').onclick = ()=>{ const box=el('excelPasteHelp'); box.hidden=!box.hidden; };
+      buildEmpty();
+      render();
+
+      const wrapper = el('excel-grid-wrapper');
+      if (wrapper) {
+        wrapper.addEventListener('paste', handlePaste);
       }
+
+      // רק אם הכפתורים קיימים – נחבר
+      const btnLoad  = el('btnExcelLoadFromText');
+      if (btnLoad) {
+        btnLoad.onclick = loadFromTextarea;
+      }
+
+      const btnApply = el('btnExcelApplyToText');
+      if (btnApply) {
+        btnApply.onclick = applyToTextarea;
+      }
+
+      const btnClear = el('btnExcelClear');
+      if (btnClear) {
+        btnClear.onclick = clearGrid;
+      }
+
+      const btnHelp = el('btnExcelPasteHelp');
+      if (btnHelp) {
+        btnHelp.onclick = () => {
+          const box = el('excelPasteHelp');
+          if (box) box.hidden = !box.hidden;
+        };
+      }
+    }
 
       window.ExcelGrid = { init, applyToTextarea, loadFromTextarea, clear: clearGrid };
     })();
