@@ -123,8 +123,8 @@
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
     .guard-btn {
-      background: #f8fafc; color: #475569; border: 1px solid #f1f5f9; padding: 6px 2px;
-      border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s;
+      background: #e0f7fa; color: #006064; border: 1px solid #f1f5f9; padding: 6px 2px;
+      border-radius: 6px; cursor: pointer; font-size: 17px; font-weight: 600; transition: all 0.2s;
       text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .guard-btn:hover { background: #f1f5f9; border-color: #cbd5e0; }
@@ -174,6 +174,13 @@
     #schedule-table tbody tr:hover td.time-slot{ color:#000; background:#e6f2f4; text-shadow:none; }
     #schedule-table td:last-child{ padding-left:20px; }
 
+    /* תא בטבלת המשמרות במצב עריכה ידנית */
+    #schedule-table td.editing-cell{
+      background:#fffde7 !important;        /* צהוב עדין */
+      outline:2px dashed #f9a825;
+      outline-offset:2px;
+    }
+
     /* =========================================
        בועות שמות (שימור מראה)
     ========================================== */
@@ -194,7 +201,7 @@
     .color-יובי{background:#fff8e1;color:#ff8f00}.color-טגניה{background:#43A047;color:#fff}
     .color-ישי{background:#f3e5f5;color:#6a1b9a}.color-חסון{background:#0D47A1;color:#fff}
     .color-לישע{background:#4a704c;color:#fff}.color-עידן{background:#eceff1;color:#D81B60}
-    .color-חגי{background:#fff3e0;color:#e65100}.color-סתיו{background:#ff0;color:#00f}
+    .color-חגי{background:#ffb991;color:#ffffff}.color-סתיו{background:#ff0;color:#00f}
     .color-אסף{background:#FFECB3;color:#c62828}.color-ליאני{background:#7E57C2;color:#fff}
     .color-נתי{background:transparent !important; box-shadow:none !important; font-size:0 !important; cursor:help}
     .color-נתי::before{content:"🐍";font-size:28px;display:inline-block;visibility:visible}
@@ -281,7 +288,7 @@
     .excel-grid th,.excel-grid td{ border-right:1px solid #e0e0e0; border-bottom:1px solid #eef2f5; padding:8px; vertical-align:middle; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
     .excel-grid tbody td:first-child{ position:sticky; left:0; background:#f6fbff; border-left:1px solid #e0e0e0; font-weight:700; color:#0D47A1; }
     .excel-grid tbody tr:nth-child(odd) td{ background:#fcfeff; }
-    .excel-grid td.cell{ background:#fff; font-size:14px; direction:rtl; }
+    .excel-grid td.cell{ background:#fff; font-size:14px; direction:rtl; white-space:normal; text-overflow:clip; overflow:visible;  word-break:break-word }
     .excel-grid td.cell[contenteditable="true"]{ outline:none; cursor:text; }
     .excel-grid td.cell:focus{ box-shadow:inset 0 0 0 2px rgba(25,118,210,.25); background:#f8fbff; }
     .excel-date{ display:flex; align-items:center; gap:10px; margin:8px 0 14px; flex-wrap:wrap; }
@@ -425,6 +432,13 @@
       display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:8px; border:1px solid #e0e0e0;
       cursor:pointer; user-select:none; font-weight:700; color:#37474F;
     }
+
+    .shift-req-control .opt.active {
+      background: #C8E6C9;      /* ירוק בהיר */
+      color: #1B5E20;           /* ירוק כהה לטקסט */
+      border-color: #81C784;    /* מסגרת ירוקה */
+      box-shadow: 0 0 0 2px rgba(129,199,132,0.4);
+    }
     
     .week-start-wrapper {
       display: inline-flex;
@@ -432,8 +446,8 @@
       gap: 6px;
       padding: 6px 10px;
       border-radius: 999px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
+      background: #e0f7fa;
+      border: 1px solid #00acc1;
     }
 
     .week-start-label {
@@ -580,33 +594,42 @@
       </button>
 
       <!-- פאנל הגדרות דרישות משמרות -->
-      <div id="shift-req-panel" class="excel-card" style="display:none; max-width:840px; margin:16px auto;">
-        <div class="excel-card-header">
-          <div class="title">דרישות משמרות (כמה שומרים בכל משבצת)</div>
-          <div class="actions">
+    <div id="shift-req-panel" class="excel-card" style="display:none; max-width:840px; margin:16px auto;">
+      <div class="excel-card-header">
+        <!-- רק הכותרת -->
+        <div class="title">כמה שומרים בכל משבצת</div>
+
+        <!-- אזור ההגדרות -->
+        <div class="actions">
+          <!-- סגור בשורה למעלה -->
+          <button id="shiftReqClose" type="button" class="excel-btn">סגור</button>
+
+          <!-- שורה מתחת: שמור לפי שבוע + יום תחילת שבוע -->
+          <div class="shift-req-actions-row">
             <label style="font-size:.9rem; color:#455a64;">
               <input id="shiftReqScopeWeek" type="checkbox" />
               שמור לפי שבוע (תאריך התחלה)
             </label>
-              <div class="week-start-wrapper">
+            <div class="week-start-wrapper">
               <span class="week-start-label">יום תחילת שבוע:</span>
               <div class="week-start-select">
                 <select id="weekStartSelect">
-                  <option value="mon">יום שני</option>
                   <option value="sun">יום ראשון</option>
+                  <option value="mon">יום שני</option>
                 </select>
               </div>
             </div>
-            <button id="shiftReqClose" type="button" class="excel-btn">סגור</button>
           </div>
         </div>
-        <div id="shift-req-grid" style="display:grid; grid-template-columns: 1fr auto; gap:10px;">
-          <!-- ימולא דינמית ע"י JS -->
-        </div>
-        <div style="margin-top:12px; text-align:center; color:#607d8b; font-size:.9rem;">
-          ברירת מחדל: 1 שומר בכל משמרת. שנה ל‑2 היכן שצריך. נשמר אוטומטית.
-        </div>
       </div>
+
+      <div id="shift-req-grid" style="display:grid; grid-template-columns: 1fr auto; gap:10px;">
+        <!-- ימולא דינמית ע"י JS -->
+      </div>
+      <div style="margin-top:12px; text-align:center; color:#607d8b; font-size:.9rem;">
+        ברירת מחדל: 1 שומר בכל משמרת. שנה ל‑2 היכן שצריך. נשמר אוטומטית.
+      </div>
+    </div>
 
       <div id="results-container" style="text-align:center;">
         <p id="initial-message">הטעינה הראשונית תפעיל את הניתוח אוטומטית.</p>
@@ -901,39 +924,92 @@
         if (td.__hasEditor) return;
         td.__hasEditor = true;
 
-        const stripWarningSpans = () => { td.querySelectorAll('.warning-text').forEach(n => n.remove()); };
-        td.addEventListener('focus', stripWarningSpans);
-        td.addEventListener('paste', e => {
-          const text = e.clipboardData?.getData('text/plain'); if (!text) return;
-          e.preventDefault(); document.execCommand('insertText', false, text);
+        const stripWarningSpans = () => {
+          td.querySelectorAll('.warning-text').forEach(n => n.remove());
+        };
+
+        function enterEditMode(cell) {
+          if (cell.dataset.editing === '1') return;
+
+          // אוסף שמות מהבועות הקיימות
+          const names = Array.from(cell.querySelectorAll('.person'))
+            .map(el => normalizeKey(el.textContent))
+            .filter(Boolean);
+
+          // הופך את הבועות לטקסט רגיל לעריכה
+          cell.dataset.editing = '1';
+          cell.classList.add('editing-cell');
+          cell.textContent = names.join(', ');
+          placeCaretAtEnd(cell);
+        }
+
+        function finishEditMode(cell) {
+          if (cell.dataset.editing !== '1') return;
+          convertCellTextToBubbles(cell);
+          delete cell.dataset.editing;
+          cell.classList.remove('editing-cell');
+        }
+
+        // דאבל־קליק = כניסה לעריכה ידנית
+        td.addEventListener('dblclick', () => {
+          stripWarningSpans();
+          enterEditMode(td);
         });
+
+        // במצב עריכה – Enter מסיים עריכה
         td.addEventListener('keydown', e => {
-          if (e.key === 'Enter') {
+          if (e.key === 'Enter' && td.dataset.editing === '1') {
             e.preventDefault();
             stripWarningSpans();
-            convertCellTextToBubbles(td);
+            finishEditMode(td);
             td.blur();
           }
         });
+
+        // במצב עריכה – יציאה מהתא מסיימת עריכה
         td.addEventListener('blur', () => {
           stripWarningSpans();
-          convertCellTextToBubbles(td);
+          finishEditMode(td);
+        });
+
+        // הדבקה – רק כשבאמת עורכים
+        td.addEventListener('paste', e => {
+          if (td.dataset.editing === '1') {
+            const text = e.clipboardData?.getData('text/plain');
+            if (!text) return;
+            e.preventDefault();
+            document.execCommand('insertText', false, text);
+          }
         });
       });
 
+      // משאירים את הגרסה המשופרת של convertCellTextToBubbles (אם כבר עדכנת)
       function convertCellTextToBubbles(cell) {
         try {
-          const cleanedText = normalizeKey(
-            String(cell.innerText || '')
-              .replace(/בעיה!?/g, '')
-              .replace(/משבצת\s*ריקה/g, '')
-          );
-          const names = Array.from(new Set(
-            cleanedText
-              .split(/[,\n]/)
-              .map(n => normalizeKey(n))
-              .filter(Boolean)
-          ));
+          const rawText = String(cell.innerText || '')
+            .replace(/בעיה!?/g, '')
+            .replace(/משבצת\s*ריקה/g, '');
+
+          const hasBubbles = !!cell.querySelector('.person');
+          const hasCommaOrNewline = /,|\n/.test(rawText);
+
+          let names;
+
+          if (hasBubbles && !hasCommaOrNewline) {
+            // לא באמת נערך טקסט, מחזירים לפי ה‑SPANים
+            names = Array.from(cell.querySelectorAll('.person'))
+              .map(el => normalizeKey(el.textContent))
+              .filter(Boolean);
+          } else {
+            const cleanedText = normalizeKey(rawText);
+            names = Array.from(new Set(
+              cleanedText
+                .split(/[,\n]/)
+                .map(n => normalizeKey(n))
+                .filter(Boolean)
+            ));
+          }
+
           const dayName  = cell.getAttribute('data-day')  || cell.dataset.dayName || '';
           const timeText = cell.getAttribute('data-time') || (cell.classList.contains('assist-cell') ? 'ליווי 07:40' : '');
 
@@ -1119,14 +1195,29 @@
           }
 
           let cellClass = '', warn = '';
-          if (num===0){
-            cellClass = 'needs-selection'; warn = '<span class="warning-text">בעיה! משבצת ריקה</span>';
-          } else if (lessThan8Violation){
-            cellClass = isNight? 'night-shift-ok':'ok-shift';
-          } else if (num>maxInShift){
-            cellClass = 'needs-selection'; warn = `<span class="warning-text">⚠️ עודף עובדים (${num}). נדרש: ${maxInShift}</span>`;
+
+          // 1. אין אף שומר
+          if (num === 0) {
+            cellClass = 'needs-selection';
+            warn = '<span class="warning-text">בעיה! משבצת ריקה</span>';
+
+          // 2. יש פחות מהכמות הנדרשת (למשל משמרת של 2 אבל שובץ רק אחד)
+          } else if (num < maxInShift) {
+            cellClass = 'needs-selection';
+            warn = `<span class="warning-text">חסר שומר נוסף (נדרש ${maxInShift})</span>`;
+
+          // 3. יש הפרת 8 שעות – נסמן אבל לא נבקש שומר נוסף
+          } else if (lessThan8Violation) {
+            cellClass = isNight ? 'night-shift-ok' : 'ok-shift';
+
+          // 4. יותר מדי שומרים
+          } else if (num > maxInShift) {
+            cellClass = 'needs-selection';
+            warn = `<span class="warning-text">⚠️ עודף עובדים (${num}). נדרש: ${maxInShift})</span>`;
+
+          // 5. מצב תקין
           } else {
-            cellClass = isNight? 'night-shift-ok':'ok-shift';
+            cellClass = isNight ? 'night-shift-ok' : 'ok-shift';
           }
 
           const timeTitle = timeFull.replace(' (Night)','');
@@ -1491,6 +1582,12 @@
       let newScheduleData = parsed.data.map(row=> row.map(()=>[]));
       let availabilityMap = {};
 
+        // סדר עבודה אוטומטי: שישי → שבת → ראשון → שני → שלישי → רביעי → חמישי
+        const autoDayOrder = ['יום שישי','יום שבת','יום ראשון','יום שני','יום שלישי','יום רביעי','יום חמישי'];
+        const dayOrderIndices = autoDayOrder
+          .map(name => parsed.days.indexOf(name))
+          .filter(idx => idx !== -1);   // רק ימים שקיימים בפועל
+
       for (let iteration=0; iteration<MAX_ITERATIONS; iteration++){
         allEmployees.forEach(n=>{ employeeShiftsCount[n]=0; nightShift2to6Count[n]=0; });
 
@@ -1508,45 +1605,48 @@
         const shiftsToFill = [];
 
         parsed.data.forEach((row, shiftIdx)=>{
-          const required = getRequiredPerShift(shiftIdx);
-          row.forEach((cell, dayIdx)=>{
-            const available = cell.split(',').map(s=>s.trim()).filter(Boolean);
-            if (!availabilityMap[dayIdx]) availabilityMap[dayIdx]={};
-            availabilityMap[dayIdx][shiftIdx] = new Set(available);
+        const required = getRequiredPerShift(shiftIdx);
 
-            let namesInSlot = [];
-            if (iteration === 0) {
-              namesInSlot = [];
-              newScheduleData[shiftIdx][dayIdx] = namesInSlot;
+        // עוברים על הימים לפי הסדר החדש (שישי, שבת, ראשון...)
+        dayOrderIndices.forEach((dayIdx)=>{
+          const cell = row[dayIdx];
+          const available = cell.split(',').map(s=>s.trim()).filter(Boolean);
+          if (!availabilityMap[dayIdx]) availabilityMap[dayIdx]={};
+          availabilityMap[dayIdx][shiftIdx] = new Set(available);
+
+          let namesInSlot = [];
+          if (iteration === 0) {
+            namesInSlot = [];
+            newScheduleData[shiftIdx][dayIdx] = namesInSlot;
+          } else {
+            namesInSlot = newScheduleData[shiftIdx][dayIdx];
+          }
+
+          namesInSlot.forEach(name=>{
+            if (!allEmployees.includes(name)) return;
+            employeeShiftsCount[name] = (employeeShiftsCount[name]||0)+1;
+
+            const curMin = minNextAllowedByDay[dayIdx][name];
+            if (curMin === undefined){
+              minNextAllowedByDay[dayIdx][name] = nextAllowedSameDayAfter(shiftIdx);
             } else {
-              namesInSlot = newScheduleData[shiftIdx][dayIdx];
+              minNextAllowedByDay[dayIdx][name] = Infinity;
             }
 
-            namesInSlot.forEach(name=>{
-              if (!allEmployees.includes(name)) return;
-              employeeShiftsCount[name] = (employeeShiftsCount[name]||0)+1;
-
-              const curMin = minNextAllowedByDay[dayIdx][name];
-              if (curMin === undefined){
-                minNextAllowedByDay[dayIdx][name] = nextAllowedSameDayAfter(shiftIdx);
-              } else {
-                minNextAllowedByDay[dayIdx][name] = Infinity;
-              }
-
-              if (shiftIdx===NIGHT_SHIFT_2_6_INDEX){
-                nightShift2to6Count[name] = (nightShift2to6Count[name]||0)+1;
-                night02_06_block[dayIdx].add(name);
-              }
-              if (shiftIdx===NIGHT_SHIFT_22_2_INDEX){
-                if (dayIdx+1<parsed.days.length) night22_02_block[dayIdx+1].add(name);
-              }
-            });
-
-            if (newScheduleData[shiftIdx][dayIdx].length < required){
-              shiftsToFill.push({ dayIndex:dayIdx, shiftIndex:shiftIdx, requiredCount: required - newScheduleData[shiftIdx][dayIdx].length });
+            if (shiftIdx===NIGHT_SHIFT_2_6_INDEX){
+              nightShift2to6Count[name] = (nightShift2to6Count[name]||0)+1;
+              night02_06_block[dayIdx].add(name);
+            }
+            if (shiftIdx===NIGHT_SHIFT_22_2_INDEX){
+              if (dayIdx+1<parsed.days.length) night22_02_block[dayIdx+1].add(name);
             }
           });
+
+          if (newScheduleData[shiftIdx][dayIdx].length < required){
+            shiftsToFill.push({ dayIndex:dayIdx, shiftIndex:shiftIdx, requiredCount: required - newScheduleData[shiftIdx][dayIdx].length });
+          }
         });
+      });
 
         shiftsToFill.sort((a,b)=> a.dayIndex!==b.dayIndex? a.dayIndex-b.dayIndex : a.shiftIndex-b.shiftIndex);
 
