@@ -23,7 +23,8 @@
     * { -webkit-tap-highlight-color: rgba(0,0,0,0.08); }
     html, body {
       overscroll-behavior: auto;
-      overflow-x: hidden;
+      /* אפשר גם בכלל למחוק את השורה הבאה */
+      overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
     body { 
@@ -511,9 +512,9 @@
     @media (max-width: 600px) {
       html, body {
         max-width: 100%;
-        overflow-x: hidden;
+        overflow-x: auto;
         overflow-y: auto;
-        font-size: 14px;           /* בסיס קטן יותר לכל הטקסט */
+        font-size: 14px;           
       }
 
       body {
