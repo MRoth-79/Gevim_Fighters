@@ -328,7 +328,7 @@
     /* כשהחלונית פתוחה – דוחפים את התוכן קצת שמאלה כדי שלא יסתתר (דסקטופ בלבד) */
     @media (min-width: 1025px) {
       body.inspector-open #results-container {
-        margin-right: 270x;
+        margin-right: 270px;
         transition: margin-right .2s ease;
       }
     }
@@ -2253,39 +2253,34 @@
         el(TXT_ID).value = out.trim();
       }
 
-      function clearGrid(){ buildEmpty(); render(); }
+      function clearGrid() {
+        buildEmpty();
+        render();
 
-      function init(){
+        const ta = document.getElementById('dataToAnalyze');
+        if (ta) ta.value = '';
+
+        const rc = document.getElementById('results-container');
+        if (rc) {
+          rc.innerHTML = '<p id="initial-message">הטעינה הראשונית תפעיל את הניתוח אוטומטית.</p>';
+        }
+      }
+
+      function init() {
+      // טבלת קלט ריקה
       buildEmpty();
       render();
 
+      // הדבקה ישירה לאזור האקסל
       const wrapper = el('excel-grid-wrapper');
       if (wrapper) {
         wrapper.addEventListener('paste', handlePaste);
       }
 
-      // רק אם הכפתורים קיימים – נחבר
-      const btnLoad  = el('btnExcelLoadFromText');
-      if (btnLoad) {
-        btnLoad.onclick = loadFromTextarea;
-      }
-
-      const btnApply = el('btnExcelApplyToText');
-      if (btnApply) {
-        btnApply.onclick = applyToTextarea;
-      }
-
+      // כפתור "נקה" – מאפס את הגריד (ואם תרצה גם טקסט/תוצאה, תרחיב clearGrid)
       const btnClear = el('btnExcelClear');
       if (btnClear) {
-        btnClear.onclick = clearGrid;
-      }
-
-      const btnHelp = el('btnExcelPasteHelp');
-      if (btnHelp) {
-        btnHelp.onclick = () => {
-          const box = el('excelPasteHelp');
-          if (box) box.hidden = !box.hidden;
-        };
+        btnClear.addEventListener('click', clearGrid);
       }
     }
 
