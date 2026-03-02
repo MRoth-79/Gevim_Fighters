@@ -1669,12 +1669,18 @@
       const guardsFor5Set = new Set(guardsFor5Text.split(/[,\n]/).map(n=>n.trim()).filter(Boolean));
       const textContent = document.getElementById('dataToAnalyze').value;
       const startDate = document.getElementById('startDate').value;
-      if (!startDate){ alert('בחר תאריך התחלה (יום שני) לפני הסידור.'); return; }
+      if (!startDate){
+        alert('בחר תאריך תחלה לפני הסידור.');
+        return;
+      }
 
       const parsed = parseVerticalText(textContent);
       if (parsed.error){
         const rc=document.getElementById('results-container'); rc.innerHTML='';
-        const p=document.createElement('p'); p.id='initial-message'; p.textContent='הטעינה הראשונית תפעיל את הניתוח אוטומטית.'; rc.appendChild(p);
+        const p=document.createElement('p');
+        p.id='initial-message';
+        p.textContent='הטעינה הראשונית תפעיל את הניתוח אוטומטית.';
+        rc.appendChild(p);
         return;
       }
 
@@ -1683,179 +1689,147 @@
       let employeeShiftsCount = {};
       let nightShift2to6Count = {};
       let newScheduleData = parsed.data.map(row=> row.map(()=>[]));
-      let availabilityMap = {};
 
-        // סדר עבודה אוטומטי: שישי → שבת → ראשון → שני → שלישי → רביעי → חמישי
-        const autoDayOrder = ['יום שישי','יום שבת','יום ראשון','יום שני','יום שלישי','יום רביעי','יום חמישי'];
-        const dayOrderIndices = autoDayOrder
-          .map(name => parsed.days.indexOf(name))
-          .filter(idx => idx !== -1);   // רק ימים שקיימים בפועל
+      // סדר יום: שישי → שבת → ראשון → שני → שלישי → רביעי → חמישי
+      const autoDayOrder = ['יום שישי','יום שבת','יום ראשון','יום שני','יום שלישי','יום רביעי','יום חמישי'];
+      const dayOrderIndices = autoDayOrder
+        .map(name => parsed.days.indexOf(name))
+        .filter(idx => idx !== -1);
 
-      for (let iteration=0; iteration<MAX_ITERATIONS; iteration++){
-        allEmployees.forEach(n=>{ employeeShiftsCount[n]=0; nightShift2to6Count[n]=0; });
-
-        availabilityMap = {};
-        let minNextAllowedByDay = parsed.days.map(()=> ({}));
-
-        let assistDayOccupancy = parsed.days.map(()=> new Set());
-        try {
-          const assist = loadAssistArray();
-          assist.forEach((csv, dayIdx)=> toNameArray(csv).forEach(n=> n && assistDayOccupancy[dayIdx].add(n)));
-        } catch(e){}
-
-        let night22_02_block = parsed.days.map(()=> new Set());
-        let night02_06_block = parsed.days.map(()=> new Set());
-        const shiftsToFill = [];
-
-        parsed.data.forEach((row, shiftIdx)=>{
-        const required = getRequiredPerShift(shiftIdx);
-
-        // עוברים על הימים לפי הסדר החדש (שישי, שבת, ראשון...)
-        dayOrderIndices.forEach((dayIdx)=>{
+      // זמינות לכל תא
+      const availabilityMap = {};
+      parsed.data.forEach((row, shiftIdx)=>{
+        dayOrderIndices.forEach(dayIdx=>{
           const cell = row[dayIdx];
           const available = cell.split(',').map(s=>s.trim()).filter(Boolean);
           if (!availabilityMap[dayIdx]) availabilityMap[dayIdx]={};
           availabilityMap[dayIdx][shiftIdx] = new Set(available);
-
-          let namesInSlot = [];
-          if (iteration === 0) {
-            namesInSlot = [];
-            newScheduleData[shiftIdx][dayIdx] = namesInSlot;
-          } else {
-            namesInSlot = newScheduleData[shiftIdx][dayIdx];
-          }
-
-          namesInSlot.forEach(name=>{
-            if (!allEmployees.includes(name)) return;
-            employeeShiftsCount[name] = (employeeShiftsCount[name]||0)+1;
-
-            const curMin = minNextAllowedByDay[dayIdx][name];
-            if (curMin === undefined){
-              minNextAllowedByDay[dayIdx][name] = nextAllowedSameDayAfter(shiftIdx);
-            } else {
-              minNextAllowedByDay[dayIdx][name] = Infinity;
-            }
-
-            if (shiftIdx===NIGHT_SHIFT_2_6_INDEX){
-              nightShift2to6Count[name] = (nightShift2to6Count[name]||0)+1;
-              night02_06_block[dayIdx].add(name);
-            }
-            if (shiftIdx===NIGHT_SHIFT_22_2_INDEX){
-              if (dayIdx+1<parsed.days.length) night22_02_block[dayIdx+1].add(name);
-            }
-          });
-
-          if (newScheduleData[shiftIdx][dayIdx].length < required){
-            shiftsToFill.push({ dayIndex:dayIdx, shiftIndex:shiftIdx, requiredCount: required - newScheduleData[shiftIdx][dayIdx].length });
-          }
         });
       });
 
-        shiftsToFill.sort((a,b)=> a.dayIndex!==b.dayIndex? a.dayIndex-b.dayIndex : a.shiftIndex-b.shiftIndex);
+      // חסימות / ליווי / 8 שעות
+      const assistDayOccupancy = parsed.days.map(()=> new Set());
+      try {
+        const assist = loadAssistArray();
+        assist.forEach((csv, dayIdx)=> toNameArray(csv).forEach(n=> n && assistDayOccupancy[dayIdx].add(n)));
+      } catch(e){}
 
-        function scoreEmployee(name, count, dayIdx, shiftIdx, equalizeMode=false){
-          if (shiftIdx===NIGHT_SHIFT_2_6_INDEX && (nightShift2to6Count[name]||0) >= MAX_NIGHT_2_6) return -3000000;
-          if (assistDayOccupancy[dayIdx].has(name)) return -1000000;
-          if (minNextAllowedByDay[dayIdx][name] !== undefined) return -2000000;
-          const mn = minNextAllowedByDay[dayIdx][name];
-          if (mn !== undefined && shiftIdx < mn) return -2000000;
+      const night22_02_block = parsed.days.map(()=> new Set());  // 22–02 משפיע על היום הבא
+      const night02_06_block = parsed.days.map(()=> new Set());  // 02–06 משפיע על בוקר באותו יום
+      const minNextAllowedByDay = parsed.days.map(()=> ({}));    // 8 שעות באותו יום
 
-          if (shiftIdx===MORNING_SHIFT_6_10_INDEX && night22_02_block[dayIdx].has(name)) return -2000000;
-          if (shiftIdx===NIGHT_SHIFT_2_6_INDEX && night22_02_block[dayIdx].has(name)) return -2000000;
+      function canAssign(name, dayIdx, shiftIdx){
+        const count = employeeShiftsCount[name] || 0;
 
-          if (shiftIdx === NIGHT_SHIFT_2_6_INDEX && dayIdx > 0) {
-            const prevDayNight = newScheduleData[NIGHT_SHIFT_22_2_INDEX][dayIdx - 1] || [];
-            if (prevDayNight.includes(name)) return -2000000;
-          }
-          if (shiftIdx === MORNING_SHIFT_6_10_INDEX && dayIdx > 0) {
-            const prevDayNight = newScheduleData[NIGHT_SHIFT_22_2_INDEX][dayIdx - 1] || [];
-            if (prevDayNight.includes(name)) return -2000000;
-          }
+        if (count >= MAX_ALLOWED) return false;
 
-          let backToBackNightPenalty = 0;
-          if (shiftIdx === NIGHT_SHIFT_2_6_INDEX && dayIdx > 0) {
-            const prevDayNight02_06 = newScheduleData[NIGHT_SHIFT_2_6_INDEX][dayIdx - 1] || [];
-            if (prevDayNight02_06.includes(name)) backToBackNightPenalty = -75000;
-          }
-
-          if (night02_06_block[dayIdx].has(name) && shiftIdx <= MORNING_SHIFT_10_14_INDEX) return -2000000;
-
-          const noDoubleNightHardCap =
-            getRequiredPerShift(NIGHT_SHIFT_2_6_INDEX) === 1 &&
-            getRequiredPerShift(NIGHT_SHIFT_22_2_INDEX) === 1;
-          if (noDoubleNightHardCap && (employeeShiftsCount[name] || 0) >= MAX_ALLOWED) return -3000000;
-          if ((employeeShiftsCount[name] || 0) >= MAX_ALLOWED) return -500000;
-
-          let score = 0;
-          const target = guardsFor5Set.has(name) ? 5 : MIN_REQUIRED;
-          if (!equalizeMode && count < target) score += 100000 * (target - count);
-          score += (MAX_ALLOWED - count) * 1000;
-          score += backToBackNightPenalty;
-
-          return score;
+        if (shiftIdx === NIGHT_SHIFT_2_6_INDEX &&
+            (nightShift2to6Count[name] || 0) >= MAX_NIGHT_2_6) {
+          return false;
         }
 
-        function fillShift(shift, onlyGuardsFor5){
-          const { dayIndex, shiftIndex } = shift;
-          const maxInShift = getRequiredPerShift(shiftIndex);
-          if (newScheduleData[shiftIndex][dayIndex].length >= maxInShift) return;
+        if (assistDayOccupancy[dayIdx].has(name)) return false;
 
-          const available = Array.from(availabilityMap[dayIndex][shiftIndex]);
-          const already = new Set(newScheduleData[shiftIndex][dayIndex]);
-          let candidates = available.filter(n => !already.has(n));
-          if (onlyGuardsFor5) candidates = candidates.filter(n => guardsFor5Set.has(n));
+        const mn = minNextAllowedByDay[dayIdx][name];
+        if (mn !== undefined && shiftIdx < mn) return false;
 
-          if (shiftIndex === NIGHT_SHIFT_2_6_INDEX && shift.dayIndex > 0) {
-            const prevDayNight02_06 = newScheduleData[NIGHT_SHIFT_2_6_INDEX][shift.dayIndex - 1] || [];
-            const preferred = candidates.filter(n => !prevDayNight02_06.includes(n));
-            if (preferred.length > 0) candidates = preferred;
-          }
+        if (shiftIdx === MORNING_SHIFT_6_10_INDEX && night22_02_block[dayIdx].has(name)) return false;
+        if (shiftIdx === NIGHT_SHIFT_2_6_INDEX   && night22_02_block[dayIdx].has(name)) return false;
 
-          let needed = maxInShift - newScheduleData[shiftIndex][dayIndex].length;
-          while (needed>0 && candidates.length>0){
-            const scored = candidates.map(n => ({ name:n, score: scoreEmployee(n, employeeShiftsCount[n]||0, dayIndex, shiftIndex, !onlyGuardsFor5) }))
-                                     .sort((a,b)=> b.score - a.score);
-
-            const best = scored[0];
-            if (best && best.score>-90000){
-              const n = best.name;
-              newScheduleData[shiftIndex][dayIndex].push(n);
-              employeeShiftsCount[n] = (employeeShiftsCount[n]||0)+1;
-
-              const curMin = minNextAllowedByDay[dayIndex][n];
-              if (curMin === undefined){
-                minNextAllowedByDay[dayIndex][n] = nextAllowedSameDayAfter(shiftIndex);
-              } else {
-                minNextAllowedByDay[dayIndex][n] = Infinity;
-              }
-
-              if (shiftIndex===NIGHT_SHIFT_2_6_INDEX){
-                nightShift2to6Count[n] = (nightShift2to6Count[n]||0)+1;
-                night02_06_block[dayIndex].add(n);
-              }
-              if (shiftIndex===NIGHT_SHIFT_22_2_INDEX){
-                if (dayIndex+1<parsed.days.length) night22_02_block[dayIndex+1].add(n);
-              }
-
-              candidates = candidates.filter(x=> x!==n);
-              needed--;
-            } else break;
-          }
+        if (dayIdx > 0) {
+          const prevNight = newScheduleData[NIGHT_SHIFT_22_2_INDEX][dayIdx - 1] || [];
+          if (shiftIdx === NIGHT_SHIFT_2_6_INDEX && prevNight.includes(name)) return false;
+          if (shiftIdx === MORNING_SHIFT_6_10_INDEX && prevNight.includes(name)) return false;
         }
 
-        // סבב 1: צהובים, סבב 2: איזון
-        shiftsToFill.forEach(s=> fillShift(s, true));
-        shiftsToFill.forEach(s=> fillShift(s, false));
+        if (night02_06_block[dayIdx].has(name) &&
+            (shiftIdx === MORNING_SHIFT_6_10_INDEX || shiftIdx === MORNING_SHIFT_10_14_INDEX))
+          return false;
 
-        const belowMin = allEmployees.filter(n=> (employeeShiftsCount[n]||0) < MIN_REQUIRED);
-        const anyUnfilled = newScheduleData.some((row, idx)=>{
-          const req = getRequiredPerShift(idx);
-          return row.some(arr => arr.length < req);
-        });
-        if (!anyUnfilled && !belowMin.length) break;
-        if (iteration===MAX_ITERATIONS-1){ console.warn('MAX ITERATIONS REACHED. CHECKING FINAL RESULTS.'); break; }
+        const noDoubleNightHardCap =
+          getRequiredPerShift(NIGHT_SHIFT_2_6_INDEX) === 1 &&
+          getRequiredPerShift(NIGHT_SHIFT_22_2_INDEX) === 1;
+        if (noDoubleNightHardCap && count >= MAX_ALLOWED) return false;
+
+        return true;
       }
 
+      function afterAssign(name, dayIdx, shiftIdx){
+        employeeShiftsCount[name] = (employeeShiftsCount[name]||0) + 1;
+
+        const curMin = minNextAllowedByDay[dayIdx][name];
+        if (curMin === undefined){
+          minNextAllowedByDay[dayIdx][name] = nextAllowedSameDayAfter(shiftIdx);
+        } else {
+          minNextAllowedByDay[dayIdx][name] = Infinity;
+        }
+
+        if (shiftIdx === NIGHT_SHIFT_2_6_INDEX){
+          nightShift2to6Count[name] = (nightShift2to6Count[name]||0) + 1;
+          night02_06_block[dayIdx].add(name);
+        }
+        if (shiftIdx === NIGHT_SHIFT_22_2_INDEX){
+          if (dayIdx+1 < parsed.days.length) night22_02_block[dayIdx+1].add(name);
+        }
+      }
+
+      // === סבבים קשיחים: round = 1..MAX_ALLOWED ===
+      for (let round = 1; round <= MAX_ALLOWED; round++){
+        let progressInRound = false;
+
+        // נעבור על כל המשבצות לפי סדר יום ומשמרת
+        EXPECTED_TIME_SLOTS.forEach((_, shiftIdx)=>{
+          dayOrderIndices.forEach(dayIdx=>{
+            const required = getRequiredPerShift(shiftIdx);
+            const assignedArr = newScheduleData[shiftIdx][dayIdx];
+            const availSet   = availabilityMap[dayIdx]?.[shiftIdx];
+            if (!availSet || !required) return;
+
+            while (assignedArr.length < required){
+              // מועמדים לסבב הנוכחי:
+              // - זמינים בתא הזה
+              // - לא שובצו כבר בתא הזה
+              // - עומדים בכל החוקים
+              // - יש להם פחות מ‑round משמרות כרגע
+              let candidates = Array.from(availSet).filter(name =>
+                !assignedArr.includes(name) &&
+                (employeeShiftsCount[name] || 0) < round &&
+                canAssign(name, dayIdx, shiftIdx)
+              );
+
+              // אם אין מועמד כזה – נשבור (אין ברירה במשבצת הזו בסבב הזה)
+              if (!candidates.length) break;
+
+              // ניקוד: צהובים קודם, פחות משמרות, פחות לילות, סדר אלפביתי
+              candidates.sort((a,b)=>{
+                const aVip = guardsFor5Set.has(a) ? 0 : 1;
+                const bVip = guardsFor5Set.has(b) ? 0 : 1;
+                if (aVip !== bVip) return aVip - bVip;
+
+                const ca = employeeShiftsCount[a] || 0;
+                const cb = employeeShiftsCount[b] || 0;
+                if (ca !== cb) return ca - cb;
+
+                const na = nightShift2to6Count[a] || 0;
+                const nb = nightShift2to6Count[b] || 0;
+                if (na !== nb) return na - nb;
+
+                return a.localeCompare(b, 'he');
+              });
+
+              const chosen = candidates[0];
+              assignedArr.push(chosen);
+              afterAssign(chosen, dayIdx, shiftIdx);
+              progressInRound = true;
+            }
+          });
+        });
+
+        // אם בסבב שלם לא הצלחנו להוסיף כלום – אין טעם להמשיך סבבים
+        if (!progressInRound) break;
+      }
+
+      // המרה חזרה לטקסט
       let out = '';
       parsed.days.forEach((day, dayIdx)=>{
         out += `${day}\n`;
@@ -1868,47 +1842,23 @@
       document.getElementById('dataToAnalyze').value = out.trim();
       renderSchedule(parseVerticalText(out.trim()));
 
-      const finalCounts = allEmployees.map(n=> ({ name:n, count:(document.getElementById('dataToAnalyze').value.match(new RegExp(`\\b${n}\\b`,'g'))||[]).length }));
+      const finalCounts = allEmployees.map(n=> ({
+        name:n,
+        count:(document.getElementById('dataToAnalyze').value.match(new RegExp(`\\b${n}\\b`,'g'))||[]).length
+      }));
       const below = finalCounts.filter(e=> e.count<MIN_REQUIRED);
       const msg = document.getElementById('link-message');
       if (!below.length){
         msg.querySelector('p').textContent = `✅ סידור אוטומטי הסתיים. כולם ≥ ${MIN_REQUIRED}.`;
         msg.style.backgroundColor = '#4CAF50';
       } else {
-        msg.querySelector('p').textContent = `⚠️ ${below.length} עובדים מתחת למינימום ${MIN_REQUIRED}: ` + below.map(e=>`${e.name} (${e.count})`).join(', ');
+        msg.querySelector('p').textContent =
+          `⚠️ ${below.length} עובדים מתחת למינימום ${MIN_REQUIRED}: ` +
+          below.map(e=>`${e.name} (${e.count})`).join(', ');
         msg.style.backgroundColor = '#ff9800';
       }
-      msg.style.display='block'; setTimeout(()=> msg.style.display='none', 8000);
-    }
-
-    /* =========================================
-       הורדת CSV (sep=\t + BOM)
-    ========================================== */
-    function downloadCsvFile(){
-      const txt = document.getElementById('dataToAnalyze').value;
-      const start = document.getElementById('startDate').value;
-      const parsed = parseVerticalText(txt);
-      if (parsed.error || !txt.trim()){ alert('❌ אין נתונים תקינים. נתח/סדר אוטומטי תחילה.'); return; }
-
-      const { days: headers, data } = parsed;
-      const dates = getDatesForWeek(start);
-
-      let csv = 'sep=\t\n' + ['שעות / יום', ...headers.map((d,i)=>`${d} (${dates[i]})`)].join('\t') + '\n';
-      data.forEach((row, idx)=>{
-        const time = EXPECTED_TIME_SLOTS[idx].split('(')[0].trim();
-        const cells = row.map(cell=> cell.split(',').map(n=>n.trim()).filter(Boolean).join(', '));
-        csv += [time, ...cells].join('\t') + '\n';
-      });
-
-      const bom = '\ufeff';
-      const blob = new Blob([bom + csv], { type:'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download=`schedule_table_analyzed_${start}.csv`;
-      document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-
-      const msg=document.getElementById('link-message');
-      msg.querySelector('p').textContent='✅ קובץ CSV הורד בהצלחה!'; msg.style.backgroundColor='#546E7A';
-      msg.style.display='block'; setTimeout(()=> msg.style.display='none', 3000);
+      msg.style.display='block';
+      setTimeout(()=> msg.style.display='none', 8000);
     }
 
     /* =========================================
