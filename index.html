@@ -220,6 +220,26 @@
       border:1px dashed #FFC107;      /* מסגרת מקווקוות עדינה */
     }
 
+    /* שמות בחופשה (בועה בטבלת הסידור) */
+    .person.on-leave {
+      background: #eceff1;
+      color: #78909c;
+      border: 1px dashed #b0bec5;
+      text-decoration: line-through;
+    }
+
+    /* תגית קטנה בבועה */
+    .person.on-leave::after {
+      content: " ⛱️";
+      font-size: 0.9em;
+    }
+
+    /* תא בגריד שמכיל שם בחופשה */
+    .excel-grid td.cell.on-leave-cell {
+      background: #f1f5f9;
+      box-shadow: inset 0 0 0 2px #e2e8f0;
+    }
+
     /* =========================================
        מפות צבע (שימור)
     ========================================== */
@@ -724,6 +744,39 @@
         ⚙️ הגדרות דרישות משמרות
       </button>
 
+      <!-- כפתור לפתיחת פאנל חופשות -->
+    <button id="openVacationsBtn" class="excel-btn tertiary" style="margin:8px auto; display:block; max-width:220px;">
+      🗓️ הגדרות חופשות
+    </button>
+
+    <!-- פאנל חופשות -->
+    <div id="vacations-panel" class="excel-card" style="display:none; max-width:840px; margin:12px auto;">
+      <div class="excel-card-header">
+        <div class="title">חופשות / מילואים</div>
+        <div class="actions" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <label style="font-size:.9rem; color:#455a64;">
+            <input id="leaveScopeWeek" type="checkbox" />
+            שמור לפי שבוע (תאריך התחלה)
+          </label>
+
+          <div style="display:flex; gap:8px; align-items:center;">
+            <label style="font-weight:700;">שם:</label>
+            <input id="leaveNameInput" type="text" placeholder="שם עובד" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:8px; width:160px;">
+            <label style="font-weight:700;">מ־</label>
+            <input id="leaveFromInput" type="date" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:8px;">
+            <label style="font-weight:700;">עד</label>
+            <input id="leaveToInput" type="date" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:8px;">
+            <button id="leaveAddBtn" class="excel-btn primary" type="button">הוסף/עדכן</button>
+            <button id="leaveClearBtn" class="excel-btn danger" type="button">מחק</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="vacations-list" style="margin-top:10px; font-size:.95rem;">
+        <!-- יופיעו שורות של חופשות --> 
+      </div>
+    </div>
+
       <!-- פאנל הגדרות דרישות משמרות -->
     <div id="shift-req-panel" class="excel-card" style="display:none; max-width:840px; margin:16px auto;">
       <div class="excel-card-header">
@@ -976,6 +1029,20 @@
       }
       return dates;
     }
+
+    function getIsoDatesForWeek(startDateString){
+      if (!startDateString) return [];
+      const out = [];
+      const [y,m,d] = startDateString.split('-').map(n => Number(n));
+      const start = new Date(y, m-1, d);
+      for (let i = 0; i < 7; i++) {
+        const t = new Date(start);
+        t.setDate(start.getDate() + i);
+        out.push(t.toISOString().slice(0,10)); // YYYY-MM-DD
+      }
+      return out;
+    }
+
     const escapeHtml = s => String(s).replace(/[&<>\"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
     /* ליווי 07:40 – נשמר לשבוע */
@@ -987,11 +1054,19 @@
     function saveAssistArray(arr){ try { localStorage.setItem(getAssistWeekKey(), JSON.stringify(arr)); } catch(e){} }
 
     function toNameArray(str){ return String(str||'').split(/[,\n]/).map(n=>n.trim()).filter(Boolean); }
-    function renderPersonBubbles(names, dayLabel, timeSlotTitle){
+    function renderPersonBubbles(names, dayLabel, timeSlotTitle, dayIso){
       return (names || []).map(raw => {
         const clean = normalizeKey(raw);
         const colorClass = nameToColorClass(clean);
-        const className = colorClass ? `person ${colorClass}` : 'person unknown-name  ';
+
+        const classes = ['person'];
+        if (colorClass) classes.push(colorClass); else classes.push('unknown-name');
+
+        // אם יש dayIso, נסמן "בחופשה" ליום הזה
+        const onLeave = dayIso ? isOnVacation(clean, dayIso) : false;
+        if (onLeave) classes.push('on-leave');
+
+        const className = classes.join(' ');
         const title = `${escapeHtml(clean)} - ${escapeHtml(dayLabel)}, ${escapeHtml(timeSlotTitle)}`;
         return `<span class="${className}" title="${title}" role="button" tabindex="0" aria-label="${title}">${escapeHtml(clean)}</span>`;
       }).join('');
@@ -1014,18 +1089,74 @@
         const s=window.getSelection(); s.removeAllRanges(); s.addRange(r); }catch{}
     }
 
+    function getVacationStorageKey() {
+      const scopeWeek = !!document.getElementById('leaveScopeWeek')?.checked;
+      if (scopeWeek) {
+        const d = document.getElementById('startDate')?.value || 'no-date';
+        return 'vacations__' + d;  // לפי שבוע
+      }
+      return 'vacations__global';  // גלובלי
+    }
+
+    function loadVacationsMap() {
+      try {
+        const raw = localStorage.getItem(getVacationStorageKey());
+        const m = raw ? JSON.parse(raw) : null;
+        return (m && typeof m === 'object') ? m : {};
+      } catch { return {}; }
+    }
+
+    function saveVacationsMap(map) {
+      try { localStorage.setItem(getVacationStorageKey(), JSON.stringify(map)); } catch {}
+    }
+
+    // בדיקה האם name בחופשה עבור תאריך מסוים
+    function isOnVacation(name, isoDate /* YYYY-MM-DD */) {
+      const m = loadVacationsMap();
+      const clean = normalizeKey(name);
+      // תומך גם במפתחות עם קו תחתון וגם במפתח המקורי למקרה שמורשת ישנה
+      const v = m[clean] || m[clean.replace(/\s+/g,'_')] || m[name];
+      if (!v || !v.from || !v.to) return false;
+      // השוואה טקסטואלית ב-ISO בטוחה (YYYY-MM-DD)
+      return isoDate >= v.from && isoDate <= v.to;
+    }
+
+    // מחזיר אוסף שמות בחופשה בשבוע לפי טווח תאריכי השבוע
+    function buildWeeklyOnLeaveSet(startDate /* YYYY-MM-DD */) {
+      const set = new Set();
+      if (!startDate) return set;
+      const m = loadVacationsMap();
+
+      const [y, M, d] = startDate.split('-').map(n => Number(n));
+      const weekStart = new Date(y, M-1, d);
+      const days = Array.from({ length: 7 }, (_, i) => {
+        const t = new Date(weekStart); t.setDate(weekStart.getDate() + i);
+        return t.toISOString().slice(0,10);  // YYYY-MM-DD
+      });
+
+      Object.entries(m).forEach(([name, v]) => {
+        if (!v?.from || !v?.to) return;
+        // אם יש לפחות יום אחד בשבוע בתוך הטווח, נסמן את השם
+        if (days.some(iso => (iso >= v.from && iso <= v.to))) {
+          set.add(name);
+        }
+      });
+      return set;
+}
+
     /* =========================================
        Assist Editors (ליווי 07:40)
     ========================================== */
     function convertAssistCellToBubbles(cell){
       const dayIdx  = Number(cell.dataset.dayIndex || 0);
       const dayName = cell.dataset.dayName || '';
+      const iso = getIsoDatesForWeek(document.getElementById('startDate').value || '')[dayIdx];
       const names = String(cell.innerText || '')
         .split(/[,\n]/)
         .map(normalizeKey)
         .filter(Boolean);
 
-      cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40');
+      cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40', iso);
 
       const arr = loadAssistArray();
       arr[dayIdx] = names.join(', ');
@@ -1152,7 +1283,10 @@
           const dayName  = cell.getAttribute('data-day')  || cell.dataset.dayName || '';
           const timeText = cell.getAttribute('data-time') || (cell.classList.contains('assist-cell') ? 'ליווי 07:40' : '');
 
-          cell.innerHTML = renderPersonBubbles(names, dayName, timeText);
+          const weekIso = getIsoDatesForWeek(document.getElementById('startDate').value || '');
+          const iDay = EXPECTED_DAYS.indexOf(dayName);
+          const dayIso = iDay >= 0 ? weekIso[iDay] : undefined;
+          cell.innerHTML = renderPersonBubbles(names, dayName, timeText, dayIso);
           if (names.length > 0) cell.classList.remove('needs-selection');
           syncDebounced();
         } catch (e) {
@@ -1218,6 +1352,8 @@
       if (!startDate){ rc.innerHTML = `<p class="warning-text">❌ אנא בחר תאריך התחלה (יום שני).</p>`; return; }
 
       const datesForWeek = getDatesForWeek(startDate);
+      const isoDatesForWeek = getIsoDatesForWeek(startDate);
+      const weeklyOnLeave = buildWeeklyOnLeaveSet(startDate);
       const { days: dayHeaders, data: scheduleData } = parsed;
 
       const guardsFor5Text = document.getElementById('guardsFor5Shifts').value;
@@ -1284,7 +1420,8 @@ scheduleTableHTML += '</tr></thead><tbody>';
         <tr class="red-assistance-shift">
           <td class="time-slot" title="ליווי 07:40">ליווי 07:40</td>
           ${dayHeaders.map((day, idx)=>{
-            const bubbles = renderPersonBubbles(toNameArray(assistValues[idx]||''), day, 'ליווי 07:40');
+            const dayIso = isoDatesForWeek[idx];
+            const bubbles = renderPersonBubbles(toNameArray(assistValues[idx]||''), day, 'ליווי 07:40', dayIso);
             const isFriday   = day.includes('שישי');
             const isSaturday = day.includes('שבת');
             const weekendClass =
@@ -1384,7 +1521,8 @@ scheduleTableHTML += '</tr></thead><tbody>';
           }
 
           const timeTitle = timeFull.replace(' (Night)','');
-          const formatted = renderPersonBubbles(names, day, timeTitle);
+          const dayIso = isoDatesForWeek[colIdx];
+          const formatted = renderPersonBubbles(names, day, timeTitle, dayIso);
           const isFriday   = day.includes('שישי');
           const isSaturday = day.includes('שבת');
           const weekendClass =
@@ -1757,6 +1895,15 @@ scheduleTableHTML += '</tr></thead><tbody>';
           return;
         }
 
+        // חישוב שמות בחופשה לשבוע הנוכחי
+        const weeklyOnLeave = buildWeeklyOnLeaveSet(startDate);
+
+        // פונקציה מקומית עם נרמול (רווחים/קו תחתון) — כדי שלא נפספס
+        function isOnLeaveThisWeek(n) {
+          const k = normalizeKey(n);
+          return weeklyOnLeave.has(k) || weeklyOnLeave.has(k.replace(/\s+/g, '_'));
+        }
+
         // === מכאן – אותו קוד כמו אצלך היום (מצב הסידור, availabilityMap, rounds וכו’) ===
         const allEmployees = Object.keys(colorMap).map(k =>
           k.includes('_') ? k.replace('_',' ') : k
@@ -1782,8 +1929,9 @@ scheduleTableHTML += '</tr></thead><tbody>';
             const dayIdx = dayOrderIndices[d];
             const cell = row[dayIdx] || '';
             const available = cell.split(',').map(s => s.trim()).filter(Boolean);
+            const filtered = available.filter(n => !isOnLeaveThisWeek(n)); // החוצה "בחופשה"
             if (!availabilityMap[dayIdx]) availabilityMap[dayIdx] = {};
-            availabilityMap[dayIdx][shiftIdx] = new Set(available);
+            availabilityMap[dayIdx][shiftIdx] = new Set(filtered);
           }
         });
 
@@ -1800,6 +1948,7 @@ scheduleTableHTML += '</tr></thead><tbody>';
         let minNextAllowedByDay = parsed.days.map(() => ({}));
 
         function isLegalAssignment(name, dayIdx, shiftIdx){
+          if (isOnLeaveThisWeek(name)) return false;
           if (newScheduleData[shiftIdx][dayIdx].indexOf(name) !== -1) return false;
           if ((employeeShiftsCount[name] || 0) >= MAX_ALLOWED) return false;
           if (shiftIdx === NIGHT_SHIFT_2_6_INDEX &&
@@ -2123,24 +2272,22 @@ scheduleTableHTML += '</tr></thead><tbody>';
     }
 
     /* =========================================
-       Spotlight + Name Inspector
+    Spotlight + Name Inspector
     ========================================== */
     let lockedName = null;
-    function updateHighlights(name){
-      const c=document.getElementById('results-container'); if (!c) return;
-      if (name) c.classList.add('spotlight-active'); else c.classList.remove('spotlight-active');
-      c.querySelectorAll('.person').forEach(el=> el.textContent.trim()===name ? el.classList.add('highlight-name') : el.classList.remove('highlight-name'));
-    }
-  
-    document.addEventListener('mouseover', e=>{
-      const p=e.target.closest('.person');
-      if (p && !lockedName && window.matchMedia('(pointer: fine)').matches) updateHighlights(p.textContent.trim());
-    });
-    document.addEventListener('mouseout', ()=>{
-      if (!lockedName && window.matchMedia('(pointer: fine)').matches) updateHighlights(null);
-    });
 
-    function computeNameStats(targetName){
+    function updateHighlights(name) {
+      const c = document.getElementById('results-container'); 
+      if (!c) return;
+      if (name) c.classList.add('spotlight-active'); else c.classList.remove('spotlight-active');
+      c.querySelectorAll('.person').forEach(el =>
+        el.textContent.trim() === name
+          ? el.classList.add('highlight-name')
+          : el.classList.remove('highlight-name')
+      );
+    }
+
+    function computeNameStats(targetName) {
       const container = document.getElementById('results-container');
       const table = container?.querySelector('#schedule-table');
       if (!container || !table || !targetName) return null;
@@ -2156,16 +2303,16 @@ scheduleTableHTML += '</tr></thead><tbody>';
         const td = b.closest('td'); if (!td) return;
         const isAssist = td.classList.contains('assist-cell');
 
-        let day = td.getAttribute('data-day') || '';
+        let day  = td.getAttribute('data-day')  || '';
         let time = td.getAttribute('data-time') || '';
 
         if (!day || !time) {
           const t = b.getAttribute('title') || '';
           const m = t.split(' - ');
           if (m.length >= 2) {
-            const right = m.slice(1).join(' - ');
-            const parts = right.split(',').map(s => s.trim());
-            if (parts[0]) day = parts[0];
+            const right  = m.slice(1).join(' - ');
+            const parts  = right.split(',').map(s => s.trim());
+            if (parts[0]) day  = parts[0];
             if (parts[1]) time = parts[1];
           }
         }
@@ -2182,8 +2329,8 @@ scheduleTableHTML += '</tr></thead><tbody>';
       const dayOrder = new Map(EXPECTED_DAYS.map((d, i) => [d, i]));
       function timeIndex(t) {
         if (!t) return 999;
-        const clean = String(t).replace(/<br\s*\/?>/gi, ' - ').trim();
-        const found = EXPECTED_TIME_SLOTS.findIndex(s => clean.startsWith(s.split('(')[0].trim()));
+        const clean  = String(t).replace(/<br\s*\/?>/gi, ' - ').trim();
+        const found  = EXPECTED_TIME_SLOTS.findIndex(s => clean.startsWith(s.split('(')[0].trim()));
         return found === -1 ? 998 : found;
       }
       items.sort((a, b) => {
@@ -2195,7 +2342,8 @@ scheduleTableHTML += '</tr></thead><tbody>';
 
       return { name: targetName, totalShifts, assistCount, items };
     }
-    function renderNameInspector(stats){
+
+    function renderNameInspector(stats) {
       const box = document.getElementById('name-inspector');
       if (!box) return;
 
@@ -2209,7 +2357,7 @@ scheduleTableHTML += '</tr></thead><tbody>';
       document.body.classList.add('inspector-open');
 
       document.getElementById('niTotalShifts').textContent  = String(stats.totalShifts);
-      document.getElementById('niAssistCount').textContent = String(stats.assistCount);
+      document.getElementById('niAssistCount').textContent  = String(stats.assistCount);
       document.getElementById('niPersonName').textContent   = stats.name;
 
       const list = document.getElementById('niList');
@@ -2234,15 +2382,64 @@ scheduleTableHTML += '</tr></thead><tbody>';
       box.style.display = 'block';
       box.setAttribute('aria-hidden', 'false');
     }
-    document.getElementById('nameInspectorClose')?.addEventListener('click', () => renderNameInspector(null));
-    document.addEventListener('click', (e) => {
-      const isPerson = !!e.target.closest('.person');
-      const isInsideInspector = !!e.target.closest('#name-inspector');
-      const isUIControl = !!(e.target.closest('button') || e.target.closest('input') || e.target.closest('a'));
-      if (!isPerson && !isInsideInspector && !isUIControl) {
-        renderNameInspector(null);
+
+    // hover highlight זמני (כשאין שם "נעול")
+    document.addEventListener('mouseover', e => {
+      const p = e.target.closest('.person');
+      if (p && !lockedName && window.matchMedia('(pointer: fine)').matches) {
+        updateHighlights(p.textContent.trim());
       }
     });
+    document.addEventListener('mouseout', () => {
+      if (!lockedName && window.matchMedia('(pointer: fine)').matches) {
+        updateHighlights(null);
+      }
+    });
+
+    // click על בועה = toggle + פתיחה/סגירה של האינספקטור
+    document.addEventListener('click', (e) => {
+      const p = e.target.closest('.person');
+
+      if (p) {
+        const n = p.textContent.trim();
+        lockedName = (lockedName === n) ? null : n;  // toggle
+        updateHighlights(lockedName);
+
+        if (lockedName) {
+          const stats = computeNameStats(lockedName);
+          renderNameInspector(stats);
+        } else {
+          renderNameInspector(null);
+        }
+        return; // לא להמשיך ללוגיקת הסגירה הכללית
+      }
+
+      // סגירה כשלא לוחצים על בועה/אינספקטור/כפתור/קישור
+      const isInsideInspector = !!e.target.closest('#name-inspector');
+      const isUIControl       = !!(e.target.closest('button') || e.target.closest('input') || e.target.closest('a'));
+      if (!isInsideInspector && !isUIControl) {
+        lockedName = null;
+        updateHighlights(lockedName);
+        renderNameInspector(null);
+      }
+    }, { passive: true });
+
+    // תמיכה במקלדת: Enter/Space = toggle על בועה; Esc = סגירה
+    document.addEventListener('keydown', (e) => {
+      const p = e.target.closest?.('.person');
+      if (p && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault(); // מונע גלילה עם מקש Space
+        p.click();          // מפעיל את מאזין ה-click למעלה
+      }
+      if (e.key === 'Escape') {
+        lockedName = null;
+        updateHighlights(lockedName);
+        renderNameInspector(null);
+      }
+    }, { passive: false });
+
+    document.getElementById('nameInspectorClose')?.addEventListener('click', () => renderNameInspector(null));
+
 
     /* =========================================
        Excel-like Grid (IIFE)
@@ -2253,7 +2450,7 @@ scheduleTableHTML += '</tr></thead><tbody>';
 
       // בדיקת שם מול colorMap המקורי
       function isKnownName(raw) {
-        const clean = raw.trim();
+        const clean = normalizeKey(raw);
         if (!clean) return true;
         if (colorMap[clean]) return true;
         const underscored = clean.replace(/\s+/g, '_');
@@ -2269,12 +2466,32 @@ scheduleTableHTML += '</tr></thead><tbody>';
           .filter(Boolean);
 
         const unknowns = val.filter(v => !isKnownName(v));
+        const startDate = document.getElementById('startDate')?.value || '';
+
+        let onLeaveNames = [];
+        if (startDate) {
+          const isoDays = getIsoDatesForWeek(startDate); // זמני השבוע
+          // נסמן תא אם לפחות ביום אחד בשבוע השם בחופשה
+          const uniqueNames = Array.from(new Set(val));
+          onLeaveNames = uniqueNames.filter(nm => {
+            const clean = normalizeKey(nm);
+            const m = loadVacationsMap();
+            const v = m[clean] || m[clean.replace(/\s+/g,'_')] || m[nm];
+            if (!v?.from || !v?.to) return false;
+            return isoDays.some(iso => (iso >= v.from && iso <= v.to));
+          });
+        }
 
         if (unknowns.length > 0) {
           td.classList.add('has-unknown');
+          td.classList.remove('on-leave-cell');
           td.title = "שמות לא מזוהים: " + unknowns.join(', ');
-        } else {
+        } else if (onLeaveNames.length > 0) {
+          td.classList.add('on-leave-cell');
           td.classList.remove('has-unknown');
+          td.title = "בחופשה: " + onLeaveNames.join(', ');
+        } else {
+          td.classList.remove('has-unknown', 'on-leave-cell');
           td.removeAttribute('title');
         }
       }
@@ -2419,6 +2636,10 @@ scheduleTableHTML += '</tr></thead><tbody>';
       // הדבקה ישירה לאזור האקסל
       const wrapper = el('excel-grid-wrapper');
       if (wrapper) {
+        // הדבקה מרובעת (טאבים/פסיקים) → מילוי מטריצה + רינדור + ולידציה
+        wrapper.addEventListener('paste', handlePaste);
+
+        // ולידציה בזמן הקלדה (שם לא מוכר → סימון צהוב)
         wrapper.addEventListener('input', (ev) => {
           const td = ev.target.closest(`#${GRID_ID} td.cell`);
           if (td) validateCellElement(td);
@@ -2565,6 +2786,134 @@ scheduleTableHTML += '</tr></thead><tbody>';
     }
 
     /* =========================================
+      Vacations Panel – בנייה ודינמיקה
+    ========================================= */
+    function buildVacationsPanel() {
+      const panel  = document.getElementById('vacations-panel');
+      const btnOpen = document.getElementById('openVacationsBtn');
+      const cbScope = document.getElementById('leaveScopeWeek');
+
+      const inName = document.getElementById('leaveNameInput');
+      const inFrom = document.getElementById('leaveFromInput');
+      const inTo   = document.getElementById('leaveToInput');
+      const btnAdd = document.getElementById('leaveAddBtn');
+      const btnDel = document.getElementById('leaveClearBtn');
+
+      const listDiv = document.getElementById('vacations-list');
+      if (!panel || !btnOpen || !cbScope || !inName || !inFrom || !inTo || !btnAdd || !btnDel || !listDiv) return;
+
+      // שחזור מצב "שמור לפי שבוע"
+      try { cbScope.checked = localStorage.getItem('leaveScopeWeek') === '1'; } catch {}
+
+      function refreshAfterVacationChange() {
+        // מרענן גריד/טבלה אחרי שינוי חופשות
+        if (window.ExcelGrid?.applyToTextarea) ExcelGrid.applyToTextarea();
+        const txt = document.getElementById('dataToAnalyze')?.value || '';
+        if (txt.trim()) {
+          renderSchedule(parseVerticalText(txt));
+        }
+      }
+
+      function renderList() {
+        const m = loadVacationsMap();
+        const keys = Object.keys(m);
+        if (!keys.length) {
+          listDiv.innerHTML = '<div class="muted">אין רישומי חופשה.</div>';
+          return;
+        }
+        listDiv.innerHTML = keys
+          .sort((a,b)=> a.localeCompare(b,'he'))
+          .map(name => {
+            const v = m[name] || {};
+            const from = v.from || '—';
+            const to   = v.to   || '—';
+            return `
+              <div class="item" style="display:flex; align-items:center; justify-content:space-between; padding:8px; border:1px solid #eef2f5; border-radius:8px; margin-bottom:6px;">
+                <div class="left">
+                  <div><strong>${name}</strong></div>
+                  <div class="muted">${from} → ${to}</div>
+                </div>
+                <div>
+                  <button class="excel-btn" type="button" data-edit-name="${name}">ערוך</button>
+                  <button class="excel-btn danger" type="button" data-del-name="${name}">מחק</button>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+        // עריכה: מילוי השדות מהקיים
+        listDiv.querySelectorAll('button[data-edit-name]').forEach(b => {
+          b.addEventListener('click', () => {
+            const nm = b.getAttribute('data-edit-name');
+            const v = loadVacationsMap()[nm] || {};
+            inName.value = nm;
+            inFrom.value = v.from || '';
+            inTo.value   = v.to   || '';
+          });
+        });
+
+        // מחיקה
+        listDiv.querySelectorAll('button[data-del-name]').forEach(b => {
+          b.addEventListener('click', () => {
+            const nm = b.getAttribute('data-del-name');
+            const m = loadVacationsMap();
+            delete m[nm];
+            saveVacationsMap(m);
+            renderList();
+            refreshAfterVacationChange();
+          });
+        });
+      }
+
+      // פתיחה/סגירה
+      btnOpen.onclick = () => {
+        panel.style.display = (panel.style.display === 'none' || !panel.style.display) ? 'block' : 'none';
+        renderList();
+      };
+
+      // שמירה של "שמור לפי שבוע"
+      cbScope.addEventListener('change', () => {
+        try { localStorage.setItem('leaveScopeWeek', cbScope.checked ? '1' : '0'); } catch {}
+        renderList();
+        refreshAfterVacationChange();
+      });
+
+      // הוספה/עדכון לפי שדות
+      btnAdd.onclick = () => {
+        const name = (inName.value || '').trim();
+        const from = inFrom.value || '';
+        const to   = inTo.value   || '';
+        if (!name || !from || !to) { alert('נא למלא שם וטווח תאריכים מלא.'); return; }
+        const m = loadVacationsMap();
+        // שמירה עם מפתח מנורמל — מתאים ל-isOnVacation החדש
+        m[normalizeKey(name)] = { from, to };
+        saveVacationsMap(m);
+        renderList();
+        refreshAfterVacationChange();
+      };
+
+      // מחיקה לפי השם שבשדה (אם רוצים ידנית)
+      btnDel.onclick = () => {
+        const name = (inName.value || '').trim();
+        if (!name) { alert('נא למלא שם למחיקה.'); return; }
+        const m = loadVacationsMap();
+        delete m[normalizeKey(name)];
+        saveVacationsMap(m);
+        renderList();
+        refreshAfterVacationChange();
+      };
+
+      // שינוי תאריך התחלה של שבוע → מרענן
+      document.getElementById('startDate')?.addEventListener('change', () => {
+        renderList();
+        refreshAfterVacationChange();
+      });
+
+      renderList();
+}
+
+
+    /* =========================================
        Auto-fit טבלה אחרי כל רינדור
     ========================================== */
     function autoFitMainTable() {
@@ -2615,11 +2964,12 @@ scheduleTableHTML += '</tr></thead><tbody>';
     /* =========================================
        DOM Ready
     ========================================== */
-    document.addEventListener('DOMContentLoaded', ()=>{
+    document.addEventListener('DOMContentLoaded', () =>{
       initializeData();
       generateGuardsButtons();
       ExcelGrid.init();
       buildShiftReqPanel();
+      buildVacationsPanel();  // ← הוספה
       updateStartDateLabelBySetting();
     });
 
