@@ -880,13 +880,18 @@
     ];
 
     function updateStartDateLabelBySetting() {
-      const weekStart = getWeekStartSetting();
-      const lbl = document.querySelector('label[for="startDate"]');
-      if (lbl) {
-        lbl.textContent = weekStart === 'mon'
-          ? 'תאריך יום שני:'
-          : 'תאריך יום ראשון:';
+      const lbl   = document.querySelector('label[for="startDate"]');
+      const input = document.getElementById('startDate');
+
+      // אין תאריך / אין label – טקסט כללי
+      if (!lbl || !input || !input.value) {
+        if (lbl) lbl.textContent = 'תאריך תחילת שבוע:';
+        return;
       }
+
+      // שם היום האמיתי לפי התאריך הנבחר
+      const dayText = getHebDayNameFromIso(input.value);
+      lbl.textContent = `תאריך תחילת שבוע (${dayText}):`;
     }
 
     const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1NXgjKC-0j4blUQawwzz4lMEhswA561GKxAoSJO5ie_s/edit?gid=0#gid=0';
@@ -917,17 +922,18 @@
     }
 
     /* אינדקסים לשימוש מהיר */
-    const NIGHT_SHIFT_2_6_INDEX = 0;
-    const MORNING_SHIFT_6_10_INDEX = 1;
-    const MORNING_SHIFT_10_14_INDEX = 2;
+    const NIGHT_SHIFT_2_6_INDEX       = 0;
+    const MORNING_SHIFT_6_10_INDEX    = 1;
+    const MORNING_SHIFT_10_14_INDEX   = 2;
     const AFTERNOON_SHIFT_14_18_INDEX = 3;
-    const NIGHT_SHIFT_22_2_INDEX = 5;
+    const EVENING_SHIFT_18_22_INDEX   = 4;
+    const NIGHT_SHIFT_22_2_INDEX      = 5;
 
     /* 8 שעות – משבצת מותרים הבאה באותו יום */
     function nextAllowedSameDayAfter(idx){
       switch(idx){
         case NIGHT_SHIFT_2_6_INDEX:     return AFTERNOON_SHIFT_14_18_INDEX; // 0 -> 3
-        case MORNING_SHIFT_6_10_INDEX:  return 4;                            // 1 -> 4
+        case MORNING_SHIFT_6_10_INDEX:  return EVENING_SHIFT_18_22_INDEX;   // 1 -> 4
         case MORNING_SHIFT_10_14_INDEX: return NIGHT_SHIFT_22_2_INDEX;       // 2 -> 5
         default:                        return Infinity;
       }
@@ -992,6 +998,24 @@
       if (colorMap[withUnderscore]) return colorMap[withUnderscore];
       return null;
     }
+
+    const HEB_DAYS = [
+      'יום ראשון',
+      'יום שני',
+      'יום שלישי',
+      'יום רביעי',
+      'יום חמישי',
+      'יום שישי',
+      'יום שבת'
+    ];
+
+    function getHebDayNameFromIso(isoDate) {
+      if (!isoDate) return '';
+      const [y, m, d] = isoDate.split('-').map(Number);
+      const dt = new Date(y, m - 1, d);
+      return HEB_DAYS[dt.getDay()] || '';
+    }
+
     function initializeData(){
       document.getElementById('dataToAnalyze').value = INITIAL_SCHEDULE_DATA;
       const today = new Date();
@@ -1490,8 +1514,35 @@ scheduleTableHTML += '</tr></thead><tbody>';
             names.forEach(n=>{ if (nightNames.includes(n)) exceptions.push({ day, slot: timeDisp, name:n, msg:'פחות מ‑8 שעות: 02–06 → מוקדם מדי באותו יום' }); });
           }
           if (rowIdx===NIGHT_SHIFT_2_6_INDEX && colIdx>0){
-            const prevNight = scheduleData[NIGHT_SHIFT_22_2_INDEX][colIdx-1].split(',').map(n=>n.trim()).filter(Boolean);
-            names.forEach(n=>{ if (prevNight.includes(n)) exceptions.push({ day, slot: timeDisp, name:n, msg:'אסור רצף לילות: 22–02 אתמול → 02–06 היום' }); });
+            // 22–02 אתמול → 02–06 היום (רצף לילות)
+            const prevNight = scheduleData[NIGHT_SHIFT_22_2_INDEX][colIdx-1]
+              .split(',').map(n=>n.trim()).filter(Boolean);
+
+            names.forEach(n=>{
+              if (prevNight.includes(n)) {
+                exceptions.push({
+                  day,
+                  slot: timeDisp,
+                  name:n,
+                  msg:'אסור רצף לילות: 22–02 אתמול → 02–06 היום'
+                });
+              }
+            });
+
+            // 18–22 אתמול → 02–06 היום (פחות מ‑8 שעות)
+            const prevEvening = scheduleData[EVENING_SHIFT_18_22_INDEX][colIdx-1]
+              .split(',').map(n=>n.trim()).filter(Boolean);
+
+            names.forEach(n=>{
+              if (prevEvening.includes(n)) {
+                exceptions.push({
+                  day,
+                  slot: timeDisp,
+                  name:n,
+                  msg:'פחות מ‑8 שעות: 18–22 אתמול → 02–06 היום'
+                });
+              }
+            });
           }
 
           let cellClass = '', warn = '';
@@ -1948,30 +1999,54 @@ scheduleTableHTML += '</tr></thead><tbody>';
         let minNextAllowedByDay = parsed.days.map(() => ({}));
 
         function isLegalAssignment(name, dayIdx, shiftIdx){
+          // 1. לא משבצים אם בחופשה
           if (isOnLeaveThisWeek(name)) return false;
-          if (newScheduleData[shiftIdx][dayIdx].indexOf(name) !== -1) return false;
+
+          // 2. לא פעמיים באותה משבצת
+          if (newScheduleData[shiftIdx][dayIdx].includes(name)) return false;
+
+          // 3. האוטומט לא משבץ יותר ממשמרת אחת באותו יום לאותו עובד
+          for (let s = 0; s < EXPECTED_TIME_SLOTS.length; s++) {
+            if (newScheduleData[s][dayIdx].includes(name)) {
+              return false;
+            }
+          }
+
+          // 4. הגבלת כמות משמרות כוללת
           if ((employeeShiftsCount[name] || 0) >= MAX_ALLOWED) return false;
+
+          // 5. הגבלת לילות 02–06
           if (shiftIdx === NIGHT_SHIFT_2_6_INDEX &&
               (nightShift2to6Count[name] || 0) >= MAX_NIGHT_2_6)
             return false;
+
+          // 6. אם הוא בליווי 07:40 באותו יום – לא נותנים לו משמרת אוטומטית
           if (assistDayOccupancy[dayIdx].has(name)) return false;
 
+          // 7. 8 שעות באותו יום (לפי nextAllowedSameDayAfter)
           const mn = minNextAllowedByDay[dayIdx][name];
           if (mn !== undefined && shiftIdx < mn) return false;
 
+          // 8. 22–02 חוסם 06–10 ו–02–06 ביום הבא דרך night22_02_block
           if ((shiftIdx === MORNING_SHIFT_6_10_INDEX ||
-              shiftIdx === NIGHT_SHIFT_2_6_INDEX) &&
-              night22_02_block[dayIdx].has(name))
+               shiftIdx === NIGHT_SHIFT_2_6_INDEX) &&
+               night22_02_block[dayIdx].has(name))
             return false;
 
+          // 9. 22–02 אתמול → אסור 02–06 היום
+          //    18–22 אתמול → אסור 02–06 היום
           if (shiftIdx === NIGHT_SHIFT_2_6_INDEX && dayIdx > 0) {
             const prevNight = newScheduleData[NIGHT_SHIFT_22_2_INDEX][dayIdx-1] || [];
-            if (prevNight.indexOf(name) !== -1) return false;
+            if (prevNight.includes(name)) return false;
+
+            const prevEvening = newScheduleData[EVENING_SHIFT_18_22_INDEX][dayIdx-1] || [];
+            if (prevEvening.includes(name)) return false;
           }
 
+          // 10. 02–06 באותו יום חוסם 06–10 ו–10–14
           if ((shiftIdx === MORNING_SHIFT_6_10_INDEX ||
-              shiftIdx === MORNING_SHIFT_10_14_INDEX) &&
-              night02_06_block[dayIdx].has(name))
+               shiftIdx === MORNING_SHIFT_10_14_INDEX) &&
+               night02_06_block[dayIdx].has(name))
             return false;
 
           return true;
@@ -2646,7 +2721,6 @@ scheduleTableHTML += '</tr></thead><tbody>';
         });
       }
 
-
       // כפתור "נקה" – מאפס את הגריד (ואם תרצה גם טקסט/תוצאה, תרחיב clearGrid)
       const btnClear = el('btnExcelClear');
       if (btnClear) {
@@ -2676,7 +2750,6 @@ scheduleTableHTML += '</tr></thead><tbody>';
     document.getElementById('openSheetButton')?.addEventListener('click', () => {
       window.open(SHEET_URL, '_blank', 'noopener,noreferrer');
     });
-
     document.getElementById('fetchFromSheetButton').addEventListener('click', fetchFromGoogleSheet);
     document.getElementById('quickFetchButton').addEventListener('click', fetchFromGoogleSheet);
     document.getElementById('btnExcelAuto')?.addEventListener('click', ()=>{
@@ -2767,18 +2840,27 @@ scheduleTableHTML += '</tr></thead><tbody>';
         const val = selWeekStart.value === 'sun' ? 'sun' : 'mon';
         try { localStorage.setItem('weekStart', val); } catch {}
 
-        // עדכון מערך הימים הגלובלי
+        // מעדכנים את סדר הימים
         EXPECTED_DAYS = computeExpectedDays(val);
 
-        // עדכון כותרת תאריך התחלה
+        // מעדכנים כותרת ליד התאריך
         updateStartDateLabelBySetting();
 
-        // רענון טבלת הקלט (ExcelGrid) לפי הטקסט הקיים
+        const ta = document.getElementById('dataToAnalyze');
+        const hasText = ta && ta.value.trim().length > 0;
+
+        // אם אין עדיין טקסט – לא מריצים ניתוח, רק מעדכנים את הגריד הריק
+        if (!hasText) {
+          if (window.ExcelGrid?.init) {
+            ExcelGrid.init();
+          }
+          return;
+        }
+
+        // יש טקסט – מותר לרענן מהטקסט הקיים
         if (window.ExcelGrid?.loadFromTextarea) {
           ExcelGrid.loadFromTextarea();
         }
-
-        // רינדור מחדש של טבלת המשמרות אם יש טקסט
         refreshAfterReqChange();
       });
 
@@ -2912,7 +2994,6 @@ scheduleTableHTML += '</tr></thead><tbody>';
       renderList();
 }
 
-
     /* =========================================
        Auto-fit טבלה אחרי כל רינדור
     ========================================== */
@@ -2969,8 +3050,15 @@ scheduleTableHTML += '</tr></thead><tbody>';
       generateGuardsButtons();
       ExcelGrid.init();
       buildShiftReqPanel();
-      buildVacationsPanel();  // ← הוספה
+      buildVacationsPanel();
       updateStartDateLabelBySetting();
+
+      const startDateInput = document.getElementById('startDate');
+      if (startDateInput) {
+        startDateInput.addEventListener('change', () => {
+          updateStartDateLabelBySetting();
+        });
+      }
     });
 
     /* === iOS paste/enter fixes for contenteditable === */
