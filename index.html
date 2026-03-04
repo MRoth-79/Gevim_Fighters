@@ -362,92 +362,132 @@
     .excel-date input[type="date"]:focus{ border-color:var(--primary-blue); box-shadow:0 0 5px rgba(0,121,107,.15); }
 
       /* =========================================
-       רספונסיביות (כולל מובייל מרוכז)
+        רספונסיביות (כולל מובייל מרוכז)
       ========================================== */
       @media (max-width:1024px){
-      .editor-layout-row{ flex-direction:column; }
-      .guards-selection-side-panel{ position:static; width:100%; }
-      #schedule-table{ display:block; overflow-x:auto; }
+        .editor-layout-row{ flex-direction:column; }
+        .guards-selection-side-panel{ position:static; width:100%; }
+        #schedule-table{ display:block; overflow-x:auto; }
       }
 
       /* === Mobile (<=768px) – consolidated & tuned === */
       @media (max-width: 768px) {
-      body { overflow-x: hidden; }
+        body { overflow-x: hidden; }
 
-      /* טיפוגרפיה וכותרת */
-      h3 { font-size: 1.05rem; }
-      .file-format-info { font-size: 0.92rem; }
-      .modern-main-header {
-        font-size: 1.6rem; padding: 10px 18px; margin: 20px auto !important; border-radius: 60px;
+        /* טיפוגרפיה וכותרת */
+        h3 { font-size: 1.05rem; }
+        .file-format-info { font-size: 0.92rem; }
+        .modern-main-header {
+          font-size: 1.6rem; padding: 10px 18px; margin: 20px auto !important; border-radius: 60px;
+        }
+
+        /* פריסת עורך */
+        .editor-layout-row { flex-direction: column; gap: 12px; margin-top: 12px; }
+        .guards-selection-side-panel { position: static; width: 100%; padding: 14px; border-radius: 12px; }
+
+        /* ===== תיקון בועות שמות במובייל — שלא ייחתכו ===== */
+
+        /* הקונטיינר הראשי של הטבלה */
+        #results-container {
+          padding: 10px;
+          -webkit-overflow-scrolling: touch;
+          overflow-x: auto;
+          overflow-y: visible;     /* קריטי – מאפשר לבועה לגלוש החוצה אנכית */
+          position: relative;
+          z-index: 0;
+        }
+
+        /* הטבלה עצמה לא תחתוך את הבועה */
+        #schedule-table {
+          display: block;
+          overflow: visible;        /* מבטל overflow:hidden של דסקטופ */
+          border-width: 1px;
+        }
+
+        /* גם התאים וכותרות הימים לא יחתכו את הבועה */
+        #schedule-table th,
+        #schedule-table td {
+          padding: 10px 8px !important;
+          font-size: 12px;
+          height: 52px !important;
+          overflow: visible !important;   /* הכי חשוב */
+          position: relative;
+          z-index: 0;
+        }
+
+        /* בועה מודגשת יוצאת החוצה בצורה נקייה */
+        .person.highlight-name{
+          position: relative;
+          z-index: 9999 !important;
+          transform: scale(1.22) !important;   /* מאוזן למובייל */
+          box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+          outline: 3px solid #000 !important;
+          outline-offset: 2px;
+        }
+
+        /* אלמנטים שעלולים להסתיר את הבועה */
+        #schedule-table .time-slot,
+        .red-assistance-shift td {
+          position: relative;
+          z-index: 1;
+        }
+
+        /* דביקות לוח זמנים */
+        #schedule-table .time-slot {
+          white-space: nowrap;
+          position: sticky;
+          right: 0;
+          z-index: 2; /* נמוך מהבועה (9999) */
+        }
+        .red-assistance-shift td {
+          border-top-width: 2px !important;
+          border-bottom-width: 2px !important;
+        }
+
+        /* כפתורי טכנולוגיה */
+        .tech-control-panel {
+          width: 100%; gap: 10px; padding: 12px; box-sizing: border-box; border-radius: 14px;
+        }
+        .tech-control-panel .tech-btn {
+          width: 100%; height: 88px; font-size: 16px; border-radius: 12px;
+        }
+        .tech-control-panel .tech-btn .icon { font-size: 28px; margin-bottom: 6px; }
+
+        /* כפתור פתיחת הגדרות */
+        #openShiftReqBtn { max-width: 100% !important; width: 100%; text-align: center; }
+
+        /* פאנל הגדרות דרישות משמרות */
+        #shift-req-panel { width: calc(100% - 24px); margin: 12px auto !important; padding: 12px; border-radius: 12px; }
+        #shift-req-grid { grid-template-columns: 1fr; gap: 8px; }
+        .shift-req-label { padding: 10px; font-size: 0.95rem; }
+        .shift-req-control { justify-content: center; gap: 10px; }
+        .shift-req-control .opt { min-width: 44px; min-height: 36px; font-size: 1rem; justify-content: center; }
+
+        /* בחירת “צהובים” – פריסה חכמה */
+        .guard-selector-container {
+          grid-template-rows: none;
+          grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+          grid-auto-flow: row;
+          gap: 8px;
+          padding: 12px;
+        }
+        .guard-btn { font-size: 0.9rem; padding: 10px 8px; min-height: 40px; }
+
+        /* Spotlight רך יותר לנייד */
+        .spotlight-active .person:not(.highlight-name){
+          opacity: 0.45 !important;
+          filter: none;
+          transform: none;
+        }
+
+        /* עריכת תוכן במגע */
+        .excel-grid td.cell[contenteditable="true"],
+        #schedule-table td[contenteditable="true"],
+        .assist-cell[contenteditable="true"] {
+          -webkit-text-size-adjust: 100%;
+          touch-action: manipulation;
+        }
       }
-
-      /* פריסת עורך */
-      .editor-layout-row { flex-direction: column; gap: 12px; margin-top: 12px; }
-      .guards-selection-side-panel { position: static; width: 100%; padding: 14px; border-radius: 12px; }
-
-      /* טבלה – Auto-fit + גלילה חלקה */
-      #results-container { padding: 10px; -webkit-overflow-scrolling: touch; }
-      #schedule-table { display: block; overflow-x: auto; border-width: 1px; }
-      #schedule-table th, #schedule-table td {
-        padding: 10px 8px !important; font-size: 12px; height: 52px !important;
-      }
-      #schedule-table .time-slot {
-        white-space: nowrap; position: sticky; right: 0; z-index: 3;
-      }
-      .red-assistance-shift td { border-top-width: 2px !important; border-bottom-width: 2px !important; }
-
-      /* כפתורי טכנולוגיה */
-      .tech-control-panel {
-        width: 100%; gap: 10px; padding: 12px; box-sizing: border-box; border-radius: 14px;
-      }
-      .tech-control-panel .tech-btn { width: 100%; height: 88px; font-size: 16px; border-radius: 12px; }
-      .tech-control-panel .tech-btn .icon { font-size: 28px; margin-bottom: 6px; }
-
-      /* כפתור פתיחת הגדרות */
-      #openShiftReqBtn { max-width: 100% !important; width: 100%; text-align: center; }
-
-      /* פאנל הגדרות דרישות משמרות */
-      #shift-req-panel { width: calc(100% - 24px); margin: 12px auto !important; padding: 12px; border-radius: 12px; }
-      #shift-req-grid { grid-template-columns: 1fr; gap: 8px; }
-      .shift-req-label { padding: 10px; font-size: 0.95rem; }
-      .shift-req-control { justify-content: center; gap: 10px; }
-      .shift-req-control .opt { min-width: 44px; min-height: 36px; font-size: 1rem; justify-content: center; }
-
-      /* בחירת “צהובים” – פריסה חכמה */
-      .guard-selector-container {
-        grid-template-rows: none; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-        grid-auto-flow: row; gap: 8px; padding: 12px;
-      }
-      .guard-btn { font-size: 0.9rem; padding: 10px 8px; min-height: 40px; }
-
-      /* Name Inspector בתחתית במובייל — גרסה קומפקטית וקריאה */
-      #name-inspector {
-        width: calc(100% - 24px) !important;
-        left: 12px !important;
-        right: 12px !important;
-        top: auto !important;
-        bottom: 12px !important;
-        max-height: min(42vh, 360px) !important; /* גובה קומפקטי, לא פולשני */
-        padding: 10px !important;
-        border-radius: 10px !important;
-        font-size: 0.95rem;
-      }
-      #name-inspector .hdr .title { font-size: .95rem; }
-      #name-inspector .kpi .num { font-size: 1.08rem; }
-      #name-inspector .kpi .lbl { font-size: .76rem; }
-      #name-inspector .item { padding: 6px 8px; }
-
-      /* Spotlight רך יותר לנייד */
-      .spotlight-active .person:not(.highlight-name){ opacity: 0.45 !important; filter: none; transform: none; }
-      .person.highlight-name{ transform: scale(1.2) !important; outline-width: 3px !important; }
-
-      /* נוחות עריכה במגע */
-      .excel-grid td.cell[contenteditable="true"],
-      #schedule-table td[contenteditable="true"],
-      .assist-cell[contenteditable="true"] {
-        -webkit-text-size-adjust: 100%; touch-action: manipulation;
-      }
-    }
 
     /* =========================================
        שורות/בקרות דרישות משמרות
