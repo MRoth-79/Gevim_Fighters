@@ -2017,7 +2017,7 @@ scheduleTableHTML += '</tr></thead><tbody>';
 
           // 5. הגבלת לילות 02–06
           if (shiftIdx === NIGHT_SHIFT_2_6_INDEX &&
-              (nightShift2to6Count[name] || 0) >= MAX_NIGHT_2_6)
+                (nightShift2to6Count[name] || 0) >= MAX_NIGHT_2_6 + 1)
             return false;
 
           // 6. אם הוא בליווי 07:40 באותו יום – לא נותנים לו משמרת אוטומטית
@@ -2059,7 +2059,7 @@ scheduleTableHTML += '</tr></thead><tbody>';
           if ((employeeShiftsCount[name] || 0) >= MAX_ALLOWED) return false;
 
           if (shiftIdx === NIGHT_SHIFT_2_6_INDEX &&
-              (nightShift2to6Count[name] || 0) >= MAX_NIGHT_2_6)
+              (nightShift2to6Count[name] || 0) >= MAX_NIGHT_2_6 + 1)
             return false;
 
           if (assistDayOccupancy[dayIdx].has(name)) return false;
@@ -2166,8 +2166,19 @@ scheduleTableHTML += '</tr></thead><tbody>';
                 const va = guardsFor5Set.has(a) ? 1 : 0;
                 const vb = guardsFor5Set.has(b) ? 1 : 0;
 
+                // קודם מאזן לפי כמות כללית
                 if (ca !== cb) return ca - cb;
+
+                // בלילה 02–06 – מעדיף מי שיש לו פחות לילות כאלו
+                if (shiftIdx === NIGHT_SHIFT_2_6_INDEX) {
+                  const na = nightShift2to6Count[a] || 0;
+                  const nb = nightShift2to6Count[b] || 0;
+                  if (na !== nb) return na - nb;   // 0 לילות לפני 1, לפני 2, לפני 3
+                }
+
+                // קדימות ל"צהובים"
                 if (va !== vb) return vb - va;
+
                 return a.localeCompare(b,'he');
               });
 
@@ -2242,10 +2253,20 @@ scheduleTableHTML += '</tr></thead><tbody>';
 
               if (!candidates.length) break;
 
+              // חדש – גם כאן מקטין סיכוי ללילה שלישי
               candidates.sort((a, b) => {
                 const ca = employeeShiftsCount[a] || 0;
                 const cb = employeeShiftsCount[b] || 0;
-                return ca - cb;
+
+                if (ca !== cb) return ca - cb;
+
+                if (shiftIndex === NIGHT_SHIFT_2_6_INDEX) {
+                  const na = nightShift2to6Count[a] || 0;
+                  const nb = nightShift2to6Count[b] || 0;
+                  if (na !== nb) return na - nb;
+                }
+
+                return a.localeCompare(b,'he');
               });
 
               const chosen = candidates[0];
