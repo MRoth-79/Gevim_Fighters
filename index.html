@@ -487,6 +487,45 @@
           -webkit-text-size-adjust: 100%;
           touch-action: manipulation;
         }
+
+        /* --- בועת שם מודגשת לא נחתכת בצד השמאלי במובייל --- */
+
+        /* 1) גטר אופקי בצד שמאל כדי לאפשר לבועה לגלוש גם כשהיא בקצה */
+        #results-container {
+          /* יש לך כבר overflow-x:auto; נשאיר אותו */
+          padding-left: 22px;         /* מרווח קטן בצד שמאל */
+          scroll-padding-left: 22px;  /* כדי שגלילה/מיקוד לא ייצמדו לגמרי לשוליים */
+        }
+
+        /* 2) הטבלה והתאים לא חותכים שום דבר (כבר הוגדר, נשאיר ליתר ביטחון) */
+        #schedule-table {
+          overflow: visible;
+        }
+        #schedule-table th,
+        #schedule-table td {
+          overflow: visible !important;
+          position: relative;
+          z-index: 0;
+        }
+
+        /* 3) הבועה המודגשת – שינוי מקור ההגדלה + דחיפה קלה פנימה */
+        .person.highlight-name{
+          /* כדי שההגדלה תצמח יותר פנימה (ימינה) ופחות שמאלה */
+          transform-origin: center right;            /* נקודת עיגון לימין (RTL) */
+          transform: scale(1.22) translateX(8px) !important; /* דחיפה ימינה נגד חיתוך שמאלי */
+          position: relative;
+          z-index: 9999 !important;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+          outline: 3px solid #000 !important;
+          outline-offset: 2px;
+        }
+
+        /* במידה ויש אלמנטים דביקים/שכבות — הבועה עדיין מעליהם */
+        #schedule-table .time-slot,
+        .red-assistance-shift td {
+          position: relative;
+          z-index: 1;   /* נמוך מהבועה (9999) */
+        }
       }
 
     /* =========================================
