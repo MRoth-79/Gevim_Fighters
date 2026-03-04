@@ -62,10 +62,26 @@
     }
 
     /* טאצ' נוח לשמות/כפתורים */
-    .person { 
-      min-height: 36px; 
-      padding: 6px 12px;
+    .person {
+      display: inline-flex !important; /* משנה ל-inline-flex כדי שלא יתפוס את כל רוחב התא */
+      align-items: center;            /* ממרכז אנכית */
+      justify-content: center;         /* ממרכז אופקית */
+      line-height: 1;                  /* מבטל רווח שורה עודף שדוחף את הטקסט למטה/למעלה */
+      width: fit-content; 
+      min-width: 60px;                 /* נותן נפח מינימלי למראה עגול יותר */
+      margin: 3px auto; 
+      padding: 6px 14px; 
+      border-radius: 50px;
+      font-size: 1.25em; 
+      font-weight: 600; 
+      transition: .3s; 
+      box-shadow: 0 2px 4px rgba(0,0,0,.08);
+      border: 1px solid rgba(0,0,0,.03); 
+      user-select: none; 
+      cursor: default;
+      white-space: nowrap;             /* מונע מהשם להישבר לשתי שורות בתוך העיגול */
     }
+
     button, .excel-btn, .guard-btn { 
       min-height: 44px; /* Apple HIG */
     }
@@ -632,7 +648,9 @@
       /* בועות שמות */
       .person {
         font-size: 0.95em;
-        padding: 3px 8px;
+        padding: 0 10px;    /* שומר על התיקון משלב 2 */
+        min-height: 32px;   /* גובה מעט קטן יותר שמתאים לטבלה המכווצת בנייד */
+        min-width: 60px;
       }
 
       /* בחירת שומרים – קומפקטי */
