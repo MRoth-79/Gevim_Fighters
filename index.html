@@ -837,26 +837,6 @@
         <p id="initial-message">הטעינה הראשונית תפעיל את הניתוח אוטומטית.</p>
       </div>
 
-      <!-- כרטיס מידע על שם (נפתח בלחיצה על בועה) -->
-      <div id="name-inspector" aria-live="polite" aria-hidden="true">
-        <div class="hdr">
-          <div class="title">פרטי שומר</div>
-          <button class="close-btn" type="button" id="nameInspectorClose">סגור</button>
-        </div>
-        <div class="kpis">
-          <div class="kpi">
-            <div class="num" id="niTotalShifts">0</div>
-            <div class="lbl">סה״כ משמרות</div>
-          </div>
-          <div class="kpi">
-            <div class="num" id="niAssistCount">0</div>
-            <div class="lbl">ליווי 07:40</div>
-          </div>
-        </div>
-        <div class="muted" id="niPersonName"></div>
-        <div class="list" id="niList"></div>
-      </div>
-
       <div id="link-message"><p>✅ קובץ HTML הורד בהצלחה!</p></div>
     </div>
   </div>
@@ -1454,7 +1434,7 @@
           </th>`;
       });
 
-scheduleTableHTML += '</tr></thead><tbody>';
+    scheduleTableHTML += '</tr></thead><tbody>';
 
       // שורת ליווי
       const assistValues = loadAssistArray();
@@ -1848,14 +1828,13 @@ scheduleTableHTML += '</tr></thead><tbody>';
       const content = `
         <!DOCTYPE html><html lang="he" dir="rtl"><head>
           <meta charset="UTF-8"/>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0"/>
+          <meta name="viewport" content="width=device-width, initial-scale=2.0"/>
           <title>${header}</title>
           <style>
             ${style}
             body{ padding:5px; text-align:center; overflow-x:auto; -webkit-text-size-adjust:100%; }
             html,body{ width:100%; overflow-x:hidden; }
-            .spotlight-active .person:not(.highlight-name){ opacity:.45 !important; filter:grayscale(30%); transform:scale(.98); }
-            .person.highlight-name{ opacity:1 !important; filter:none !important; transform:scale(1.35) !important; box-shadow:0 10px 25px rgba(0,0,0,0.5) !important; outline:4px solid #000 !important; outline-offset:2px; z-index:9999 !important; position:relative; }
+            /* הוסר spotlight / highlight-name כי אין אינספקטור */
             .assist-cell{ user-select:none; cursor:default; }
             #results-container{ transition:all .2s ease; width:100%; display:block; }
             #schedule-table{ margin-right:0; margin-left:auto; }
@@ -1863,27 +1842,6 @@ scheduleTableHTML += '</tr></thead><tbody>';
         </head><body>
           <h1 class="modern-main-header" style="font-size:1.5em; padding:10px;">${header}</h1>
           <div id="results-container">${exportTableHTML}</div>
-
-          <!-- כרטיס מידע על שם (גם בקובץ המיוצא) -->
-          <div id="name-inspector" aria-live="polite" aria-hidden="true">
-            <div class="hdr">
-              <div class="title">פרטי שומר</div>
-              <button class="close-btn" type="button" id="nameInspectorClose">סגור</button>
-            </div>
-            <div class="kpis">
-              <div class="kpi">
-                <div class="num" id="niTotalShifts">0</div>
-                <div class="lbl">סה״כ משמרות</div>
-              </div>
-              <div class="kpi">
-                <div class="num" id="niAssistCount">0</div>
-                <div class="lbl">ליווי 07:40</div>
-              </div>
-            </div>
-            <div class="muted" id="niPersonName"></div>
-            <div class="list" id="niList"></div>
-          </div>
-
           <script>${scripts}<\/script>
         </body></html>`;
 
