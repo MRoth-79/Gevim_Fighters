@@ -220,30 +220,35 @@
       בועות שמות – בלוק מאוחד (אין כפילות)
     ========================================== */
     /* בועת שם – גרסה גדולה יותר */
+    /* בועת שם – בלוק מאוחד */
     .person{
-      display: block !important;        
-      line-height: 1.05;                 
+      display: block !important;    /* כל שם בשורה נפרדת */
+      text-align: center;           /* ← מרכז את הטקסט בתוך הבועה */
+      line-height: 1.05;
+
       width: fit-content;
-      min-width: 72px;                   
-      margin: 6px auto;                  
-      padding: 10px 18px;               
-      border-radius: 999px;              
-      font-size: 1.35em;                 
-      font-weight: 700;                  
-      transition: .2s;
-      box-shadow: 0 3px 8px rgba(0,0,0,.10);   
+      min-width: 60px;
+      margin: 6px auto;             /* ממורכזת בתוך התא */
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 1.25em;            /* גודל בסיס לשם */
+      font-weight: 600;
+
+      box-shadow: 0 3px 8px rgba(0,0,0,.10);
       border: 1px solid rgba(0,0,0,.06);
       user-select: none;
       cursor: default;
       white-space: nowrap;
+
+      /* מניעת גלישה */
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    /* ריווח בין שמות באותה משבצת */
+    /* ריווח אנכי בין שמות באותה משבצת */
     #schedule-table td .person + .person{
-      margin-top: 8px;  /* אפשר 6–10px לפי טעם */
+      margin-top: 6px;
     }
 
     /* ריווח אנכי עקבי בין שמות */
@@ -504,22 +509,24 @@
           z-index: 1;
         }
 
-        /* הבועה עצמה – גדולה יותר ובשורה נפרדת (למקרה שגלובלי נדרס) */
+        /* הבועה עצמה – גדולה יותר, באמצע, ובשורה נפרדת */
         .person{
-          display: block !important;     /* כל שם בשורה נפרדת */
-          font-size: 1.15em;             /* שמות גדולים יותר במובייל */
+          display: block !important;       /* כל שם בשורה נפרדת */
+          text-align: center;              /* ← השם ממורכז בתוך הבועה */
+          font-size: 1.3em;               /* ← גדול יותר במובייל */
           line-height: 1.05;
-          padding: 8px 16px;             /* בועה שמנמנה יותר */
+          padding: 12px 20px;              /* בועה שמנמנה יותר */
           min-width: 66px;
-          margin: 6px auto;              /* ריווח + יישור למרכז */
+          margin: 6px auto;                /* מרכז את הבועה בתוך התא */
           border-radius: 999px;
           box-shadow: 0 3px 8px rgba(0,0,0,.10);
           border: 1px solid rgba(0,0,0,.06);
 
+          /* בטיחות נגד גלישה */
           max-width: 100%;
           overflow: hidden;
           text-overflow: ellipsis;
-          white-space: nowrap;           /* בתוך הבועה – שורה אחת + … לשמות ארוכים */
+          white-space: nowrap;             /* בתוך הבועה – שורה אחת + … לשמות ארוכים */
         }
 
         /* ריווח עקבי בין שתי בועות באותו תא */
@@ -538,9 +545,7 @@
         .person.highlight-name{
           position: relative;
           z-index: 2;
-
-          /* בלי scale (לא גדל ולא גולש) */
-          transform: none !important;
+          transform: none !important;      /* בלי scale (לא גדל ולא גולש) */
 
           /* טקסט בולט יותר */
           font-weight: 900;
