@@ -219,43 +219,47 @@
     /* =========================================
       בועות שמות – בלוק מאוחד (אין כפילות)
     ========================================== */
-    /* בועות שמות — גרסה משופרת, גדולה ומודגשת */
+
     .person{
-      display: block !important;
-      text-align: center;
-      line-height: 1.1;
+      display: block !important;     /* כל שם בשורה נפרדת */
+      text-align: center;            /* השם במרכז הבועה */
+      line-height: 1.12;
 
       width: fit-content;
       min-width: 70px;
-      margin: 6px auto;
-      padding: 10px 20px;            /* יותר "שומן" לבועה */
+      margin: 8px auto;
+      padding: 10px 20px;
       border-radius: 999px;
 
-      /* 👇 כאן השינוי החשוב */
-      font-size: 1.45em;              /* היה 1.25em — עכשיו הרבה יותר קריא */
-      font-weight: 800;               /* הדגשה ברורה */
-      letter-spacing: 0.5px;          /* מרווח אותיות עדין שמחדד */
+      /* ← גודל דינמי לכל המסכים: min | prefers | max */
+      font-size: clamp(1.25em, 1.8vw + 1em, 1.55em);
 
-      /* קונטור עדין שמבליט את השם */
+      /* הדגשה */
+      font-weight: 800;
+      letter-spacing: 0.3px;
+
+      /* קונטור/צל לטקסט לשיפור קריאות */
       -webkit-text-stroke: 0.35px rgba(0,0,0,0.30);
       text-shadow:
         0 1px 0 rgba(0,0,0,0.25),
         0 0 2px rgba(0,0,0,0.28);
 
+      /* מראה הבועה */
       box-shadow: 0 3px 8px rgba(0,0,0,.10);
       border: 1px solid rgba(0,0,0,.06);
       user-select: none;
       cursor: default;
       white-space: nowrap;
 
+      /* מניעת גלישה */
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    /* ריווח אנכי בין שתי בועות */
+    /* ריווח אנכי בין שתי בועות באותו תא – להשאיר פעם אחת בלבד בקובץ */
     #schedule-table td .person + .person{
-      margin-top: 8px;
+      margin-top: 8px;  /* אפשר 6–10px לפי טעם */
     }
 
     .person:hover{ transform:translateY(-2px); box-shadow:0 4px 8px rgba(0,0,0,.12); filter:brightness(1.05); }
@@ -552,7 +556,7 @@
 
           /* טקסט בולט יותר */
           font-weight: 900;
-          letter-spacing: 0.2px;
+          letter-spacing: 0.25px;
           -webkit-text-stroke: 0.35px rgba(0,0,0,0.35);   /* Safari/Chrome */
           text-shadow:
             0 1px 0 rgba(0,0,0,0.22),
@@ -810,21 +814,36 @@
       }
 
       /* בועות שמות – גדולות, ממורכזות, לא נחתכות */
-      .person {
-        display: block !important;
-        text-align: center;          /* ← השם במרכז הבועה */
-        font-size: 1.12em;           /* גדול יותר גם במסכים קטנים */
-        padding: 9px 14px;           /* פדינג מאוזן */
-        min-width: 60px;
-        min-height: 32px;
-        margin: 6px auto;
-        border-radius: 999px;
+      
+      .person{
+          display: block !important;
+          text-align: center;
 
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
+          /* פונט דינמי למסכים קטנים – בולט אבל לא מוגזם */
+          font-size: clamp(1.2em, 3vw + 0.95em, 1.45em);
+          font-weight: 900;
+          letter-spacing: 0.4px;
+
+          /* בועה קצת שמנמנה ונעימה לעין */
+          padding: 10px 18px;
+          min-width: 60px;
+          min-height: 32px;
+          margin: 6px auto;
+          border-radius: 999px;
+
+          /* קריאות על רקעים משתנים */
+          -webkit-text-stroke: 0.35px rgba(0,0,0,0.35);
+          text-shadow:
+            0 1px 0 rgba(0,0,0,0.25),
+            0 0 2px rgba(0,0,0,0.30);
+
+          /* מניעת גלישה */
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
 
       /* Name Inspector קטן יותר */
       #name-inspector {
