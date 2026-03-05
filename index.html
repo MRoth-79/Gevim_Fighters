@@ -295,7 +295,7 @@
     /* Highlight ללא scale — בולט בתוך התא בלבד */
     .person.highlight-name{
       position: relative;
-      z-index: 2;                     /* מעל שאר הבועות בתא */
+      z-index: 3;                     /* מעל שאר הבועות בתא */
       opacity: 1 !important;
       filter: none !important;
 
@@ -613,34 +613,42 @@
           transform: none;
         }
 
-        /* === היילייט ללא scale — בולט, נשאר בתוך התא === */
-        .person.highlight-name{
+        /* === Highlight חזק וברור — עם הגדלה (ללא חיתוך) === */
+      
+      .person.highlight-name{
           position: relative;
-          z-index: 2;
-          transform: none !important;      /* בלי scale (לא גדל ולא גולש) */
-
-          /* טקסט בולט יותר */
+          z-index: 3;
+          transform-origin: center right;            /* עוגן לימין (RTL) */
+          transform: scale(1.18) translateX(4px);    /* דחיפה קטנה ימינה נגד חיתוך */
           font-weight: 900;
           letter-spacing: 0.25px;
-          -webkit-text-stroke: 0.35px rgba(0,0,0,0.35);   /* Safari/Chrome */
+          -webkit-text-stroke: 0.6px rgba(0,0,0,0.6);
           text-shadow:
-            0 1px 0 rgba(0,0,0,0.22),
-            0 0 1px rgba(0,0,0,0.35);
+            0 1px 0 rgba(0,0,0,0.65),
+            0 0 3px rgba(0,0,0,0.6);
 
-          /* מסגרת פנימית + הילה */
-          outline: 3px solid #000 !important;
+          outline: 4px solid #000 !important;
           outline-offset: 0;
-
           box-shadow:
-            inset 0 0 0 3px rgba(0,0,0,0.18),
-            0 4px 12px rgba(0,0,0,0.25);
+            inset 0 0 0 3px rgba(255,255,255,0.85),
+            0 6px 18px rgba(0,0,0,0.35);
 
-          /* רקע בהיר עדין שמבליט את הטקסט */
           background-image: radial-gradient(
             ellipse at center,
-            rgba(255,255,255,0.60) 0%,
-            rgba(255,255,255,0.20) 100%
+            rgba(255,255,255,0.62) 0%,
+            rgba(255,255,255,0.24) 100%
           );
+          filter: contrast(1.1) saturate(1.05);
+        }
+        .person.highlight-name::after{
+          content:"";
+          position:absolute;
+          inset:-2px;
+          border-radius:inherit;
+          pointer-events:none;
+          box-shadow:
+            inset 0 0 0 2px rgba(255,255,255,0.7),
+            inset 0 0 16px rgba(0,0,0,0.16);
         }
 
         /* גלואו פנימי עדין (בתוך הבועה) */
