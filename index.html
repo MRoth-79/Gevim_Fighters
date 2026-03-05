@@ -251,10 +251,6 @@
       margin-top: 6px;
     }
 
-    /* ריווח אנכי עקבי בין שמות */
-    #schedule-table td .person + .person{
-      margin-top: 6px;
-    }
     .person:hover{ transform:translateY(-2px); box-shadow:0 4px 8px rgba(0,0,0,.12); filter:brightness(1.05); }
     .spotlight-active .person:not(.highlight-name){ opacity:var(--spotlight-dim-opacity) !important; filter:grayscale(80%); }
     @media (pointer:coarse){ .spotlight-active .person:not(.highlight-name){ opacity:calc(var(--spotlight-dim-opacity) + .10) !important; filter:none; } }
@@ -529,11 +525,6 @@
           white-space: nowrap;             /* בתוך הבועה – שורה אחת + … לשמות ארוכים */
         }
 
-        /* ריווח עקבי בין שתי בועות באותו תא */
-        #schedule-table td .person + .person{
-          margin-top: 6px;
-        }
-
         /* Spotlight רך */
         .spotlight-active .person:not(.highlight-name){
           opacity: 0.45 !important;
@@ -730,7 +721,7 @@
         max-width: 100%;
         overflow-x: hidden;
         overflow-y: auto;
-        font-size: 14px;           
+        font-size: 14px;
       }
 
       body {
@@ -791,7 +782,7 @@
         padding: 5px 3px;
       }
 
-      /* טבלת המשמרות */
+      /* טבלת המשמרות – לא חותכים גובה, נותנים לגדול */
       #results-container {
         padding: 6px;
         overflow-x: auto;
@@ -799,28 +790,28 @@
       }
       #schedule-table th,
       #schedule-table td {
-        font-size: 10px;
-        padding: 6px 3px !important;
-        height: 42px !important;
+        font-size: 11px;
+        padding: 8px 6px !important;
+        height: auto !important;     /* ← ביטול 42px הקשיח */
+        min-height: 44px;            /* מינימום נוח */
+        vertical-align: top;
       }
 
-      /* בועות שמות */
+      /* בועות שמות – גדולות, ממורכזות, לא נחתכות */
       .person {
-        font-size: 0.95em;
-        padding: 0 10px;    /* שומר על התיקון משלב 2 */
-        min-height: 32px;   /* גובה מעט קטן יותר שמתאים לטבלה המכווצת בנייד */
+        display: block !important;
+        text-align: center;          /* ← השם במרכז הבועה */
+        font-size: 1.12em;           /* גדול יותר גם במסכים קטנים */
+        padding: 9px 14px;           /* פדינג מאוזן */
         min-width: 60px;
-      }
+        min-height: 32px;
+        margin: 6px auto;
+        border-radius: 999px;
 
-      /* בחירת שומרים – קומפקטי */
-      .guard-selector-container {
-        gap: 6px;
-        padding: 8px;
-      }
-      .guard-btn {
-        font-size: 13px;
-        padding: 6px 4px;
-        min-height: 34px;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       /* Name Inspector קטן יותר */
