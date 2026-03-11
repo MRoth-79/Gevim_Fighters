@@ -370,7 +370,9 @@
     .color-יובי{background:#fff8e1;color:#ff8f00}.color-טגניה{background:#43A047;color:#fff}
     .color-ישי{background:#f3e5f5;color:#6a1b9a}.color-חסון{background:#0D47A1;color:#fff}
     .color-לישע{background:#4a704c;color:#fff}.color-עידן{background:#eceff1;color:#D81B60}
-    .color-חגי{background:#ffb991;color:#ffffff}.color-סתיו{background:#ff0;color:#00f}
+    /* ===== חגי המעודכן: אותיות בחום עם קונטור שחור ===== */
+    .color-חגי {  background: #ffb991;  color: #5d4037; -webkit-text-stroke: 1px #000000; font-weight: 800;}
+    .color-סתיו{background:#ff0;color:#00f}
     .color-אסף{background:#FFECB3;color:#c62828}.color-ליאני{background:#7E57C2;color:#fff}
     .color-נתי{background:transparent !important; box-shadow:none !important; font-size:0 !important; cursor:help}
     .color-נתי::before{content:"🐍";font-size:28px;display:inline-block;visibility:visible}
@@ -378,24 +380,37 @@
     .color-ניר{background:#f00;color:#fff}.color-חורחה{background:#fce4ec;color:#d81b60}
     .color-שלומי{background:#A1887F;color:#fff}.color-יפתח{background:#f0f4c3;color:#827717}
     .color-חברוני{background:#c8e6c9;color:#33691e}.color-ויקטור{background:#FFB300;color:#fff}
-    .color-גולן{
-      background:#D32F2F; background-image:conic-gradient(#fff 90deg,transparent 90deg 180deg,#fff 180deg 270deg,transparent 270deg);
-      background-size:10px 10px; color:#fff !important; font-weight:700;
-      text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;
+    .color-גולן {
+      background-color: #fff;
+      background-image:
+        linear-gradient(45deg, #D32F2F 25%, transparent 25%),
+        linear-gradient(-45deg, #D32F2F 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #D32F2F 75%),
+        linear-gradient(-45deg, transparent 75%, #D32F2F 75%);
+      background-size: 8px 8px; 
+      background-position: 0 0, 0 4px, 4px -4px, -4px 0px; 
+      color: #000 !important; 
+      font-weight: 800; 
+      text-shadow:
+        0 1px 0 rgba(255,255,255,0.8),
+        0 0 1px rgba(255,255,255,0.6); 
+      border: 1px solid rgba(0,0,0,0.1);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
     }
-    /* ===== הדגשה נוספת ל"גולן" (שם חד ובולט יותר, בלי שינוי צבעים) ===== */
+    /* ===== הדגשה נוספת ל"גולן" המעודכן ===== */
     .person.color-גולן,
-    .color-גולן.person{
+    .color-גולן.person {
       font-weight: 900;
       letter-spacing: 0.35px;
-      -webkit-text-stroke: 0.55px rgba(0,0,0,0.55);
+      /* ה text-stroke הוסר כדי שהטקסט השחור יהיה נקי */
+      /* text-shadow עודכן להילה לבנה לקריאות על הרקע */
       text-shadow:
-        0 1px 0 rgba(0,0,0,0.55),
-        0 0 2px rgba(0,0,0,0.6);
+        0 1px 0 rgba(255,255,255,0.7),
+        0 0 2px rgba(255,255,255,0.8);
 
       box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,0.28),
-        0 4px 12px rgba(0,0,0,0.25);
+        inset 0 0 0 2px rgba(255,255,255,0.4), /* הילה פנימית לבנה */
+        0 4px 12px rgba(0,0,0,0.2);
 
       position: relative;
       isolation: isolate;
@@ -412,15 +427,14 @@
       z-index: -1;
     }
 
-    /* אופציונלי: כש"בועת גולן" מודגשת (highlight) – עוד קצת נוכחות */
     .person.highlight-name.color-גולן{
-      -webkit-text-stroke: 0.65px rgba(0,0,0,0.65);
+      /* text-stroke הוסר */
       text-shadow:
-        0 1px 0 rgba(0,0,0,0.6),
-        0 0 3px rgba(0,0,0,0.65);
+        0 1px 0 rgba(255,255,255,0.8),
+        0 0 3px rgba(255,255,255,0.9);
       box-shadow:
-        inset 0 0 0 3px rgba(255,255,255,0.35),
-        0 6px 18px rgba(0,0,0,0.30);
+        inset 0 0 0 3px rgba(255,255,255,0.6),
+        0 6px 18px rgba(0,0,0,0.3);
     }
 
     /* =========================================
@@ -934,6 +948,51 @@
     .excel-grid td.cell.has-unknown {
       background: #fff8e1 !important;         /* צהוב עדין */
       box-shadow: inset 0 0 0 2px #ffe082;     /* הדגשה פנימית */
+    }
+
+    #schedule-table thead th {padding: 18px 10px !important; }
+
+    /* שם היום (למשל: "שני") */
+    .day-header-name {
+    display: block;
+    font-size: 1.6rem !important; /* הגדלה משמעותית */
+    font-weight: 800;
+    margin-bottom: 4px;
+    }
+
+    /* התאריך (למשל: "11/03") */
+    .date-text {
+        display: block;
+        font-size: 1.15rem !important; /* הגדלת התאריך */
+        font-weight: 500;
+        opacity: 0.9;
+    }
+
+    /* התאמה למובייל - שלא יברח מהמסך */
+    @media (max-width: 600px) {
+     .day-header-name {
+        font-size: 1.2rem !important;
+     }
+      .date-text {
+        font-size: 0.9rem !important;
+        }
+    }
+
+    /* הגדלת הכיתוב של השעות בעמודה הצידית */
+    #schedule-table .time-slot {
+        font-size: 1.3rem !important; /* הגדלה משמעותית של הפונט */
+        font-weight: 800 !important;   /* עובי חזק לקריאות מקסימלית */
+        line-height: 1.2;             /* ריווח בין השורות כשיש שבירת שורה */
+        text-align: center;
+        padding: 12px 8px !important;
+    }
+
+    /* התאמה למובייל - הגדלה מתונה יותר כדי לשמור על מקום */
+    @media (max-width: 600px) {
+        #schedule-table .time-slot {
+            font-size: 1.05rem !important;
+            padding: 8px 4px !important;
+        }
     }
 
   </style>
