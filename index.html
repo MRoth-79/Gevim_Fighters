@@ -983,9 +983,13 @@
      .day-header-name {
         font-size: 1.2rem !important;
      }
-      .date-text {
-        font-size: 0.9rem !important;
-        }
+      /* התאריך (למשל: "11/03") */
+    .date-text {
+        display: block;
+        font-size: 1.15rem !important; /* הגלת התאריך */
+        font-weight: 500;
+        opacity: 0.9;
+    	}
     }
 
     /* הגדלת הכיתוב של השעות בעמודה הצידית */
@@ -1004,6 +1008,11 @@
             padding: 8px 4px !important;
         }
     }
+    #schedule-table thead th .person {
+        color: inherit; /* שומר על צבע הטקסט המקורי של העובד */
+        -webkit-text-stroke: 0.35px rgba(0,0,0,0.30);
+        display: inline-flex !important; /* מונע מהבועה להימתח לכל רוחב הכותרת */
+      }
 
   </style>
     </head>
@@ -1444,10 +1453,14 @@
       const dayIdx  = Number(cell.dataset.dayIndex || 0);
       const dayName = cell.dataset.dayName || '';
       const iso = getIsoDatesForWeek(document.getElementById('startDate').value || '')[dayIdx];
+      
+      // הגנה: מסננים שמות של כותרות אם נלקחו בטעות בזמן עריכה
+      const filterOutHeaders = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת', 'הבא', '/'];
+      
       const names = String(cell.innerText || '')
         .split(/[,\n]/)
         .map(normalizeKey)
-        .filter(Boolean);
+        .filter(n => n && !filterOutHeaders.some(h => n.includes(h)));
 
       cell.innerHTML = renderPersonBubbles(names, dayName, 'ליווי 07:40', iso);
 
@@ -1458,6 +1471,7 @@
       placeCaretAtEnd(cell);
       syncDebounced();
     }
+    
     function setupAssistEditors() {
       document.querySelectorAll('.assist-cell[contenteditable="true"]').forEach(cell => {
         if (cell.__hasAssistEditor) return;
@@ -1657,48 +1671,53 @@
         </colgroup>
       `;
 
-      scheduleTableHTML += '<thead><tr><th scope="col">שעות / יום</th>';
+      // 1. טעינת מערך נתוני הליווי מתוך ה-localStorage
+      const assistValuesForHeader = loadAssistArray();
 
+      // שורה ראשונה ב-thead: משבצת השעות (Rowspan 2) + קוביות התאריכים בלבד
+      scheduleTableHTML += '<thead><tr><th scope="col" rowspan="2" style="vertical-align: middle; text-align: center; font-size: 1.6rem !important; font-weight: 800 !important; letter-spacing: 0.5px;">שעות / יום</th>';
+      
       dayHeaders.forEach((day, i) => {
         const isFriday   = day.includes('שישי');
         const isSaturday = day.includes('שבת');
-        const colClass =
-          (isFriday   ? ' friday-col'   : '') +
-          (isSaturday ? ' saturday-col' : '');
+        const colClass = (isFriday ? ' friday-col' : '') + (isSaturday ? ' saturday-col' : '');
+
+        scheduleTableHTML += `
+          <th scope="col" class="${colClass.trim()}" style="padding: 12px 10px !important; border-bottom: 1px solid #78909c;">
+            <span class="date-text" style="display: block; font-size: 1.25rem !important; font-weight: 700 !important; opacity: 0.95; text-align: center;">${datesForWeek[i]}</span>
+          </th>`;
+      });
+      scheduleTableHTML += '</tr>';
+
+      // שורה שנייה ב-thead: קוביות ימי השבוע ומיכלי הליווי האינטראקטיביים
+      scheduleTableHTML += '<tr>';
+      
+      dayHeaders.forEach((day, i) => {
+        const isFriday   = day.includes('שישי');
+        const isSaturday = day.includes('שבת');
+        const colClass = (isFriday ? ' friday-col' : '') + (isSaturday ? ' saturday-col' : '');
 
         const weekStart   = getWeekStartSetting();
         const displayName = (weekStart === 'mon' && day === 'יום ראשון')
           ? 'יום ראשון (הבא)'
           : day.replace('יום ', '');
 
+        const dayIso = isoDatesForWeek[i];
+        const assistBubbles = renderPersonBubbles(toNameArray(assistValuesForHeader[i]||''), day, 'ליווי 07:40', dayIso);
+
         scheduleTableHTML += `
-          <th scope="col" class="${colClass.trim()}" data-day-name="${escapeHtml(day)}">
-            <span class="day-header-name">${displayName}</span>
-            <span class="date-text">${datesForWeek[i]}</span>
+          <th scope="col" class="${colClass.trim()}" data-day-name="${escapeHtml(day)}" style="padding: 12px 10px !important; border-top: none;">
+            <span class="day-header-name" style="display: block; font-size: 1.4rem !important; font-weight: 800; text-align: center; margin-bottom: 4px;">${displayName}</span>
+            <div class="assist-cell" contenteditable="true"
+                 data-day-index="${i}" data-day-name="${escapeHtml(day)}" data-assist-type="0740"
+                 style="margin-top: 6px; font-weight: normal; display: block;" title="${escapeHtml(day)} - ליווי 07:40">
+              ${assistBubbles}
+            </div>
           </th>`;
       });
 
       scheduleTableHTML += '</tr></thead><tbody>';
 
-      // שורת ליווי
-      const assistValues = loadAssistArray();
-      scheduleTableHTML += `
-        <tr class="red-assistance-shift">
-          <td class="time-slot" title="ליווי 07:40">ליווי 07:40</td>
-          ${dayHeaders.map((day, idx)=>{
-            const dayIso = isoDatesForWeek[idx];
-            const bubbles = renderPersonBubbles(toNameArray(assistValues[idx]||''), day, 'ליווי 07:40', dayIso);
-            const isFriday   = day.includes('שישי');
-            const isSaturday = day.includes('שבת');
-            const weekendClass =
-              (isFriday   ? ' friday-col'   : '') +
-              (isSaturday ? ' saturday-col' : '');
-            return `
-              <td class="assist-cell${weekendClass}" contenteditable="true"
-                data-day-index="${idx}" data-day-name="${escapeHtml(day)}" data-assist-type="0740"
-                title="${escapeHtml(day)} - ליווי 07:40">${bubbles}</td>`;
-          }).join('')}
-        </tr>`;
 
       const allShifts = {};
       const night2to6CountByName = {};
