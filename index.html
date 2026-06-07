@@ -1,92 +1,102 @@
 <![CDATA[
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>מנתח טבלת משמרות 📅</title>
   <style>
     :root {
-      --bg: #f6f7fb;
-      --surface: #ffffff;
-      --surface-2: #f0f3f8;
-      --text: #18212f;
-      --muted: #64748b;
-      --border: #dbe2ea;
-      --border-strong: #c5d0dd;
+      --artifact-background: var(--theme-background, #ffffff);
+      --artifact-background-light: var(--theme-background-light, #f6f6f6);
+      --artifact-background-mid: var(--theme-background-mid, #f0f0f0);
+      --artifact-border-light: var(--theme-border-light, #e5e5e5);
+      --artifact-border-dark: var(--theme-border-dark, #cfcfcf);
+      --artifact-primary-highlight: var(--theme-primary-highlight, #1b1b1b);
+      --artifact-primary-hover: var(--theme-primary-hover, #404040);
+      --artifact-selected: var(--theme-selected, #ececec);
+      --artifact-text-primary: var(--theme-text-primary, #1b1b1b);
+      --artifact-text-secondary: var(--theme-text-secondary, #727272);
 
-      --accent: #0f766e;
-      --accent-text: #ffffff;
-      --accent-2: #7dd3c7;
-      --accent-2-text: #0b2d29;
+      --artifact-page: var(--artifact-background-light);
+      --artifact-surface: var(--artifact-background);
+      --artifact-surface-muted: var(--artifact-background-mid);
 
-      --success: #16a34a;
-      --warning: #ea580c;
-      --danger: #dc2626;
-      --info: #2563eb;
+      --artifact-accent: #0f766e;
+      --artifact-accent-text: #ffffff;
+      --artifact-accent-2: #99f6e4;
+      --artifact-accent-2-text: #134e4a;
 
-      --success-soft: #eaf8ef;
-      --danger-soft: #fdecec;
-      --info-soft: #eaf1ff;
+      --artifact-info: #2563eb;
+      --artifact-info-soft: #eaf1ff;
+      --artifact-success: #16a34a;
+      --artifact-success-soft: #eaf8ef;
+      --artifact-warning: #ea580c;
+      --artifact-warning-soft: #fff3e8;
+      --artifact-danger: #dc2626;
+      --artifact-danger-soft: #fdecec;
 
-      --weekend-bg: #ffd9c5;
-      --weekend-text: #7a3e1d;
+      --artifact-weekend-bg: #ffd9c5;
+      --artifact-weekend-text: #7a3e1d;
+      --artifact-weekend-hover: #ffc8af;
 
-      --unknown-bg: #fff8e1;
-      --unknown-text: #5d4037;
-      --leave-bg: #eceff1;
-      --leave-text: #607d8b;
+      --artifact-unknown-bg: #fff8e1;
+      --artifact-unknown-text: #5d4037;
+      --artifact-leave-bg: #eceff1;
+      --artifact-leave-text: #607d8b;
 
-      --guard-bg: #e0f7fa;
-      --guard-text: #006064;
-      --guard-active-bg: #fffbeb;
-      --guard-active-text: #92400e;
+      --artifact-guard-bg: #e0f7fa;
+      --artifact-guard-text: #006064;
+      --artifact-guard-active-bg: #fffbeb;
+      --artifact-guard-active-text: #92400e;
 
-      --shadow: 0 10px 24px rgba(15, 23, 42, .08);
-      --shadow-soft: 0 4px 12px rgba(15, 23, 42, .06);
-      --radius: 18px;
-      --time-col-width: 116px;
-      --table-min-width: 1120px;
+      --artifact-toolbar-fetch: linear-gradient(135deg, #00d2ff, #3a7bd5);
+      --artifact-toolbar-ai: linear-gradient(135deg, #667eea, #764ba2);
+      --artifact-toolbar-analyze: linear-gradient(135deg, #00b09b, #96c93d);
+      --artifact-toolbar-download: linear-gradient(135deg, #0ea5e9, #0284c7);
+      --artifact-toolbar-sheet: linear-gradient(135deg, #22c55e, #16a34a);
 
-      --toolbar-fetch: linear-gradient(135deg, #00d2ff, #3a7bd5);
-      --toolbar-ai: linear-gradient(135deg, #667eea, #764ba2);
-      --toolbar-analyze: linear-gradient(135deg, #00b09b, #96c93d);
-      --toolbar-download: linear-gradient(135deg, #0ea5e9, #0284c7);
-      --toolbar-sheet: linear-gradient(135deg, #22c55e, #16a34a);
+      --artifact-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      --artifact-shadow-soft: 0 4px 12px rgba(15, 23, 42, 0.06);
+      --artifact-person-dim: 0.22;
+      --artifact-radius: 18px;
+      --artifact-max-width: 1480px;
+      --artifact-time-col-width: 116px;
+      --artifact-table-min-width: 1080px;
 
-      --person-dim: .24;
-
-      --name-אמיר-bg: linear-gradient(135deg, #3b82f6, #2563eb); --name-אמיר-text: #fff;
-      --name-נמרוד-bg: linear-gradient(135deg, #22d3ee, #0891b2); --name-נמרוד-text: #082f49;
-      --name-יובי-bg: linear-gradient(135deg, #fbbf24, #f59e0b); --name-יובי-text: #422006;
-      --name-טגניה-bg: linear-gradient(135deg, #34d399, #10b981); --name-טגניה-text: #052e16;
-      --name-ישי-bg: linear-gradient(135deg, #a78bfa, #7c3aed); --name-ישי-text: #fff;
-      --name-חסון-bg: linear-gradient(135deg, #1f2937, #0f172a); --name-חסון-text: #fff;
-      --name-לישע-bg: linear-gradient(135deg, #a3e635, #65a30d); --name-לישע-text: #243a0a;
-      --name-עידן-bg: linear-gradient(135deg, #f472b6, #db2777); --name-עידן-text: #fff;
-      --name-חגי-bg: linear-gradient(135deg, #fb7185, #e11d48); --name-חגי-text: #fff;
-      --name-סתיו-bg: linear-gradient(135deg, #fde047, #facc15); --name-סתיו-text: #3f3200;
-      --name-אסף-bg: linear-gradient(135deg, #ef4444, #b91c1c); --name-אסף-text: #fff;
-      --name-ליאני-bg: linear-gradient(135deg, #7c3aed, #4c1d95); --name-ליאני-text: #fff;
-      --name-נתי-bg: linear-gradient(135deg, #38bdf8, #0284c7); --name-נתי-text: #fff;
-      --name-ערן-bg: linear-gradient(135deg, #94a3b8, #64748b); --name-ערן-text: #fff;
-      --name-מאור-bg: linear-gradient(135deg, #fef3c7, #fde68a); --name-מאור-text: #1f2937;
-      --name-ניר-bg: linear-gradient(135deg, #fb7185, #ef4444); --name-ניר-text: #fff;
-      --name-חורחה-bg: linear-gradient(135deg, #f9a8d4, #ec4899); --name-חורחה-text: #500724;
-      --name-שלומי-bg: linear-gradient(135deg, #a16207, #78350f); --name-שלומי-text: #fff;
-      --name-יפתח-bg: linear-gradient(135deg, #d9f99d, #84cc16); --name-יפתח-text: #365314;
-      --name-חברוני-bg: linear-gradient(135deg, #2dd4bf, #0f766e); --name-חברוני-text: #e6fffb;
-      --name-ויקטור-bg: linear-gradient(135deg, #fdba74, #f97316); --name-ויקטור-text: #4a1d00;
-      --name-גולן-text: #111827;
+      --person-אמיר-bg: linear-gradient(135deg, #3b82f6, #2563eb); --person-אמיר-text: #ffffff;
+      --person-נמרוד-bg: linear-gradient(135deg, #22d3ee, #0891b2); --person-נמרוד-text: #083344;
+      --person-יובי-bg: linear-gradient(135deg, #fbbf24, #f59e0b); --person-יובי-text: #422006;
+      --person-טגניה-bg: linear-gradient(135deg, #34d399, #10b981); --person-טגניה-text: #052e16;
+      --person-ישי-bg: linear-gradient(135deg, #a78bfa, #7c3aed); --person-ישי-text: #ffffff;
+      --person-חסון-bg: linear-gradient(135deg, #334155, #0f172a); --person-חסון-text: #ffffff;
+      --person-לישע-bg: linear-gradient(135deg, #a3e635, #65a30d); --person-לישע-text: #243a0a;
+      --person-עידן-bg: linear-gradient(135deg, #f472b6, #db2777); --person-עידן-text: #ffffff;
+      --person-חגי-bg: linear-gradient(135deg, #fb7185, #e11d48); --person-חגי-text: #ffffff;
+      --person-סתיו-bg: linear-gradient(135deg, #fde047, #facc15); --person-סתיו-text: #3f3200;
+      --person-אסף-bg: linear-gradient(135deg, #ef4444, #b91c1c); --person-אסף-text: #ffffff;
+      --person-ליאני-bg: linear-gradient(135deg, #8b5cf6, #4c1d95); --person-ליאני-text: #ffffff;
+      --person-נתי-bg: linear-gradient(135deg, #38bdf8, #0284c7); --person-נתי-text: #ffffff;
+      --person-ערן-bg: linear-gradient(135deg, #94a3b8, #64748b); --person-ערן-text: #ffffff;
+      --person-מאור-bg: linear-gradient(135deg, #fef3c7, #fde68a); --person-מאור-text: #1f2937;
+      --person-ניר-bg: linear-gradient(135deg, #fb7185, #ef4444); --person-ניר-text: #ffffff;
+      --person-חורחה-bg: linear-gradient(135deg, #f9a8d4, #ec4899); --person-חורחה-text: #500724;
+      --person-שלומי-bg: linear-gradient(135deg, #a16207, #78350f); --person-שלומי-text: #ffffff;
+      --person-יפתח-bg: linear-gradient(135deg, #d9f99d, #84cc16); --person-יפתח-text: #365314;
+      --person-חברוני-bg: linear-gradient(135deg, #2dd4bf, #0f766e); --person-חברוני-text: #e6fffb;
+      --person-ויקטור-bg: linear-gradient(135deg, #fdba74, #f97316); --person-ויקטור-text: #4a1d00;
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0,0,0,.08); }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0.08);
+    }
 
     html, body {
       margin: 0;
       min-height: 100dvh;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--artifact-page);
+      color: var(--artifact-text-primary);
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       -webkit-text-size-adjust: 100%;
       overflow-x: hidden;
@@ -101,29 +111,30 @@
     }
 
     .app-shell {
-      max-width: 1500px;
+      max-width: var(--artifact-max-width);
       margin: 0 auto;
     }
 
     .hero {
       width: fit-content;
-      margin: 10px auto 22px;
+      margin: 12px auto 22px;
       padding: 16px 28px;
       border-radius: 999px;
-      background: var(--surface);
-      color: var(--accent);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
+      background: var(--artifact-surface);
+      color: var(--artifact-accent);
+      border: 1px solid var(--artifact-border-light);
+      box-shadow: var(--artifact-shadow);
       font-size: clamp(1.45rem, 2vw, 2.2rem);
       font-weight: 800;
       text-align: center;
     }
 
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-soft);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
+      border: 1px solid var(--artifact-border-light);
+      border-radius: var(--artifact-radius);
+      box-shadow: var(--artifact-shadow-soft);
       padding: 16px;
       margin-bottom: 16px;
     }
@@ -132,14 +143,14 @@
       margin: 0 0 12px;
       font-size: 1.12rem;
       font-weight: 800;
-      color: var(--accent);
+      color: var(--artifact-accent);
       text-align: center;
     }
 
     .subtle {
       margin: 6px 0 0;
-      color: var(--muted);
-      font-size: .94rem;
+      color: var(--artifact-text-secondary);
+      font-size: 0.94rem;
       text-align: center;
     }
 
@@ -150,29 +161,29 @@
       align-items: center;
     }
 
-    .row.between { justify-content: space-between; }
     .row.center { justify-content: center; }
+    .row.between { justify-content: space-between; }
 
     .label-strong {
       font-weight: 800;
-      color: var(--text);
+      color: var(--artifact-text-primary);
     }
 
     .input, .select, .date-input {
-      background: var(--surface);
-      color: var(--text);
-      border: 1px solid var(--border-strong);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
+      border: 1px solid var(--artifact-border-dark);
       border-radius: 12px;
       padding: 10px 12px;
       font-size: 14px;
-      min-height: 44px;
       outline: none;
+      min-height: 44px;
       transition: border-color .18s ease, box-shadow .18s ease;
     }
 
     .input:focus, .select:focus, .date-input:focus {
-      border-color: var(--info);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, .16);
+      border-color: var(--artifact-info);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
     }
 
     .url-input {
@@ -191,7 +202,7 @@
       font-weight: 800;
       cursor: pointer;
       transition: transform .18s ease, filter .18s ease, opacity .18s ease;
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--artifact-shadow-soft);
     }
 
     .btn:hover:not(:disabled) {
@@ -204,10 +215,10 @@
       cursor: not-allowed;
     }
 
-    .btn-primary { background: var(--info); color: #fff; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-neutral { background: var(--surface-2); color: var(--text); }
+    .btn-primary { background: var(--artifact-info); color: #ffffff; }
+    .btn-success { background: var(--artifact-success); color: #ffffff; }
+    .btn-danger { background: var(--artifact-danger); color: #ffffff; }
+    .btn-neutral { background: var(--artifact-background-mid); color: var(--artifact-text-primary); }
 
     .toolbar {
       display: grid;
@@ -219,13 +230,13 @@
     .tool-btn {
       min-height: 96px;
       border-radius: 16px;
-      color: #fff;
+      color: #ffffff;
       font-weight: 900;
       font-size: 15px;
       border: none;
       cursor: pointer;
-      box-shadow: var(--shadow);
-      text-shadow: 0 1px 2px rgba(0,0,0,.22);
+      box-shadow: var(--artifact-shadow);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
       transition: transform .18s ease, filter .18s ease;
       display: flex;
       flex-direction: column;
@@ -236,25 +247,17 @@
 
     .tool-btn:hover { transform: translateY(-2px); filter: brightness(1.04); }
     .tool-btn .icon { font-size: 28px; line-height: 1; }
-    .tool-fetch { background: var(--toolbar-fetch); }
-    .tool-ai { background: var(--toolbar-ai); }
-    .tool-analyze { background: var(--toolbar-analyze); }
-    .tool-download { background: var(--toolbar-download); }
-    .tool-sheet { background: var(--toolbar-sheet); }
-
-    .inline-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 12px;
-    }
+    .tool-fetch { background: var(--artifact-toolbar-fetch); }
+    .tool-ai { background: var(--artifact-toolbar-ai); }
+    .tool-analyze { background: var(--artifact-toolbar-analyze); }
+    .tool-download { background: var(--artifact-toolbar-download); }
+    .tool-sheet { background: var(--artifact-toolbar-sheet); }
 
     .grid-wrap {
       overflow: auto;
       border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--surface);
+      border: 1px solid var(--artifact-border-light);
+      background: var(--artifact-surface);
     }
 
     table {
@@ -266,27 +269,28 @@
     .excel-grid {
       min-width: 780px;
       table-layout: fixed;
-      background: var(--surface);
+      background: var(--artifact-surface);
     }
 
     .excel-grid thead th {
       position: sticky;
       top: 0;
       z-index: 2;
-      background: var(--accent);
-      color: var(--accent-text);
+      background: var(--artifact-accent);
+      color: var(--artifact-accent-text);
       padding: 10px 8px;
       font-size: .94rem;
-      border-bottom: 2px solid var(--border-strong);
+      border-bottom: 2px solid var(--artifact-border-dark);
     }
 
-    .excel-grid th, .excel-grid td {
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+    .excel-grid th,
+    .excel-grid td {
+      border-right: 1px solid var(--artifact-border-light);
+      border-bottom: 1px solid var(--artifact-border-light);
       padding: 8px;
       vertical-align: middle;
-      background: var(--surface);
-      color: var(--text);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
     }
 
     .excel-grid tbody td:first-child {
@@ -294,6 +298,7 @@
       inset-inline-start: 0;
       z-index: 1;
       background: #f8fbff;
+      color: var(--artifact-text-primary);
       font-weight: 800;
       width: 120px;
       min-width: 120px;
@@ -309,19 +314,19 @@
     }
 
     .excel-grid td.cell:focus {
-      background: var(--info-soft);
+      background: var(--artifact-info-soft);
       color: #12306b;
-      box-shadow: inset 0 0 0 2px rgba(37, 99, 235, .26);
+      box-shadow: inset 0 0 0 2px rgba(37, 99, 235, 0.26);
     }
 
     .excel-grid td.cell.has-unknown {
-      background: var(--unknown-bg);
-      color: var(--unknown-text);
+      background: var(--artifact-unknown-bg);
+      color: var(--artifact-unknown-text);
     }
 
     .excel-grid td.cell.on-leave-cell {
-      background: var(--leave-bg);
-      color: var(--leave-text);
+      background: var(--artifact-leave-bg);
+      color: var(--artifact-leave-text);
     }
 
     .guard-grid {
@@ -333,9 +338,9 @@
     .guard-btn {
       min-height: 44px;
       border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--guard-bg);
-      color: var(--guard-text);
+      border: 1px solid var(--artifact-border-light);
+      background: var(--artifact-guard-bg);
+      color: var(--artifact-guard-text);
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
@@ -343,9 +348,9 @@
     }
 
     .guard-btn.active {
-      background: var(--guard-active-bg);
-      color: var(--guard-active-text);
-      box-shadow: 0 0 0 3px rgba(252, 211, 77, .22);
+      background: var(--artifact-guard-active-bg);
+      color: var(--artifact-guard-active-text);
+      box-shadow: 0 0 0 3px rgba(252, 211, 77, 0.22);
     }
 
     .collapsible {
@@ -360,10 +365,12 @@
       margin-top: 12px;
     }
 
-    .req-label, .req-control {
+    .req-label,
+    .req-control {
       border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--surface);
+      border: 1px solid var(--artifact-border-light);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
       padding: 10px;
     }
 
@@ -387,16 +394,16 @@
       min-height: 36px;
       padding: 6px 10px;
       border-radius: 10px;
-      border: 1px solid var(--border-strong);
-      background: var(--surface);
-      color: var(--text);
+      border: 1px solid var(--artifact-border-dark);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
       cursor: pointer;
       font-weight: 800;
       user-select: none;
     }
 
     .req-opt.active {
-      background: var(--success-soft);
+      background: var(--artifact-success-soft);
       color: #1b5e20;
     }
 
@@ -413,12 +420,13 @@
       gap: 12px;
       padding: 10px;
       border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--surface);
+      border: 1px solid var(--artifact-border-light);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
     }
 
     .muted {
-      color: var(--muted);
+      color: var(--artifact-text-secondary);
       font-size: .92rem;
     }
 
@@ -429,23 +437,12 @@
       padding: 12px 14px;
       text-align: center;
       font-weight: 800;
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--artifact-shadow-soft);
     }
 
-    .status-banner.success { background: var(--success); color: #fff; }
-    .status-banner.warning { background: var(--warning); color: #fff; }
-    .status-banner.error { background: var(--danger); color: #fff; }
-
-    .validation-panel {
-      margin-top: 12px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: var(--info-soft);
-      color: #174095;
-      font-size: .94rem;
-      text-align: center;
-      line-height: 1.5;
-    }
+    .status-banner.success { background: var(--artifact-success); color: #ffffff; }
+    .status-banner.warning { background: var(--artifact-warning); color: #ffffff; }
+    .status-banner.error { background: var(--artifact-danger); color: #ffffff; }
 
     .results-shell {
       overflow-x: auto;
@@ -456,57 +453,52 @@
 
     .results-shell h3 {
       margin: 18px 0 10px;
-      color: var(--accent);
+      color: var(--artifact-accent);
     }
 
     .results-info {
-      color: var(--accent);
+      color: var(--artifact-accent);
       font-weight: 700;
       margin-bottom: 14px;
     }
 
     .schedule-table {
       width: 100%;
-      min-width: var(--table-min-width);
+      min-width: var(--artifact-table-min-width);
       table-layout: fixed;
       border-collapse: collapse;
-      background: var(--surface);
-      color: var(--text);
-      border: 2px solid var(--border-strong);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
+      border: 2px solid var(--artifact-border-dark);
       border-radius: 14px;
       overflow: hidden;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .schedule-table thead {
-      background: var(--accent);
-      color: var(--accent-text);
-    }
-
-    .schedule-table thead th {
-      position: sticky;
-      top: 0;
-      z-index: 2;
+      box-shadow: var(--artifact-shadow-soft);
     }
 
     .schedule-table col.time-col {
-      width: var(--time-col-width);
+      width: var(--artifact-time-col-width);
     }
 
-    .schedule-table th, .schedule-table td {
-      border: 1px solid var(--border-strong);
+    .schedule-table th,
+    .schedule-table td {
+      border: 1px solid var(--artifact-border-dark);
       padding: 8px 6px;
       min-height: 52px;
       vertical-align: top;
       overflow: hidden;
     }
 
-    .schedule-table th {
-      text-align: center;
+    .schedule-table thead {
+      background: var(--artifact-accent);
+      color: var(--artifact-accent-text);
     }
 
     .schedule-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
       padding: 6px 6px;
+      text-align: center;
     }
 
     .schedule-table thead th[rowspan="2"] {
@@ -514,55 +506,53 @@
       line-height: 1.1;
       white-space: normal;
       vertical-align: middle;
-      width: var(--time-col-width);
-      min-width: var(--time-col-width);
-      max-width: var(--time-col-width);
+      width: var(--artifact-time-col-width);
     }
 
     .schedule-table td {
-      background: var(--surface);
-      color: var(--text);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
       white-space: normal;
     }
 
     .schedule-table td.editing-cell {
       background: #fff8e1 !important;
       color: #5d4037 !important;
-      outline: 2px dashed var(--warning);
+      outline: 2px dashed var(--artifact-warning);
       outline-offset: -2px;
     }
 
     .time-slot {
-      background: var(--accent-2) !important;
-      color: var(--accent-2-text) !important;
+      background: var(--artifact-accent-2) !important;
+      color: var(--artifact-accent-2-text) !important;
       font-size: .96rem;
       font-weight: 800;
       text-align: center;
       vertical-align: middle !important;
       line-height: 1.1;
       direction: ltr;
-      width: var(--time-col-width);
-      min-width: var(--time-col-width);
-      max-width: var(--time-col-width);
-      padding: 8px 4px !important;
+      width: var(--artifact-time-col-width);
+      min-width: var(--artifact-time-col-width);
+      max-width: var(--artifact-time-col-width);
+      padding: 10px 4px !important;
     }
 
-    .time-slot .slot-wrap {
+    .time-slot-wrap {
       display: flex;
       flex-direction: column;
-      gap: 4px;
       align-items: center;
-      justify-content: center;
+      gap: 5px;
     }
 
-    .time-slot .slot-icon {
-      font-size: 1.14rem;
+    .time-slot-icon {
+      font-size: 1.15rem;
       line-height: 1;
     }
 
-    .friday-col, .saturday-col {
-      background: var(--weekend-bg) !important;
-      color: var(--weekend-text) !important;
+    .friday-col,
+    .saturday-col {
+      background: var(--artifact-weekend-bg) !important;
+      color: var(--artifact-weekend-text) !important;
     }
 
     .day-header-name {
@@ -575,9 +565,9 @@
 
     .date-text {
       display: block;
-      font-size: .9rem;
+      font-size: 0.9rem;
       font-weight: 700;
-      opacity: .96;
+      opacity: 0.96;
       line-height: 1.05;
     }
 
@@ -596,41 +586,42 @@
       line-height: 1.08;
       font-weight: 800;
       letter-spacing: .18px;
-      border: 1px solid rgba(0,0,0,.06);
-      box-shadow: 0 2px 6px rgba(0,0,0,.10);
-      text-shadow: 0 1px 0 rgba(0,0,0,.10);
-      -webkit-text-stroke: .1px rgba(0,0,0,.12);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
       user-select: none;
       cursor: default;
-      background: var(--surface-2);
-      color: var(--text);
-      transition: transform .12s ease, opacity .12s ease, box-shadow .12s ease, filter .12s ease;
-    }
-
-    .spotlight-active .person:not(.highlight-name) {
-      opacity: var(--person-dim);
-      filter: grayscale(.35) saturate(.7);
+      background: var(--artifact-surface-muted);
+      color: var(--artifact-text-primary);
+      transition: opacity .14s ease, transform .14s ease, filter .14s ease, box-shadow .14s ease;
     }
 
     .person.highlight-name {
-      transform: scale(1.03);
-      box-shadow:
-        0 0 0 3px rgba(255,255,255,.85),
-        0 0 0 6px rgba(37, 99, 235, .22),
-        0 10px 20px rgba(15,23,42,.18);
+      position: relative;
+      z-index: 2;
       opacity: 1 !important;
       filter: none !important;
+      transform: scale(1.03);
+      box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.82),
+        0 0 0 6px rgba(15, 118, 110, 0.24),
+        0 10px 18px rgba(0, 0, 0, 0.18);
+    }
+
+    .spotlight-active .person:not(.highlight-name) {
+      opacity: var(--artifact-person-dim);
+      filter: grayscale(55%) saturate(75%);
     }
 
     .person.unknown-name {
-      background: var(--unknown-bg);
-      color: var(--unknown-text);
+      background: var(--artifact-unknown-bg);
+      color: var(--artifact-unknown-text);
       border-style: dashed;
     }
 
     .person.on-leave {
-      background: var(--leave-bg) !important;
-      color: var(--leave-text) !important;
+      background: var(--artifact-leave-bg) !important;
+      color: var(--artifact-leave-text) !important;
       border-style: dashed !important;
       text-decoration: line-through;
     }
@@ -640,31 +631,31 @@
       font-size: .9em;
     }
 
-    .person.color-אמיר { background: var(--name-אמיר-bg); color: var(--name-אמיר-text); }
-    .person.color-נמרוד { background: var(--name-נמרוד-bg); color: var(--name-נמרוד-text); }
-    .person.color-יובי { background: var(--name-יובי-bg); color: var(--name-יובי-text); }
-    .person.color-טגניה { background: var(--name-טגניה-bg); color: var(--name-טגניה-text); }
-    .person.color-ישי { background: var(--name-ישי-bg); color: var(--name-ישי-text); }
-    .person.color-חסון { background: var(--name-חסון-bg); color: var(--name-חסון-text); }
-    .person.color-לישע { background: var(--name-לישע-bg); color: var(--name-לישע-text); }
-    .person.color-עידן { background: var(--name-עידן-bg); color: var(--name-עידן-text); }
-    .person.color-חגי { background: var(--name-חגי-bg); color: var(--name-חגי-text); }
-    .person.color-סתיו { background: var(--name-סתיו-bg); color: var(--name-סתיו-text); }
-    .person.color-אסף { background: var(--name-אסף-bg); color: var(--name-אסף-text); }
-    .person.color-ליאני { background: var(--name-ליאני-bg); color: var(--name-ליאני-text); }
-    .person.color-נתי { background: var(--name-נתי-bg); color: var(--name-נתי-text); }
-    .person.color-ערן { background: var(--name-ערן-bg); color: var(--name-ערן-text); }
-    .person.color-מאור { background: var(--name-מאור-bg); color: var(--name-מאור-text); }
-    .person.color-ניר { background: var(--name-ניר-bg); color: var(--name-ניר-text); }
-    .person.color-חורחה { background: var(--name-חורחה-bg); color: var(--name-חורחה-text); }
-    .person.color-שלומי { background: var(--name-שלומי-bg); color: var(--name-שלומי-text); }
-    .person.color-יפתח { background: var(--name-יפתח-bg); color: var(--name-יפתח-text); }
-    .person.color-חברוני { background: var(--name-חברוני-bg); color: var(--name-חברוני-text); }
-    .person.color-ויקטור { background: var(--name-ויקטור-bg); color: var(--name-ויקטור-text); }
+    .person.color-אמיר { background: var(--person-אמיר-bg); color: var(--person-אמיר-text); }
+    .person.color-נמרוד { background: var(--person-נמרוד-bg); color: var(--person-נמרוד-text); }
+    .person.color-יובי { background: var(--person-יובי-bg); color: var(--person-יובי-text); }
+    .person.color-טגניה { background: var(--person-טגניה-bg); color: var(--person-טגניה-text); }
+    .person.color-ישי { background: var(--person-ישי-bg); color: var(--person-ישי-text); }
+    .person.color-חסון { background: var(--person-חסון-bg); color: var(--person-חסון-text); }
+    .person.color-לישע { background: var(--person-לישע-bg); color: var(--person-לישע-text); }
+    .person.color-עידן { background: var(--person-עידן-bg); color: var(--person-עידן-text); }
+    .person.color-חגי { background: var(--person-חגי-bg); color: var(--person-חגי-text); }
+    .person.color-סתיו { background: var(--person-סתיו-bg); color: var(--person-סתיו-text); }
+    .person.color-אסף { background: var(--person-אסף-bg); color: var(--person-אסף-text); }
+    .person.color-ליאני { background: var(--person-ליאני-bg); color: var(--person-ליאני-text); }
+    .person.color-נתי { background: var(--person-נתי-bg); color: var(--person-נתי-text); }
+    .person.color-ערן { background: var(--person-ערן-bg); color: var(--person-ערן-text); }
+    .person.color-מאור { background: var(--person-מאור-bg); color: var(--person-מאור-text); }
+    .person.color-ניר { background: var(--person-ניר-bg); color: var(--person-ניר-text); }
+    .person.color-חורחה { background: var(--person-חורחה-bg); color: var(--person-חורחה-text); }
+    .person.color-שלומי { background: var(--person-שלומי-bg); color: var(--person-שלומי-text); }
+    .person.color-יפתח { background: var(--person-יפתח-bg); color: var(--person-יפתח-text); }
+    .person.color-חברוני { background: var(--person-חברוני-bg); color: var(--person-חברוני-text); }
+    .person.color-ויקטור { background: var(--person-ויקטור-bg); color: var(--person-ויקטור-text); }
 
     .person.color-גולן {
-      background-color: var(--surface);
-      color: var(--name-גולן-text);
+      background-color: var(--artifact-surface);
+      color: #111827;
       background-image:
         linear-gradient(45deg, #d32f2f 25%, transparent 25%),
         linear-gradient(-45deg, #d32f2f 25%, transparent 25%),
@@ -677,71 +668,50 @@
     .warning-text {
       display: inline-block;
       margin-top: 4px;
-      color: var(--danger);
+      color: var(--artifact-danger);
       font-weight: 800;
     }
 
-    .summary-table, .exceptions-table {
+    .summary-table,
+    .exceptions-table {
       width: min(1200px, 100%);
       margin: 24px auto;
       border-collapse: separate;
       border-spacing: 0;
-      background: var(--surface);
-      color: var(--text);
-      border: 1px solid var(--border);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
+      border: 1px solid var(--artifact-border-light);
       border-radius: 14px;
       overflow: hidden;
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--artifact-shadow-soft);
     }
 
     .summary-table thead {
-      background: var(--accent);
-      color: #fff;
+      background: var(--artifact-accent);
+      color: #ffffff;
     }
 
     .exceptions-table thead {
-      background: var(--danger);
-      color: #fff;
+      background: var(--artifact-danger);
+      color: #ffffff;
     }
 
-    .summary-table th, .summary-table td,
-    .exceptions-table th, .exceptions-table td {
+    .summary-table th,
+    .summary-table td,
+    .exceptions-table th,
+    .exceptions-table td {
       padding: 14px 10px;
       text-align: center;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--artifact-border-light);
     }
 
-    .shifts-5-count {
-      background: var(--info-soft);
-      color: #12306b;
-      font-weight: 800;
-    }
-
-    .shifts-4-count {
-      background: var(--success-soft);
-      color: #1b5e20;
-      font-weight: 800;
-    }
-
-    .shifts-3-count {
-      background: #e8f5e9;
-      color: #1b5e20;
-      font-weight: 800;
-    }
-
-    .low-shifts {
-      background: var(--danger-soft);
-      color: #8f1f1f;
-      font-weight: 800;
-    }
-
-    .night-limit-fail-row {
-      background: var(--danger-soft);
-      color: #8f1f1f;
-    }
-
-    .night-limit-ok { color: var(--success); font-weight: 800; }
-    .night-limit-fail { color: var(--danger); font-weight: 800; }
+    .shifts-5-count { background: var(--artifact-info-soft); color: #12306b; font-weight: 800; }
+    .shifts-4-count { background: var(--artifact-success-soft); color: #1b5e20; font-weight: 800; }
+    .shifts-3-count { background: #e8f5e9; color: #1b5e20; font-weight: 800; }
+    .low-shifts { background: var(--artifact-danger-soft); color: #8f1f1f; font-weight: 800; }
+    .night-limit-fail-row { background: var(--artifact-danger-soft); color: #8f1f1f; }
+    .night-limit-ok { color: var(--artifact-success); font-weight: 800; }
+    .night-limit-fail { color: var(--artifact-danger); font-weight: 800; }
 
     @media (max-width: 1100px) {
       .toolbar { grid-template-columns: repeat(2, minmax(140px, 1fr)); }
@@ -765,6 +735,54 @@
       .person {
         font-size: 1.18em;
         padding: 9px 13px;
+      }
+      .spotlight-active .person:not(.highlight-name) {
+        opacity: .45 !important;
+        filter: grayscale(35%);
+      }
+    }
+
+    @media print {
+      body {
+        margin: 0;
+        padding: 0.4in 0.6in;
+        background: #fff;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .app-shell, .card, .results-shell, main {
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+
+      section, .card, .hero {
+        break-inside: avoid;
+        margin-bottom: 20px !important;
+      }
+
+      .card {
+        padding: 18px !important;
+        box-shadow: none !important;
+        border: 1px solid rgba(0,0,0,0.08);
+      }
+
+      .toolbar, .row {
+        gap: 10px !important;
+        margin-bottom: 20px !important;
+      }
+
+      table, thead, .list {
+        break-inside: avoid;
+      }
+
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      button, [role="button"], .interactive-only {
+        display: none !important;
       }
     }
   </style>
@@ -791,18 +809,10 @@
           </div>
         </div>
 
-        <div class="inline-actions">
-          <button id="undoButton" type="button" class="btn btn-neutral">↶ Undo</button>
-          <button id="redoButton" type="button" class="btn btn-neutral">↷ Redo</button>
-          <button id="resetDraftButton" type="button" class="btn btn-neutral">מחק טיוטה שמורה</button>
-        </div>
-
         <div class="grid-wrap" style="margin-top:12px;">
           <table id="excel-grid" class="excel-grid" dir="rtl"></table>
         </div>
-
-        <div id="validationPanel" class="validation-panel" style="display:none;"></div>
-        <div class="subtle">ליווי הוסר מהמערכת כרגע. הבלטת שמות חזרה, בלי סימון עמודה או שורה.</div>
+        <div class="subtle">טיפ: אפשר להדביק טבלה מלאה מאקסל/גוגל שיטס, ופסיק או Enter מפרידים בין שמות בתוך תא.</div>
       </div>
 
       <div class="card">
@@ -899,8 +909,7 @@
             WEEK_START: "weekStart",
             SHEET_URL: "googleSheetUrl",
             SHIFT_REQ_SCOPE_WEEK: "shiftReqScopeWeek",
-            LEAVE_SCOPE_WEEK: "leaveScopeWeek",
-            DRAFT: "shiftSchedulerDraftV6"
+            LEAVE_SCOPE_WEEK: "leaveScopeWeek"
           },
           SHIFT_INDEX: Object.freeze({
             NIGHT_2_6: 0,
@@ -910,6 +919,7 @@
             EVENING_18_22: 4,
             NIGHT_22_2: 5
           }),
+          HEB_DAYS: ["יום ראשון","יום שני","יום שלישי","יום רביעי","יום חמישי","יום שישי","יום שבת"],
           TIME_SLOTS: [
             "02:00 - 06:00 (Night)",
             "06:00 - 10:00",
@@ -918,8 +928,7 @@
             "18:00 - 22:00",
             "22:00 - 02:00 (Night)"
           ],
-          SLOT_ICONS: ["🦉","☕","🍔","😎","🍕","😴"],
-          HEB_DAYS: ["יום ראשון","יום שני","יום שלישי","יום רביעי","יום חמישי","יום שישי","יום שבת"],
+          SLOT_ICONS: ["🦉", "🥱", "☕", "🍔", "😵‍💫", "😴"],
           COLOR_MAP: {
             "אמיר":"color-אמיר","נמרוד":"color-נמרוד","יובי":"color-יובי","טגניה":"color-טגניה",
             "ישי":"color-ישי","גולן":"color-גולן","חסון":"color-חסון","לישע":"color-לישע",
@@ -934,9 +943,7 @@
           expectedDays: [],
           excelMatrix: [],
           lockedName: null,
-          statusTimer: null,
-          history: [],
-          future: []
+          statusTimer: null
         },
 
         el: {},
@@ -949,11 +956,8 @@
           this.renderGuardButtons();
           this.buildShiftReqPanel();
           this.buildVacationsPanel();
-          this.restoreDraft();
           this.bindEvents();
           this.updateStartDateLabelBySetting();
-          this.updateValidationPanel();
-          this.updateUndoRedoButtons();
         },
 
         cacheDom() {
@@ -965,8 +969,10 @@
             "weekStartSelect","shiftReqGrid","openVacationsBtn","vacationsPanel",
             "leaveScopeWeek","leaveNameInput","leaveFromInput","leaveToInput",
             "leaveAddBtn","leaveClearBtn","vacationsList","statusBanner","resultsContainer",
-            "excel-grid","validationPanel","undoButton","redoButton","resetDraftButton"
-          ].forEach(id => this.el[id] = document.getElementById(id));
+            "excel-grid"
+          ].forEach(id => {
+            this.el[id] = document.getElementById(id);
+          });
         },
 
         bindEvents() {
@@ -980,22 +986,16 @@
           this.el.openSheetButton.addEventListener("click", () => window.open(this.C.SHEET_URL, "_blank", "noopener,noreferrer"));
           this.el.startDate.addEventListener("change", () => {
             this.updateStartDateLabelBySetting();
-            this.saveDraft();
             this.refreshAfterDataChange();
           });
-          this.el.undoButton.addEventListener("click", () => this.undo());
-          this.el.redoButton.addEventListener("click", () => this.redo());
-          this.el.resetDraftButton.addEventListener("click", () => this.resetDraft());
 
           document.addEventListener("mouseover", e => {
             const bubble = e.target.closest(".person");
-            if (!bubble || this.state.lockedName) return;
-            this.updateHighlights(bubble.textContent.trim());
+            if (bubble && !this.state.lockedName) this.updateHighlights(bubble.textContent.trim());
           }, { passive: true });
 
           document.addEventListener("mouseout", e => {
-            if (!e.target.closest(".person") || this.state.lockedName) return;
-            this.updateHighlights(null);
+            if (e.target.closest(".person") && !this.state.lockedName) this.updateHighlights(null);
           }, { passive: true });
 
           document.addEventListener("click", e => {
@@ -1018,15 +1018,7 @@
               this.state.lockedName = null;
               this.updateHighlights(null);
             }
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !e.shiftKey) {
-              e.preventDefault();
-              this.undo();
-            }
-            if (((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") || ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "z")) {
-              e.preventDefault();
-              this.redo();
-            }
-          }, { passive: false });
+          }, { passive: true });
 
           document.addEventListener("beforeinput", e => {
             if (e.inputType === "insertParagraph" && e.target?.isContentEditable) {
@@ -1073,54 +1065,12 @@
           return classes.filter(Boolean).join(" ");
         },
 
-        deepClone(v) {
-          return JSON.parse(JSON.stringify(v));
-        },
-
-        safeGet(key) {
-          try { return localStorage.getItem(key); } catch { return null; }
-        },
-
-        safeSet(key, value) {
-          try { localStorage.setItem(key, value); } catch {}
-        },
-
-        safeRemove(key) {
-          try { localStorage.removeItem(key); } catch {}
-        },
-
-        pushHistorySnapshot() {
-          this.state.history.push(this.deepClone(this.state.excelMatrix));
-          if (this.state.history.length > 100) this.state.history.shift();
-          this.state.future = [];
-          this.updateUndoRedoButtons();
-        },
-
-        updateUndoRedoButtons() {
-          this.el.undoButton.disabled = this.state.history.length === 0;
-          this.el.redoButton.disabled = this.state.future.length === 0;
-        },
-
-        undo() {
-          if (!this.state.history.length) return;
-          this.state.future.push(this.deepClone(this.state.excelMatrix));
-          this.state.excelMatrix = this.state.history.pop();
-          this.ExcelGrid.render();
-          this.refreshAfterDataChange();
-          this.updateUndoRedoButtons();
-        },
-
-        redo() {
-          if (!this.state.future.length) return;
-          this.state.history.push(this.deepClone(this.state.excelMatrix));
-          this.state.excelMatrix = this.state.future.pop();
-          this.ExcelGrid.render();
-          this.refreshAfterDataChange();
-          this.updateUndoRedoButtons();
-        },
-
         getWeekStartSetting() {
-          return this.safeGet(this.C.STORAGE.WEEK_START) === "sun" ? "sun" : "mon";
+          try {
+            return localStorage.getItem(this.C.STORAGE.WEEK_START) === "sun" ? "sun" : "mon";
+          } catch {
+            return "mon";
+          }
         },
 
         computeExpectedDays(weekStart) {
@@ -1136,8 +1086,11 @@
           const daysToNext = weekStart === "mon" ? ((8 - dow) % 7 || 7) : ((7 - dow) % 7 || 7);
           today.setDate(today.getDate() + daysToNext);
           this.el.startDate.value = today.toISOString().slice(0, 10);
-          const savedUrl = this.safeGet(this.C.STORAGE.SHEET_URL);
-          if (savedUrl) this.el.googleSheetUrl.value = savedUrl;
+
+          try {
+            const savedUrl = localStorage.getItem(this.C.STORAGE.SHEET_URL);
+            if (savedUrl) this.el.googleSheetUrl.value = savedUrl;
+          } catch {}
         },
 
         getHebDayNameFromIso(isoDate) {
@@ -1225,6 +1178,7 @@
             }
             matrix.push(rowData);
           }
+
           return { days: this.state.expectedDays, data: matrix };
         },
 
@@ -1250,7 +1204,7 @@
         loadShiftRequirements() {
           const defaults = { 0:1, 1:1, 2:1, 3:1, 4:1, 5:1 };
           try {
-            const raw = this.safeGet(this.getShiftReqStorageKey());
+            const raw = localStorage.getItem(this.getShiftReqStorageKey());
             const parsed = raw ? JSON.parse(raw) : null;
             return parsed && typeof parsed === "object" ? { ...defaults, ...parsed } : defaults;
           } catch {
@@ -1259,8 +1213,7 @@
         },
 
         saveShiftRequirements(map) {
-          this.safeSet(this.getShiftReqStorageKey(), JSON.stringify(map));
-          this.saveDraft();
+          try { localStorage.setItem(this.getShiftReqStorageKey(), JSON.stringify(map)); } catch {}
         },
 
         getRequiredPerShift(index) {
@@ -1275,7 +1228,7 @@
 
         loadVacationsMap() {
           try {
-            const raw = this.safeGet(this.getVacationStorageKey());
+            const raw = localStorage.getItem(this.getVacationStorageKey());
             const parsed = raw ? JSON.parse(raw) : null;
             return parsed && typeof parsed === "object" ? parsed : {};
           } catch {
@@ -1284,8 +1237,7 @@
         },
 
         saveVacationsMap(map) {
-          this.safeSet(this.getVacationStorageKey(), JSON.stringify(map));
-          this.saveDraft();
+          try { localStorage.setItem(this.getVacationStorageKey(), JSON.stringify(map)); } catch {}
         },
 
         isOnVacation(name, isoDate) {
@@ -1332,147 +1284,150 @@
           }).join("");
         },
 
-        updateHighlights(name) {
-          const root = this.el.resultsContainer;
-          if (!root) return;
-          if (name) root.classList.add("spotlight-active");
-          else root.classList.remove("spotlight-active");
-          root.querySelectorAll(".person").forEach(el => {
-            el.classList.toggle("highlight-name", el.textContent.trim() === name);
-          });
+        renderTimeSlotCell(rowIdx, timeDisplay) {
+          const icon = this.C.SLOT_ICONS[rowIdx] || "😂";
+          return `
+            <th scope="row" class="time-slot">
+              <div class="time-slot-wrap">
+                <span class="time-slot-icon">${icon}</span>
+                <span>${timeDisplay}</span>
+              </div>
+            </th>
+          `;
         },
 
-        getValidationSummary() {
-          const matrix = this.state.excelMatrix;
-          const unknownNames = new Set();
-          const emptyCells = [];
-          const allKnownNames = new Set(Object.keys(this.C.COLOR_MAP).map(name => name.replace(/_/g, " ")));
+        renderScheduleHeader(days, datesForWeek) {
+          let html = `<colgroup><col class="time-col">${days.map(() => `<col>`).join("")}</colgroup>`;
+          html += `<thead><tr><th scope="col" rowspan="2">שעות / יום</th>`;
 
-          matrix.forEach((row, rowIndex) => {
-            row.forEach((cell, colIndex) => {
-              const names = this.toNameArray(cell);
-              if (!names.length) emptyCells.push({ rowIndex, colIndex });
-              names.forEach(name => {
-                if (!allKnownNames.has(name)) unknownNames.add(name);
-              });
-            });
+          days.forEach((day, idx) => {
+            const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
+            html += `<th scope="col" class="${weekendClass}"><span class="date-text">${datesForWeek[idx]}</span></th>`;
           });
 
-          return {
-            unknownNames: Array.from(unknownNames),
-            emptyCellsCount: emptyCells.length
-          };
+          html += `</tr><tr>`;
+
+          days.forEach(day => {
+            const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
+            const dayDisplay = this.getWeekStartSetting() === "mon" && day === "יום ראשון"
+              ? "יום ראשון"
+              : day.replace("יום ", "");
+            html += `<th scope="col" class="${weekendClass}"><span class="day-header-name">${this.escapeHtml(dayDisplay)}</span></th>`;
+          });
+
+          html += `</tr></thead>`;
+          return html;
         },
 
-        updateValidationPanel() {
-          const summary = this.getValidationSummary();
-          const messages = [];
-          if (summary.unknownNames.length) messages.push(`שמות לא מזוהים: ${summary.unknownNames.join(", ")}`);
-          if (summary.emptyCellsCount) messages.push(`תאים ריקים בטבלת הקלט: ${summary.emptyCellsCount}`);
+        renderScheduleRow(row, rowIdx, days, isoDates) {
+          const timeFull = this.C.TIME_SLOTS[rowIdx];
+          const timeDisplay = timeFull.replace(" (Night)", "").replace(" - ", "<br>");
+          const required = this.getRequiredPerShift(rowIdx);
+          let html = `<tr>${this.renderTimeSlotCell(rowIdx, timeDisplay)}`;
 
-          if (!messages.length) {
-            this.el.validationPanel.style.display = "none";
-            this.el.validationPanel.textContent = "";
+          row.forEach((cell, colIdx) => {
+            const day = days[colIdx];
+            const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
+            const count = names.length;
+            const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
+            const bubbles = this.renderPersonBubbles(names, day, timeFull.replace(" (Night)", ""), isoDates[colIdx]);
+
+            let warning = "";
+            let extraClass = "";
+
+            if (count === 0) {
+              warning = `<span class="warning-text">משבצת ריקה</span>`;
+              extraClass = "needs-selection";
+            } else if (count < required) {
+              warning = `<span class="warning-text">חסר שומר נוסף (נדרש ${required})</span>`;
+              extraClass = "needs-selection";
+            } else if (count > required) {
+              warning = `<span class="warning-text">עודף עובדים (${count}). נדרש: ${required}</span>`;
+              extraClass = "needs-selection";
+            }
+
+            const tdClass = this.cx(weekendClass, extraClass);
+            html += `<td class="${tdClass}" data-day="${this.escapeHtml(day)}" data-time="${this.escapeHtml(timeFull.replace(" (Night)", ""))}" contenteditable="true">${bubbles}${warning}</td>`;
+          });
+
+          html += `</tr>`;
+          return html;
+        },
+
+        renderExceptionsTable(exceptions) {
+          let html = `<h3>⚠️ ריכוז חריגות ואזהרות</h3>`;
+          html += `<table class="exceptions-table"><thead><tr><th>יום</th><th>משמרת</th><th>עובד</th><th>פירוט החריגה</th></tr></thead><tbody>`;
+          if (!exceptions.length) {
+            html += `<tr><td colspan="4">אין חריגות בסידור! ✅</td></tr>`;
           } else {
-            this.el.validationPanel.style.display = "block";
-            this.el.validationPanel.textContent = messages.join(" | ");
+            exceptions.forEach(ex => {
+              html += `<tr><td>${this.escapeHtml(ex.day)}</td><td>${this.escapeHtml(ex.slot)}</td><td><b>${this.escapeHtml(ex.name)}</b></td><td>${this.escapeHtml(ex.msg)}</td></tr>`;
+            });
           }
+          html += `</tbody></table>`;
+          return html;
         },
 
-        saveDraft() {
-          const payload = {
-            startDate: this.el.startDate.value,
-            weekStart: this.getWeekStartSetting(),
-            matrix: this.state.excelMatrix,
-            activeGuards: Array.from(this.el.guardButtonsContainer.querySelectorAll(".guard-btn.active")).map(btn => this.normalizeKey(btn.textContent))
-          };
-          this.safeSet(this.C.STORAGE.DRAFT, JSON.stringify(payload));
-        },
+        renderSummaryTable(allShifts, night2to6Count) {
+          let html = `<h3>סיכום הופעות (ללא ליווי)</h3>`;
+          html += `<table class="summary-table"><thead><tr><th>מס'</th><th>שם העובד</th><th>סה"כ הופעות</th><th>משמרות 02–06</th><th>סטטוס</th></tr></thead><tbody>`;
 
-        restoreDraft() {
-          try {
-            const raw = this.safeGet(this.C.STORAGE.DRAFT);
-            if (!raw) return;
-            const draft = JSON.parse(raw);
+          const sortedNames = Object.keys(allShifts).sort((a, b) => {
+            if (allShifts[b] !== allShifts[a]) return allShifts[b] - allShifts[a];
+            return a.localeCompare(b, "he");
+          });
 
-            if (draft.weekStart && draft.weekStart !== this.getWeekStartSetting()) {
-              this.safeSet(this.C.STORAGE.WEEK_START, draft.weekStart);
-              this.state.expectedDays = this.computeExpectedDays(draft.weekStart);
-              this.el.weekStartSelect.value = draft.weekStart;
+          let serial = 1;
+          sortedNames.forEach(name => {
+            const count = allShifts[name];
+            const nights = night2to6Count[name] || 0;
+            let rowClass = "";
+            let status = "";
+
+            if (count >= this.C.MAX_ALLOWED) {
+              rowClass = "shifts-5-count";
+              status = `✅ עמד (${count})`;
+            } else if (count === 4) {
+              rowClass = "shifts-4-count";
+              status = "✅ עמד (4)";
+            } else if (count === 3) {
+              rowClass = "shifts-3-count";
+              status = "🆗 עמד (3)";
+            } else {
+              rowClass = "low-shifts";
+              status = `❌ פחות מ־3 (${count})`;
             }
 
-            if (draft.startDate) this.el.startDate.value = draft.startDate;
+            if (nights > this.C.MAX_NIGHT_2_6) rowClass += " night-limit-fail-row";
 
-            if (Array.isArray(draft.matrix) && draft.matrix.length === this.C.TIME_SLOTS.length) {
-              this.state.excelMatrix = draft.matrix;
-              this.ExcelGrid.render();
-            }
+            html += `
+              <tr class="${rowClass}">
+                <td>${serial++}</td>
+                <td>${this.escapeHtml(name)}</td>
+                <td>${count}</td>
+                <td>${nights > this.C.MAX_NIGHT_2_6
+                  ? `<span class="night-limit-fail">❌ ${nights}</span>`
+                  : `<span class="night-limit-ok">✅ ${nights}</span>`}
+                </td>
+                <td>${status}</td>
+              </tr>
+            `;
+          });
 
-            if (Array.isArray(draft.activeGuards)) {
-              const set = new Set(draft.activeGuards.map(name => this.normalizeKey(name)));
-              this.el.guardButtonsContainer.querySelectorAll(".guard-btn").forEach(btn => {
-                btn.classList.toggle("active", set.has(this.normalizeKey(btn.textContent)));
-              });
-            }
-          } catch {}
+          html += `</tbody></table>`;
+          return html;
         },
 
-        resetDraft() {
-          this.safeRemove(this.C.STORAGE.DRAFT);
-          this.showStatus("הטיוטה השמורה נמחקה.", "success");
-        },
-
-        refreshAfterDataChange() {
-          this.ExcelGrid.validateAllGridCells();
-          this.updateValidationPanel();
-          const text = this.serializeMatrixToVerticalText();
-          if (text.trim()) this.renderScheduleView(this.parseScheduleText(text));
-          this.saveDraft();
-        },
-
-        placeCaretAtEnd(el) {
-          try {
-            el.focus();
-            const range = document.createRange();
-            range.selectNodeContents(el);
-            range.collapse(false);
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-          } catch {}
-        },
-
-        convertEditableCellToBubbles(cell, fallbackTime = "") {
-          const raw = String(cell.innerText || "").replace(/בעיה!?/g, "").replace(/משבצת\s*ריקה/g, "");
-          const names = Array.from(new Set(raw.split(/[,\n]/).map(v => this.normalizeKey(v)).filter(Boolean)));
-          const dayName = cell.getAttribute("data-day") || "";
-          const timeLabel = cell.getAttribute("data-time") || fallbackTime;
-          const dayIndex = this.state.expectedDays.indexOf(dayName);
-          const dayIso = dayIndex >= 0 ? this.getIsoDatesForWeek(this.el.startDate.value)[dayIndex] : "";
-          cell.innerHTML = this.renderPersonBubbles(names, dayName, timeLabel, dayIso);
-        },
-
-        showStatus(message, type = "success") {
-          const el = this.el.statusBanner;
-          clearTimeout(this.state.statusTimer);
-          el.className = `status-banner ${type}`;
-          el.textContent = message;
-          el.style.display = "block";
-          this.state.statusTimer = setTimeout(() => { el.style.display = "none"; }, 7000);
-        },
-
-        nextAllowedSameDayAfter(index) {
-          const I = this.C.SHIFT_INDEX;
-          switch (index) {
-            case I.NIGHT_2_6: return I.AFTERNOON_14_18;
-            case I.MORNING_6_10: return I.EVENING_18_22;
-            case I.MORNING_10_14: return I.NIGHT_22_2;
-            default: return Infinity;
-          }
-        },
-
-        isLessThan8SameDay(prevIdx, curIdx) {
-          return curIdx < this.nextAllowedSameDayAfter(prevIdx);
+        renderMainScheduleTable(parsed, datesForWeek, isoDates) {
+          const days = parsed.days;
+          let html = `<table id="scheduleTable" class="schedule-table" role="table">`;
+          html += this.renderScheduleHeader(days, datesForWeek);
+          html += `<tbody>`;
+          parsed.data.forEach((row, rowIdx) => {
+            html += this.renderScheduleRow(row, rowIdx, days, isoDates);
+          });
+          html += `</tbody></table>`;
+          return html;
         },
 
         calculateScheduleInsights(scheduleData, days) {
@@ -1544,138 +1499,6 @@
           return { allShifts, night2to6Count, exceptions };
         },
 
-        renderScheduleHeader(days, datesForWeek) {
-          let html = `<colgroup><col class="time-col">${days.map(() => `<col>`).join("")}</colgroup>`;
-          html += `<thead><tr><th scope="col" rowspan="2">שעות / יום</th>`;
-          days.forEach((day, idx) => {
-            const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
-            html += `<th scope="col" class="${weekendClass}"><span class="date-text">${datesForWeek[idx]}</span></th>`;
-          });
-          html += `</tr><tr>`;
-          days.forEach(day => {
-            const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
-            const dayDisplay = this.getWeekStartSetting() === "mon" && day === "יום ראשון" ? "יום ראשון" : day.replace("יום ", "");
-            html += `<th scope="col" class="${weekendClass}"><span class="day-header-name">${this.escapeHtml(dayDisplay)}</span></th>`;
-          });
-          html += `</tr></thead>`;
-          return html;
-        },
-
-        renderTimeSlotCell(rowIdx, label) {
-          const icon = this.C.SLOT_ICONS[rowIdx] || "😂";
-          return `
-            <th scope="row" class="time-slot" data-time-index="${rowIdx}">
-              <div class="slot-wrap">
-                <span class="slot-icon">${icon}</span>
-                <span>${label}</span>
-              </div>
-            </th>
-          `;
-        },
-
-        renderScheduleBody(scheduleData, days, isoDates) {
-          let html = `<tbody>`;
-          scheduleData.forEach((row, rowIdx) => {
-            const timeFull = this.C.TIME_SLOTS[rowIdx];
-            const timeDisplay = timeFull.replace(" (Night)", "").replace(" - ", "<br>");
-            const required = this.getRequiredPerShift(rowIdx);
-            html += `<tr>${this.renderTimeSlotCell(rowIdx, timeDisplay)}`;
-
-            row.forEach((cell, colIdx) => {
-              const day = days[colIdx];
-              const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
-              const count = names.length;
-              const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
-              const bubbles = this.renderPersonBubbles(names, day, timeFull.replace(" (Night)", ""), isoDates[colIdx]);
-
-              let warning = "";
-              let extraClass = "";
-
-              if (count === 0) {
-                warning = `<span class="warning-text">משבצת ריקה</span>`;
-                extraClass = "needs-selection";
-              } else if (count < required) {
-                warning = `<span class="warning-text">חסר שומר נוסף (נדרש ${required})</span>`;
-                extraClass = "needs-selection";
-              } else if (count > required) {
-                warning = `<span class="warning-text">עודף עובדים (${count}). נדרש: ${required}</span>`;
-                extraClass = "needs-selection";
-              }
-
-              const tdClass = this.cx(weekendClass, extraClass);
-              html += `<td class="${tdClass}" data-day="${this.escapeHtml(day)}" data-time="${this.escapeHtml(timeFull.replace(" (Night)", ""))}" contenteditable="true">${bubbles}${warning}</td>`;
-            });
-
-            html += `</tr>`;
-          });
-          html += `</tbody>`;
-          return html;
-        },
-
-        renderExceptionsTable(exceptions) {
-          let html = `<h3>⚠️ ריכוז חריגות ואזהרות</h3>`;
-          html += `<table class="exceptions-table"><thead><tr><th>יום</th><th>משמרת</th><th>עובד</th><th>פירוט החריגה</th></tr></thead><tbody>`;
-          if (!exceptions.length) {
-            html += `<tr><td colspan="4">אין חריגות בסידור! ✅</td></tr>`;
-          } else {
-            exceptions.forEach(ex => {
-              html += `<tr><td>${this.escapeHtml(ex.day)}</td><td>${this.escapeHtml(ex.slot)}</td><td><b>${this.escapeHtml(ex.name)}</b></td><td>${this.escapeHtml(ex.msg)}</td></tr>`;
-            });
-          }
-          html += `</tbody></table>`;
-          return html;
-        },
-
-        renderSummaryTable(allShifts, night2to6Count) {
-          let html = `<h3>סיכום הופעות</h3>`;
-          html += `<table class="summary-table"><thead><tr><th>מס'</th><th>שם העובד</th><th>סה"כ הופעות</th><th>משמרות 02–06</th><th>סטטוס</th></tr></thead><tbody>`;
-
-          const sortedNames = Object.keys(allShifts).sort((a, b) => {
-            if (allShifts[b] !== allShifts[a]) return allShifts[b] - allShifts[a];
-            return a.localeCompare(b, "he");
-          });
-
-          let serial = 1;
-          sortedNames.forEach(name => {
-            const count = allShifts[name];
-            const nights = night2to6Count[name] || 0;
-            let rowClass = "";
-            let status = "";
-
-            if (count >= this.C.MAX_ALLOWED) {
-              rowClass = "shifts-5-count";
-              status = `✅ עמד (${count})`;
-            } else if (count === 4) {
-              rowClass = "shifts-4-count";
-              status = "✅ עמד (4)";
-            } else if (count === 3) {
-              rowClass = "shifts-3-count";
-              status = "🆗 עמד (3)";
-            } else {
-              rowClass = "low-shifts";
-              status = `❌ פחות מ־3 (${count})`;
-            }
-
-            if (nights > this.C.MAX_NIGHT_2_6) rowClass += " night-limit-fail-row";
-
-            html += `
-              <tr class="${rowClass}">
-                <td>${serial++}</td>
-                <td>${this.escapeHtml(name)}</td>
-                <td>${count}</td>
-                <td>${nights > this.C.MAX_NIGHT_2_6
-                  ? `<span class="night-limit-fail">❌ ${nights}</span>`
-                  : `<span class="night-limit-ok">✅ ${nights}</span>`}
-                </td>
-                <td>${status}</td>
-              </tr>
-            `;
-          });
-
-          html += `</tbody></table>`;
-          return html;
-        },
-
         renderScheduleView(parsed) {
           if (parsed.error) {
             this.el.resultsContainer.innerHTML = `<p class="warning-text">❌ ${this.escapeHtml(parsed.error)}</p>`;
@@ -1688,10 +1511,9 @@
           }
 
           const days = parsed.days;
-          const scheduleData = parsed.data;
           const datesForWeek = this.getDatesForWeek(this.el.startDate.value);
           const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
-          const { allShifts, night2to6Count, exceptions } = this.calculateScheduleInsights(scheduleData, days);
+          const insights = this.calculateScheduleInsights(parsed.data, days);
 
           const doubleShifts = this.C.TIME_SLOTS
             .map((slot, idx) => ({ idx, label: slot.replace(" (Night)", "") }))
@@ -1701,12 +1523,9 @@
 
           let html = `<h3>טבלת משמרות</h3>`;
           html += `<div class="results-info">${doubleShifts ? `משמרות עם 2 שומרים: ${doubleShifts}.` : "כל המשמרות = 1 שומר."} מינימום ${this.C.MIN_REQUIRED} לעובד.</div>`;
-          html += `<table id="scheduleTable" class="schedule-table" role="table">`;
-          html += this.renderScheduleHeader(days, datesForWeek);
-          html += this.renderScheduleBody(scheduleData, days, isoDates);
-          html += `</table>`;
-          html += this.renderExceptionsTable(exceptions);
-          html += this.renderSummaryTable(allShifts, night2to6Count);
+          html += this.renderMainScheduleTable(parsed, datesForWeek, isoDates);
+          html += this.renderExceptionsTable(insights.exceptions);
+          html += this.renderSummaryTable(insights.allShifts, insights.night2to6Count);
 
           this.el.resultsContainer.innerHTML = html;
           this.setupScheduleEditors();
@@ -1732,7 +1551,6 @@
               this.convertEditableCellToBubbles(td);
               td.dataset.editing = "0";
               td.classList.remove("editing-cell");
-              this.pushHistorySnapshot();
               this.syncRenderedTableBackToMatrix();
             };
 
@@ -1765,22 +1583,21 @@
           });
 
           this.ExcelGrid.render();
-          this.refreshAfterDataChange();
-          this.updateUndoRedoButtons();
+          this.ExcelGrid.validateAllGridCells();
         },
 
         renderGuardButtons() {
-          const names = Object.keys(this.C.COLOR_MAP).map(name => name.replace("_", " ")).sort((a, b) => a.localeCompare(b, "he"));
+          const names = Object.keys(this.C.COLOR_MAP)
+            .map(name => name.replace("_", " "))
+            .sort((a, b) => a.localeCompare(b, "he"));
+
           this.el.guardButtonsContainer.innerHTML = "";
           names.forEach(name => {
             const btn = document.createElement("button");
             btn.type = "button";
             btn.className = "guard-btn";
             btn.textContent = name;
-            btn.addEventListener("click", () => {
-              btn.classList.toggle("active");
-              this.saveDraft();
-            });
+            btn.addEventListener("click", () => btn.classList.toggle("active"));
             this.el.guardButtonsContainer.appendChild(btn);
           });
         },
@@ -1794,7 +1611,9 @@
         },
 
         buildShiftReqPanel() {
-          this.el.shiftReqScopeWeek.checked = this.safeGet(this.C.STORAGE.SHIFT_REQ_SCOPE_WEEK) === "1";
+          try {
+            this.el.shiftReqScopeWeek.checked = localStorage.getItem(this.C.STORAGE.SHIFT_REQ_SCOPE_WEEK) === "1";
+          } catch {}
           this.el.weekStartSelect.value = this.getWeekStartSetting();
 
           const renderRows = () => {
@@ -1837,27 +1656,30 @@
           });
 
           this.el.shiftReqScopeWeek.addEventListener("change", () => {
-            this.safeSet(this.C.STORAGE.SHIFT_REQ_SCOPE_WEEK, this.el.shiftReqScopeWeek.checked ? "1" : "0");
+            try {
+              localStorage.setItem(this.C.STORAGE.SHIFT_REQ_SCOPE_WEEK, this.el.shiftReqScopeWeek.checked ? "1" : "0");
+            } catch {}
             renderRows();
             this.refreshAfterDataChange();
           });
 
           this.el.weekStartSelect.addEventListener("change", () => {
             const val = this.el.weekStartSelect.value === "sun" ? "sun" : "mon";
-            this.safeSet(this.C.STORAGE.WEEK_START, val);
+            try { localStorage.setItem(this.C.STORAGE.WEEK_START, val); } catch {}
             this.state.expectedDays = this.computeExpectedDays(val);
             this.ExcelGrid.init();
             this.updateStartDateLabelBySetting();
             renderRows();
             this.refreshAfterDataChange();
-            this.saveDraft();
           });
 
           renderRows();
         },
 
         buildVacationsPanel() {
-          this.el.leaveScopeWeek.checked = this.safeGet(this.C.STORAGE.LEAVE_SCOPE_WEEK) === "1";
+          try {
+            this.el.leaveScopeWeek.checked = localStorage.getItem(this.C.STORAGE.LEAVE_SCOPE_WEEK) === "1";
+          } catch {}
 
           const renderList = () => {
             const map = this.loadVacationsMap();
@@ -1912,7 +1734,7 @@
           });
 
           this.el.leaveScopeWeek.addEventListener("change", () => {
-            this.safeSet(this.C.STORAGE.LEAVE_SCOPE_WEEK, this.el.leaveScopeWeek.checked ? "1" : "0");
+            try { localStorage.setItem(this.C.STORAGE.LEAVE_SCOPE_WEEK, this.el.leaveScopeWeek.checked ? "1" : "0"); } catch {}
             renderList();
             this.refreshAfterDataChange();
           });
@@ -1949,11 +1771,6 @@
         },
 
         handleAnalyze() {
-          const summary = this.getValidationSummary();
-          if (summary.unknownNames.length) {
-            this.showStatus(`יש שמות לא מזוהים שצריך לתקן לפני ניתוח: ${summary.unknownNames.join(", ")}`, "error");
-            return;
-          }
           const text = this.serializeMatrixToVerticalText();
           this.renderScheduleView(this.parseScheduleText(text));
         },
@@ -1965,14 +1782,15 @@
           if (!url || !url.startsWith("https://script.google.com/macros/s/")) {
             statusEl.textContent = "❌ כתובת Web App לא תקינה.";
             statusEl.style.display = "block";
-            statusEl.style.color = "var(--danger)";
+            statusEl.style.color = "var(--artifact-danger)";
             return;
           }
 
-          this.safeSet(this.C.STORAGE.SHEET_URL, url);
+          try { localStorage.setItem(this.C.STORAGE.SHEET_URL, url); } catch {}
+
           statusEl.textContent = "טוען נתונים... 🔄";
           statusEl.style.display = "block";
-          statusEl.style.color = "var(--accent)";
+          statusEl.style.color = "var(--artifact-accent)";
           this.el.fetchFromSheetButton.disabled = true;
 
           try {
@@ -1980,18 +1798,14 @@
             if (!resp.ok) throw new Error(`שגיאת רשת (${resp.status})`);
             const text = await resp.text();
             if (!text.trim()) throw new Error("השרת החזיר טקסט ריק");
-            if (!/[יום\s]+(?:ראשון|שני|שלישי|רביעי|חמישי|שישי|שבת)/.test(text) && !/\t|,/.test(text)) {
-              throw new Error("הפורמט שחזר לא נראה כמו טבלת משמרות");
-            }
 
-            this.pushHistorySnapshot();
             this.ExcelGrid.loadFromText(text);
             statusEl.textContent = "✅ הנתונים נטענו בהצלחה";
-            statusEl.style.color = "var(--success)";
+            statusEl.style.color = "var(--artifact-success)";
             this.showStatus("הנתונים נטענו לטבלת הקלט.", "success");
           } catch (err) {
             statusEl.textContent = `❌ שגיאה: ${err.message}`;
-            statusEl.style.color = "var(--danger)";
+            statusEl.style.color = "var(--artifact-danger)";
             this.showStatus(`שגיאה בטעינה: ${err.message}`, "error");
           } finally {
             this.el.fetchFromSheetButton.disabled = false;
@@ -2000,19 +1814,11 @@
         },
 
         autoSchedule() {
-          const summary = this.getValidationSummary();
-          if (summary.unknownNames.length) {
-            this.showStatus(`אי אפשר לבצע סידור אוטומטי כל עוד יש שמות לא מזוהים: ${summary.unknownNames.join(", ")}`, "error");
-            return;
-          }
-
           const parsed = this.parseScheduleText(this.serializeMatrixToVerticalText());
           if (parsed.error) {
             this.renderScheduleView(parsed);
             return;
           }
-
-          this.pushHistorySnapshot();
 
           const priorityGuards = this.getPriorityGuardSet();
           const weeklyOnLeave = this.buildWeeklyOnLeaveSet(this.el.startDate.value);
@@ -2122,11 +1928,13 @@
                 if (!baseCandidates.length) break;
 
                 const primary = baseCandidates.filter(name =>
-                  (employeeShiftCount[name] || 0) < roundTarget && isLegalAssignment(name, dayIndex, shiftIndex)
+                  (employeeShiftCount[name] || 0) < roundTarget &&
+                  isLegalAssignment(name, dayIndex, shiftIndex)
                 );
 
                 const pool = (primary.length ? primary : baseCandidates.filter(name =>
-                  (employeeShiftCount[name] || 0) < this.C.MAX_ALLOWED && isLegalAssignment(name, dayIndex, shiftIndex)
+                  (employeeShiftCount[name] || 0) < this.C.MAX_ALLOWED &&
+                  isLegalAssignment(name, dayIndex, shiftIndex)
                 )).sort((a, b) => {
                   const ca = employeeShiftCount[a] || 0;
                   const cb = employeeShiftCount[b] || 0;
@@ -2209,7 +2017,8 @@
           });
 
           this.ExcelGrid.render();
-          this.refreshAfterDataChange();
+          this.ExcelGrid.validateAllGridCells();
+          this.renderScheduleView(this.parseScheduleText(this.serializeMatrixToVerticalText()));
 
           const below = allEmployees
             .map(name => ({ name, count: employeeShiftCount[name] || 0 }))
@@ -2296,8 +2105,6 @@
                 const c = Number(cell.dataset.c);
                 app.state.excelMatrix[r][c] = this.normalizeCellValue(cell.innerText);
                 this.validateCellElement(cell);
-                app.saveDraft();
-                app.updateValidationPanel();
               });
             }
           },
@@ -2307,7 +2114,9 @@
             const table = app.el["excel-grid"];
             const dayShort = app.state.expectedDays.map(day => day.replace("יום ", ""));
             let html = "<thead><tr><th>שעות / יום</th>";
-            dayShort.forEach(day => { html += `<th>${app.escapeHtml(day)}</th>`; });
+            dayShort.forEach(day => {
+              html += `<th>${app.escapeHtml(day)}</th>`;
+            });
             html += "</tr></thead><tbody>";
 
             app.C.TIME_SLOTS.forEach((slot, r) => {
@@ -2322,7 +2131,6 @@
             html += "</tbody>";
             table.innerHTML = html;
             this.validateAllGridCells();
-            app.updateValidationPanel();
           },
 
           normalizeCellValue(value) {
@@ -2390,7 +2198,6 @@
             if (!text) return;
 
             e.preventDefault();
-            app.pushHistorySnapshot();
             const rows = this.parseTableLike(text);
             const r0 = Number(cell.dataset.r);
             const c0 = Number(cell.dataset.c);
@@ -2407,7 +2214,6 @@
 
             this.render();
             app.refreshAfterDataChange();
-            app.updateUndoRedoButtons();
           },
 
           isKnownName(name) {
@@ -2452,12 +2258,9 @@
 
           clear() {
             const app = App;
-            app.pushHistorySnapshot();
             app.state.excelMatrix = app.C.TIME_SLOTS.map(() => app.state.expectedDays.map(() => ""));
             this.render();
             app.el.resultsContainer.innerHTML = `<p id="initialMessage">הדבק נתונים או משוך אותם מה‑Web App, ואז לחץ על ניתוח או סידור אוטומטי.</p>`;
-            app.saveDraft();
-            app.updateUndoRedoButtons();
           }
         }
       };
@@ -2467,12 +2270,12 @@
 
       window.GleanBridge = window.GleanBridge || { postMessage() {}, onMessage() {} };
       window.GleanBridge.postMessage({
-        actionId: 'export-pdf',
-        type: 'glean-add-menu',
-        metadata: { label: 'Export as PDF', icon: 'export' }
+        actionId: "export-pdf",
+        type: "glean-add-menu",
+        metadata: { label: "Export as PDF", icon: "export" }
       });
-      window.GleanBridge.onMessage('action', function(data) {
-        if (data.actionId === 'export-pdf') window.print();
+      window.GleanBridge.onMessage("action", function(data) {
+        if (data.actionId === "export-pdf") window.print();
       });
     })();
   </script>
