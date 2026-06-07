@@ -9,94 +9,101 @@
     :root {
       --artifact-background: var(--theme-background, #ffffff);
       --artifact-background-light: var(--theme-background-light, #f6f6f6);
-      --artifact-background-mid: var(--theme-background-mid, #efefef);
+      --artifact-background-mid: var(--theme-background-mid, #f0f0f0);
       --artifact-border-light: var(--theme-border-light, #e5e5e5);
-      --artifact-border-dark: var(--theme-border-dark, #cccccc);
+      --artifact-border-dark: var(--theme-border-dark, #cfcfcf);
       --artifact-text-primary: var(--theme-text-primary, #1b1b1b);
       --artifact-text-secondary: var(--theme-text-secondary, #727272);
       --artifact-primary-highlight: var(--theme-primary-highlight, #1b1b1b);
-      --artifact-selected: var(--theme-selected, #e8e8e8);
-      --artifact-primary-brand: var(--theme-primary-brand, #343ced);
+      --artifact-selected: var(--theme-selected, #ececec);
 
-      --page-bg: var(--artifact-background-light);
-      --surface: var(--artifact-background);
-      --surface-2: var(--artifact-background-mid);
-      --text: var(--artifact-text-primary);
-      --muted: var(--artifact-text-secondary);
-      --border: var(--artifact-border-light);
-      --border-strong: var(--artifact-border-dark);
+      --artifact-page: var(--artifact-background-light);
+      --artifact-surface: var(--artifact-background);
+      --artifact-surface-muted: var(--artifact-background-mid);
 
-      --accent: #004d40;
-      --accent-2: #4db6ac;
-      --accent-text: #ffffff;
+      --artifact-accent: #004d40;
+      --artifact-accent-text: #ffffff;
+      --artifact-accent-2: #4db6ac;
+      --artifact-accent-2-text: #08201d;
 
-      --success: #2e7d32;
-      --warning: #ef6c00;
-      --danger: #d32f2f;
-      --info: #1976d2;
+      --artifact-info: #1976d2;
+      --artifact-info-text: #ffffff;
+      --artifact-info-soft: #e8f1ff;
+      --artifact-info-soft-text: #0d47a1;
 
-      --success-soft: #e7f6ea;
-      --warning-soft: #fff3e8;
-      --danger-soft: #fdecec;
-      --info-soft: #e8f1ff;
+      --artifact-success: #2e7d32;
+      --artifact-success-text: #ffffff;
+      --artifact-success-soft: #e7f6ea;
+      --artifact-success-soft-text: #1b5e20;
 
-      --weekend-bg: #ffd6bf;
-      --weekend-hover: #ffc7a7;
-      --weekend-text: #7a3e1d;
+      --artifact-warning: #ef6c00;
+      --artifact-warning-text: #ffffff;
+      --artifact-danger: #d32f2f;
+      --artifact-danger-text: #ffffff;
+      --artifact-danger-soft: #fdecec;
+      --artifact-danger-soft-text: #8f1f1f;
 
-      --guard-bg: #e0f7fa;
-      --guard-text: #006064;
-      --guard-active-bg: #fffbeb;
-      --guard-active-text: #92400e;
+      --artifact-weekend-bg: #ffd6bf;
+      --artifact-weekend-text: #7a3e1d;
+      --artifact-weekend-hover-bg: #ffc5a2;
 
-      --unknown-bg: #fff8e1;
-      --unknown-text: #5d4037;
-      --leave-bg: #eceff1;
-      --leave-text: #607d8b;
+      --artifact-unknown-bg: #fff8e1;
+      --artifact-unknown-text: #5d4037;
+      --artifact-leave-bg: #eceff1;
+      --artifact-leave-text: #607d8b;
 
-      --shadow: 0 10px 24px rgba(0,0,0,.08);
-      --shadow-soft: 0 4px 12px rgba(0,0,0,.06);
-      --radius: 18px;
-      --time-col-width: 108px;
-      --table-min-width: 1080px;
+      --artifact-guard-bg: #e0f7fa;
+      --artifact-guard-text: #006064;
+      --artifact-guard-active-bg: #fffbeb;
+      --artifact-guard-active-text: #92400e;
 
-      --toolbar-fetch: linear-gradient(135deg, #00d2ff, #3a7bd5);
-      --toolbar-ai: linear-gradient(135deg, #667eea, #764ba2);
-      --toolbar-analyze: linear-gradient(135deg, #00b09b, #96c93d);
-      --toolbar-download: linear-gradient(135deg, #0ea5e9, #0284c7);
-      --toolbar-sheet: linear-gradient(135deg, #22c55e, #16a34a);
+      --artifact-toolbar-fetch: linear-gradient(135deg, #00d2ff, #3a7bd5);
+      --artifact-toolbar-ai: linear-gradient(135deg, #667eea, #764ba2);
+      --artifact-toolbar-analyze: linear-gradient(135deg, #00b09b, #96c93d);
+      --artifact-toolbar-download: linear-gradient(135deg, #0ea5e9, #0284c7);
+      --artifact-toolbar-sheet: linear-gradient(135deg, #22c55e, #16a34a);
 
-      --name-אמיר-bg: #2563eb;   --name-אמיר-text: #ffffff;
-      --name-נמרוד-bg: #06b6d4;  --name-נמרוד-text: #082f49;
-      --name-יובי-bg: #f59e0b;   --name-יובי-text: #3b2200;
-      --name-טגניה-bg: #22c55e;  --name-טגניה-text: #052e16;
-      --name-ישי-bg: #8b5cf6;    --name-ישי-text: #ffffff;
-      --name-חסון-bg: #0f172a;   --name-חסון-text: #ffffff;
-      --name-לישע-bg: #84cc16;   --name-לישע-text: #1f2f06;
-      --name-עידן-bg: #ec4899;   --name-עידן-text: #ffffff;
-      --name-חגי-bg: #fb7185;    --name-חגי-text: #4c0519;
-      --name-סתיו-bg: #fde047;   --name-סתיו-text: #3f3200;
-      --name-אסף-bg: #b91c1c;    --name-אסף-text: #ffffff;
-      --name-ליאני-bg: #4c1d95;  --name-ליאני-text: #ffffff;
-      --name-נתי-bg: #0ea5e9;    --name-נתי-text: #ffffff;
-      --name-ערן-bg: #64748b;    --name-ערן-text: #ffffff;
-      --name-מאור-bg: #fef3c7;   --name-מאור-text: #1f2937;
-      --name-ניר-bg: #ef4444;    --name-ניר-text: #ffffff;
-      --name-חורחה-bg: #f472b6;  --name-חורחה-text: #4a044e;
-      --name-שלומי-bg: #8b5e3c;  --name-שלומי-text: #ffffff;
-      --name-יפתח-bg: #bef264;   --name-יפתח-text: #365314;
-      --name-חברוני-bg: #14b8a6; --name-חברוני-text: #042f2e;
+      --artifact-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+      --artifact-shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+      --artifact-person-dim: 0.22;
+      --artifact-radius: 18px;
+      --artifact-max-width: 1500px;
+      --artifact-time-col-width: 88px;
+
+      --name-אמיר-bg: #3b82f6; --name-אמיר-text: #ffffff;
+      --name-נמרוד-bg: #06b6d4; --name-נמרוד-text: #0f172a;
+      --name-יובי-bg: #f59e0b; --name-יובי-text: #1b1b1b;
+      --name-טגניה-bg: #22c55e; --name-טגניה-text: #052e16;
+      --name-ישי-bg: #a855f7; --name-ישי-text: #ffffff;
+      --name-חסון-bg: #0f172a; --name-חסון-text: #ffffff;
+      --name-לישע-bg: #84cc16; --name-לישע-text: #1a2e05;
+      --name-עידן-bg: #ec4899; --name-עידן-text: #ffffff;
+      --name-חגי-bg: #fb7185; --name-חגי-text: #431407;
+      --name-סתיו-bg: #fde047; --name-סתיו-text: #3f3000;
+      --name-אסף-bg: #b91c1c; --name-אסף-text: #ffffff;
+      --name-ליאני-bg: #4c1d95; --name-ליאני-text: #ffffff;
+      --name-ערן-bg: #64748b; --name-ערן-text: #ffffff;
+      --name-מאור-bg: #fef3c7; --name-מאור-text: #1f2937;
+      --name-ניר-bg: #ef4444; --name-ניר-text: #ffffff;
+      --name-חורחה-bg: #f472b6; --name-חורחה-text: #4a044e;
+      --name-שלומי-bg: #8b5e3c; --name-שלומי-text: #ffffff;
+      --name-יפתח-bg: #bef264; --name-יפתח-text: #365314;
+      --name-חברוני-bg: #86efac; --name-חברוני-text: #14532d;
       --name-ויקטור-bg: #fb923c; --name-ויקטור-text: #4a1d00;
       --name-גולן-text: #111827;
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0,0,0,0.08); }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0.08);
+    }
 
     html, body {
       margin: 0;
       min-height: 100dvh;
-      background: var(--page-bg);
-      color: var(--text);
+      background: var(--artifact-page);
+      color: var(--artifact-text-primary);
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       -webkit-text-size-adjust: 100%;
       overflow-x: hidden;
@@ -111,29 +118,30 @@
     }
 
     .app-shell {
-      max-width: 1500px;
+      max-width: var(--artifact-max-width);
       margin: 0 auto;
     }
 
     .hero {
       width: fit-content;
-      margin: 10px auto 22px;
+      margin: 12px auto 22px;
       padding: 16px 28px;
       border-radius: 999px;
-      background: var(--surface);
-      color: var(--accent);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
+      background: var(--artifact-surface);
+      color: var(--artifact-accent);
+      border: 1px solid var(--artifact-border-light);
+      box-shadow: var(--artifact-shadow);
       font-size: clamp(1.45rem, 2vw, 2.2rem);
       font-weight: 800;
       text-align: center;
     }
 
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-soft);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
+      border: 1px solid var(--artifact-border-light);
+      border-radius: var(--artifact-radius);
+      box-shadow: var(--artifact-shadow-soft);
       padding: 16px;
       margin-bottom: 16px;
     }
@@ -142,14 +150,14 @@
       margin: 0 0 12px;
       font-size: 1.12rem;
       font-weight: 800;
-      color: var(--accent);
+      color: var(--artifact-accent);
       text-align: center;
     }
 
     .subtle {
       margin: 6px 0 0;
-      color: var(--muted);
-      font-size: .94rem;
+      color: var(--artifact-text-secondary);
+      font-size: 0.94rem;
       text-align: center;
     }
 
@@ -160,30 +168,30 @@
       align-items: center;
     }
 
-    .row.between { justify-content: space-between; }
     .row.center { justify-content: center; }
+    .row.between { justify-content: space-between; }
     .row.end { justify-content: flex-end; }
 
     .label-strong {
       font-weight: 800;
-      color: var(--text);
+      color: var(--artifact-text-primary);
     }
 
     .input, .select, .date-input {
-      background: var(--surface);
-      color: var(--text);
-      border: 1px solid var(--border-strong);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
+      border: 1px solid var(--artifact-border-dark);
       border-radius: 12px;
       padding: 10px 12px;
       font-size: 14px;
-      min-height: 44px;
       outline: none;
+      min-height: 44px;
       transition: border-color .18s ease, box-shadow .18s ease;
     }
 
     .input:focus, .select:focus, .date-input:focus {
-      border-color: var(--info);
-      box-shadow: 0 0 0 3px rgba(25,118,210,.16);
+      border-color: var(--artifact-info);
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.16);
     }
 
     .url-input {
@@ -202,7 +210,7 @@
       font-weight: 800;
       cursor: pointer;
       transition: transform .18s ease, filter .18s ease, opacity .18s ease;
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--artifact-shadow-soft);
     }
 
     .btn:hover:not(:disabled) {
@@ -215,10 +223,10 @@
       cursor: not-allowed;
     }
 
-    .btn-primary { background: var(--info); color: #fff; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-neutral { background: var(--surface-2); color: var(--text); }
+    .btn-primary { background: var(--artifact-info); color: var(--artifact-info-text); }
+    .btn-success { background: var(--artifact-success); color: var(--artifact-success-text); }
+    .btn-danger { background: var(--artifact-danger); color: var(--artifact-danger-text); }
+    .btn-neutral { background: var(--artifact-background-mid); color: var(--artifact-text-primary); }
 
     .toolbar {
       display: grid;
@@ -235,8 +243,8 @@
       font-size: 15px;
       border: none;
       cursor: pointer;
-      box-shadow: var(--shadow);
-      text-shadow: 0 1px 2px rgba(0,0,0,.22);
+      box-shadow: var(--artifact-shadow);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
       transition: transform .18s ease, filter .18s ease;
       display: flex;
       flex-direction: column;
@@ -247,11 +255,11 @@
 
     .tool-btn:hover { transform: translateY(-2px); filter: brightness(1.04); }
     .tool-btn .icon { font-size: 28px; line-height: 1; }
-    .tool-fetch { background: var(--toolbar-fetch); }
-    .tool-ai { background: var(--toolbar-ai); }
-    .tool-analyze { background: var(--toolbar-analyze); }
-    .tool-download { background: var(--toolbar-download); }
-    .tool-sheet { background: var(--toolbar-sheet); }
+    .tool-fetch { background: var(--artifact-toolbar-fetch); }
+    .tool-ai { background: var(--artifact-toolbar-ai); }
+    .tool-analyze { background: var(--artifact-toolbar-analyze); }
+    .tool-download { background: var(--artifact-toolbar-download); }
+    .tool-sheet { background: var(--artifact-toolbar-sheet); }
 
     .inline-actions {
       display: flex;
@@ -264,8 +272,8 @@
     .grid-wrap {
       overflow: auto;
       border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--surface);
+      border: 1px solid var(--artifact-border-light);
+      background: var(--artifact-surface);
     }
 
     table {
@@ -277,27 +285,28 @@
     .excel-grid {
       min-width: 780px;
       table-layout: fixed;
-      background: var(--surface);
+      background: var(--artifact-surface);
     }
 
     .excel-grid thead th {
       position: sticky;
       top: 0;
       z-index: 2;
-      background: var(--accent);
-      color: var(--accent-text);
+      background: var(--artifact-accent);
+      color: var(--artifact-accent-text);
       padding: 10px 8px;
       font-size: .94rem;
-      border-bottom: 2px solid var(--border-strong);
+      border-bottom: 2px solid var(--artifact-border-dark);
     }
 
-    .excel-grid th, .excel-grid td {
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+    .excel-grid th,
+    .excel-grid td {
+      border-right: 1px solid var(--artifact-border-light);
+      border-bottom: 1px solid var(--artifact-border-light);
       padding: 8px;
       vertical-align: middle;
-      background: var(--surface);
-      color: var(--text);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
     }
 
     .excel-grid tbody td:first-child {
@@ -305,6 +314,7 @@
       inset-inline-start: 0;
       z-index: 1;
       background: #f8fbff;
+      color: var(--artifact-text-primary);
       font-weight: 800;
       width: 120px;
       min-width: 120px;
@@ -320,19 +330,19 @@
     }
 
     .excel-grid td.cell:focus {
-      background: var(--info-soft);
-      color: var(--info-soft-text);
-      box-shadow: inset 0 0 0 2px rgba(25,118,210,.26);
+      background: var(--artifact-info-soft);
+      color: var(--artifact-info-soft-text);
+      box-shadow: inset 0 0 0 2px rgba(25, 118, 210, 0.26);
     }
 
     .excel-grid td.cell.has-unknown {
-      background: var(--unknown-bg);
-      color: var(--unknown-text);
+      background: var(--artifact-unknown-bg);
+      color: var(--artifact-unknown-text);
     }
 
     .excel-grid td.cell.on-leave-cell {
-      background: var(--leave-bg);
-      color: var(--leave-text);
+      background: var(--artifact-leave-bg);
+      color: var(--artifact-leave-text);
     }
 
     .guard-grid {
@@ -344,9 +354,9 @@
     .guard-btn {
       min-height: 44px;
       border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--guard-bg);
-      color: var(--guard-text);
+      border: 1px solid var(--artifact-border-light);
+      background: var(--artifact-guard-bg);
+      color: var(--artifact-guard-text);
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
@@ -354,8 +364,8 @@
     }
 
     .guard-btn.active {
-      background: var(--guard-active-bg);
-      color: var(--guard-active-text);
+      background: var(--artifact-guard-active-bg);
+      color: var(--artifact-guard-active-text);
       box-shadow: 0 0 0 3px rgba(252, 211, 77, 0.22);
     }
 
@@ -371,10 +381,12 @@
       margin-top: 12px;
     }
 
-    .req-label, .req-control {
+    .req-label,
+    .req-control {
       border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--surface);
+      border: 1px solid var(--artifact-border-light);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
       padding: 10px;
     }
 
@@ -398,17 +410,17 @@
       min-height: 36px;
       padding: 6px 10px;
       border-radius: 10px;
-      border: 1px solid var(--border-strong);
-      background: var(--surface);
-      color: var(--text);
+      border: 1px solid var(--artifact-border-dark);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
       cursor: pointer;
       font-weight: 800;
       user-select: none;
     }
 
     .req-opt.active {
-      background: var(--success-soft);
-      color: var(--success-soft-text);
+      background: var(--artifact-success-soft);
+      color: var(--artifact-success-soft-text);
     }
 
     .list {
@@ -424,8 +436,14 @@
       gap: 12px;
       padding: 10px;
       border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--surface);
+      border: 1px solid var(--artifact-border-light);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
+    }
+
+    .muted {
+      color: var(--artifact-text-secondary);
+      font-size: .92rem;
     }
 
     .status-banner {
@@ -435,20 +453,20 @@
       padding: 12px 14px;
       text-align: center;
       font-weight: 800;
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--artifact-shadow-soft);
     }
 
-    .status-banner.success { background: var(--success); color: #fff; }
-    .status-banner.warning { background: var(--warning); color: #fff; }
-    .status-banner.error { background: var(--danger); color: #fff; }
+    .status-banner.success { background: var(--artifact-success); color: var(--artifact-success-text); }
+    .status-banner.warning { background: var(--artifact-warning); color: var(--artifact-warning-text); }
+    .status-banner.error { background: var(--artifact-danger); color: var(--artifact-danger-text); }
 
     .validation-panel {
       margin-top: 12px;
       padding: 12px 14px;
       border-radius: 12px;
-      background: var(--info-soft);
-      color: var(--info-soft-text);
-      font-size: .94rem;
+      background: var(--artifact-info-soft);
+      color: var(--artifact-info-soft-text);
+      font-size: 0.94rem;
       text-align: center;
       line-height: 1.5;
     }
@@ -462,31 +480,31 @@
 
     .results-shell h3 {
       margin: 18px 0 10px;
-      color: var(--accent);
+      color: var(--artifact-accent);
     }
 
     .results-info {
-      color: var(--accent);
+      color: var(--artifact-accent);
       font-weight: 700;
       margin-bottom: 14px;
     }
 
     .schedule-table {
       width: 100%;
-      min-width: var(--table-min-width);
+      min-width: 1040px;
       table-layout: fixed;
       border-collapse: collapse;
-      background: var(--surface);
-      color: var(--text);
-      border: 2px solid var(--border-strong);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
+      border: 2px solid var(--artifact-border-dark);
       border-radius: 14px;
       overflow: hidden;
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--artifact-shadow-soft);
     }
 
     .schedule-table thead {
-      background: var(--accent);
-      color: var(--accent-text);
+      background: var(--artifact-accent);
+      color: var(--artifact-accent-text);
     }
 
     .schedule-table thead th {
@@ -496,11 +514,12 @@
     }
 
     .schedule-table col.time-col {
-      width: var(--time-col-width);
+      width: var(--artifact-time-col-width);
     }
 
-    .schedule-table th, .schedule-table td {
-      border: 1px solid var(--border-strong);
+    .schedule-table th,
+    .schedule-table td {
+      border: 1px solid var(--artifact-border-dark);
       padding: 8px 6px;
       min-height: 52px;
       vertical-align: top;
@@ -520,21 +539,21 @@
       line-height: 1.1;
       white-space: normal;
       vertical-align: middle;
-      width: var(--time-col-width);
-      min-width: var(--time-col-width);
-      max-width: var(--time-col-width);
+      width: var(--artifact-time-col-width);
+      min-width: var(--artifact-time-col-width);
+      max-width: var(--artifact-time-col-width);
     }
 
     .schedule-table td {
-      background: var(--surface);
-      color: var(--text);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
       white-space: normal;
     }
 
     .schedule-table td.editing-cell {
       background: #fff8e1 !important;
       color: #5d4037 !important;
-      outline: 2px dashed var(--warning);
+      outline: 2px dashed var(--artifact-warning);
       outline-offset: -2px;
     }
 
@@ -544,41 +563,29 @@
 
     .schedule-table tbody tr:hover td.friday-col,
     .schedule-table tbody tr:hover td.saturday-col {
-      background: var(--weekend-hover) !important;
-      color: var(--weekend-text) !important;
+      background: var(--artifact-weekend-hover-bg) !important;
+      color: var(--artifact-weekend-text) !important;
     }
 
     .time-slot {
-      background: var(--accent-2) !important;
-      color: var(--accent-2-text) !important;
-      font-size: .96rem;
+      background: var(--artifact-accent-2) !important;
+      color: var(--artifact-accent-2-text) !important;
+      font-size: 1rem;
       font-weight: 800;
       text-align: center;
       vertical-align: middle !important;
       line-height: 1.1;
       direction: ltr;
-      width: var(--time-col-width);
-      min-width: var(--time-col-width);
-      max-width: var(--time-col-width);
+      width: var(--artifact-time-col-width);
+      min-width: var(--artifact-time-col-width);
+      max-width: var(--artifact-time-col-width);
       padding: 8px 4px !important;
     }
 
-    .time-slot .slot-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .time-slot .slot-icon {
-      font-size: 1.12rem;
-      line-height: 1;
-    }
-
-    .friday-col, .saturday-col {
-      background: var(--weekend-bg) !important;
-      color: var(--weekend-text) !important;
+    .friday-col,
+    .saturday-col {
+      background: var(--artifact-weekend-bg) !important;
+      color: var(--artifact-weekend-text) !important;
     }
 
     .day-header-name {
@@ -591,10 +598,16 @@
 
     .date-text {
       display: block;
-      font-size: .9rem;
+      font-size: 0.9rem;
       font-weight: 700;
-      opacity: .96;
+      opacity: 0.96;
       line-height: 1.05;
+    }
+
+    .assist-cell {
+      min-height: 36px;
+      outline: none;
+      padding-top: 2px;
     }
 
     .person {
@@ -612,14 +625,14 @@
       line-height: 1.08;
       font-weight: 800;
       letter-spacing: .18px;
-      border: 1px solid rgba(0,0,0,.06);
-      box-shadow: 0 2px 6px rgba(0,0,0,.10);
-      text-shadow: 0 1px 0 rgba(0,0,0,.12);
-      -webkit-text-stroke: .15px rgba(0,0,0,.18);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+      -webkit-text-stroke: .2px rgba(0, 0, 0, 0.22);
       user-select: none;
       cursor: default;
-      background: var(--surface-2);
-      color: var(--text);
+      background: var(--artifact-surface-muted);
+      color: var(--artifact-text-primary);
     }
 
     .person.highlight-name {
@@ -630,8 +643,8 @@
       font-weight: 900;
       outline: 3px solid var(--artifact-primary-highlight);
       box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,.66),
-        0 6px 14px rgba(0,0,0,.22);
+        inset 0 0 0 2px rgba(255, 255, 255, 0.66),
+        0 6px 14px rgba(0, 0, 0, 0.22);
     }
 
     .spotlight-active .person:not(.highlight-name) {
@@ -640,14 +653,14 @@
     }
 
     .person.unknown-name {
-      background: var(--unknown-bg);
-      color: var(--unknown-text);
+      background: var(--artifact-unknown-bg);
+      color: var(--artifact-unknown-text);
       border-style: dashed;
     }
 
     .person.on-leave {
-      background: var(--leave-bg) !important;
-      color: var(--leave-text) !important;
+      background: var(--artifact-leave-bg) !important;
+      color: var(--artifact-leave-text) !important;
       border-style: dashed !important;
       text-decoration: line-through;
     }
@@ -669,7 +682,6 @@
     .person.color-סתיו { background: var(--name-סתיו-bg); color: var(--name-סתיו-text); }
     .person.color-אסף { background: var(--name-אסף-bg); color: var(--name-אסף-text); }
     .person.color-ליאני { background: var(--name-ליאני-bg); color: var(--name-ליאני-text); }
-    .person.color-נתי { background: var(--name-נתי-bg); color: var(--name-נתי-text); }
     .person.color-ערן { background: var(--name-ערן-bg); color: var(--name-ערן-text); }
     .person.color-מאור { background: var(--name-מאור-bg); color: var(--name-מאור-text); }
     .person.color-ניר { background: var(--name-ניר-bg); color: var(--name-ניר-text); }
@@ -679,8 +691,21 @@
     .person.color-חברוני { background: var(--name-חברוני-bg); color: var(--name-חברוני-text); }
     .person.color-ויקטור { background: var(--name-ויקטור-bg); color: var(--name-ויקטור-text); }
 
+    .person.color-נתי {
+      background: transparent !important;
+      box-shadow: none !important;
+      font-size: 0 !important;
+      border-color: transparent !important;
+    }
+
+    .person.color-נתי::before {
+      content: "🐍";
+      font-size: 28px;
+      visibility: visible;
+    }
+
     .person.color-גולן {
-      background-color: var(--surface);
+      background-color: var(--artifact-surface);
       color: var(--name-גולן-text);
       background-image:
         linear-gradient(45deg, #d32f2f 25%, transparent 25%),
@@ -694,49 +719,52 @@
     .warning-text {
       display: inline-block;
       margin-top: 4px;
-      color: var(--danger);
+      color: var(--artifact-danger);
       font-weight: 800;
     }
 
-    .summary-table, .exceptions-table {
+    .summary-table,
+    .exceptions-table {
       width: min(1200px, 100%);
       margin: 24px auto;
       border-collapse: separate;
       border-spacing: 0;
-      background: var(--surface);
-      color: var(--text);
-      border: 1px solid var(--border);
+      background: var(--artifact-surface);
+      color: var(--artifact-text-primary);
+      border: 1px solid var(--artifact-border-light);
       border-radius: 14px;
       overflow: hidden;
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--artifact-shadow-soft);
     }
 
     .summary-table thead {
       background: var(--artifact-primary-highlight);
-      color: var(--accent-text);
+      color: var(--artifact-accent-text);
     }
 
     .exceptions-table thead {
-      background: var(--danger);
-      color: #fff;
+      background: var(--artifact-danger);
+      color: var(--artifact-danger-text);
     }
 
-    .summary-table th, .summary-table td,
-    .exceptions-table th, .exceptions-table td {
+    .summary-table th,
+    .summary-table td,
+    .exceptions-table th,
+    .exceptions-table td {
       padding: 14px 10px;
       text-align: center;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--artifact-border-light);
     }
 
     .shifts-5-count {
-      background: var(--info-soft);
-      color: var(--info-soft-text);
+      background: var(--artifact-info-soft);
+      color: var(--artifact-info-soft-text);
       font-weight: 800;
     }
 
     .shifts-4-count {
-      background: var(--success-soft);
-      color: var(--success-soft-text);
+      background: var(--artifact-success-soft);
+      color: var(--artifact-success-soft-text);
       font-weight: 800;
     }
 
@@ -747,18 +775,18 @@
     }
 
     .low-shifts {
-      background: var(--danger-soft);
-      color: var(--danger-soft-text);
+      background: var(--artifact-danger-soft);
+      color: var(--artifact-danger-soft-text);
       font-weight: 800;
     }
 
     .night-limit-fail-row {
-      background: var(--danger-soft);
-      color: var(--danger-soft-text);
+      background: var(--artifact-danger-soft);
+      color: var(--artifact-danger-soft-text);
     }
 
-    .night-limit-ok { color: var(--success); font-weight: 800; }
-    .night-limit-fail { color: var(--danger); font-weight: 800; }
+    .night-limit-ok { color: var(--artifact-success); font-weight: 800; }
+    .night-limit-fail { color: var(--artifact-danger); font-weight: 800; }
 
     @media (max-width: 1100px) {
       .toolbar { grid-template-columns: repeat(2, minmax(140px, 1fr)); }
@@ -874,7 +902,7 @@
         </div>
 
         <div id="validationPanel" class="validation-panel" style="display:none;"></div>
-        <div class="subtle">ליווי הוסר מהמערכת כרגע. המיקוד הוא רק במשמרות עצמן.</div>
+        <div class="subtle">טיפ: אפשר להדביק טבלה מלאה מאקסל/גוגל שיטס, ופסיק או Enter מפרידים בין שמות בתוך תא.</div>
       </div>
 
       <div class="card">
@@ -972,7 +1000,7 @@
             SHEET_URL: "googleSheetUrl",
             SHIFT_REQ_SCOPE_WEEK: "shiftReqScopeWeek",
             LEAVE_SCOPE_WEEK: "leaveScopeWeek",
-            DRAFT: "shiftSchedulerDraftV5"
+            DRAFT: "shiftSchedulerDraftV4"
           },
           SHIFT_INDEX: Object.freeze({
             NIGHT_2_6: 0,
@@ -982,6 +1010,7 @@
             EVENING_18_22: 4,
             NIGHT_22_2: 5
           }),
+          HEB_DAYS: ["יום ראשון","יום שני","יום שלישי","יום רביעי","יום חמישי","יום שישי","יום שבת"],
           TIME_SLOTS: [
             "02:00 - 06:00 (Night)",
             "06:00 - 10:00",
@@ -990,8 +1019,6 @@
             "18:00 - 22:00",
             "22:00 - 02:00 (Night)"
           ],
-          SLOT_ICONS: ["🌙","🌅","☀️","🌤️","🌆","🌃"],
-          HEB_DAYS: ["יום ראשון","יום שני","יום שלישי","יום רביעי","יום חמישי","יום שישי","יום שבת"],
           COLOR_MAP: {
             "אמיר":"color-אמיר","נמרוד":"color-נמרוד","יובי":"color-יובי","טגניה":"color-טגניה",
             "ישי":"color-ישי","גולן":"color-גולן","חסון":"color-חסון","לישע":"color-לישע",
@@ -1008,7 +1035,9 @@
           lockedName: null,
           statusTimer: null,
           history: [],
-          future: []
+          future: [],
+          suspendHistory: false,
+          suspendAutosave: false
         },
 
         el: {},
@@ -1038,7 +1067,9 @@
             "leaveScopeWeek","leaveNameInput","leaveFromInput","leaveToInput",
             "leaveAddBtn","leaveClearBtn","vacationsList","statusBanner","resultsContainer",
             "excel-grid","validationPanel","undoButton","redoButton","resetDraftButton"
-          ].forEach(id => this.el[id] = document.getElementById(id));
+          ].forEach(id => {
+            this.el[id] = document.getElementById(id);
+          });
         },
 
         bindEvents() {
@@ -1152,8 +1183,8 @@
           return classes.filter(Boolean).join(" ");
         },
 
-        deepClone(v) {
-          return JSON.parse(JSON.stringify(v));
+        deepClone(value) {
+          return JSON.parse(JSON.stringify(value));
         },
 
         safeGet(key) {
@@ -1166,36 +1197,6 @@
 
         safeRemove(key) {
           try { localStorage.removeItem(key); } catch {}
-        },
-
-        pushHistorySnapshot() {
-          this.state.history.push(this.deepClone(this.state.excelMatrix));
-          if (this.state.history.length > 100) this.state.history.shift();
-          this.state.future = [];
-          this.updateUndoRedoButtons();
-        },
-
-        updateUndoRedoButtons() {
-          this.el.undoButton.disabled = this.state.history.length === 0;
-          this.el.redoButton.disabled = this.state.future.length === 0;
-        },
-
-        undo() {
-          if (!this.state.history.length) return;
-          this.state.future.push(this.deepClone(this.state.excelMatrix));
-          this.state.excelMatrix = this.state.history.pop();
-          this.ExcelGrid.render();
-          this.refreshAfterDataChange();
-          this.updateUndoRedoButtons();
-        },
-
-        redo() {
-          if (!this.state.future.length) return;
-          this.state.history.push(this.deepClone(this.state.excelMatrix));
-          this.state.excelMatrix = this.state.future.pop();
-          this.ExcelGrid.render();
-          this.refreshAfterDataChange();
-          this.updateUndoRedoButtons();
         },
 
         getWeekStartSetting() {
@@ -1282,7 +1283,9 @@
             if (!parts.length) return;
 
             const timePart = parts[0];
+            const isAssist = timePart === "ליווי 07:40";
             const isTime = this.C.TIME_SLOTS.some(slot => timePart.startsWith(slot.split("(")[0].trim()));
+            if (isAssist) return;
             if (isTime) rawDayData[currentDay].push(parts.slice(1).join(","));
           });
 
@@ -1387,6 +1390,25 @@
           return set;
         },
 
+        getAssistWeekKey() {
+          return `assist_0740__${this.el.startDate.value || "no-date"}`;
+        },
+
+        loadAssistArray() {
+          try {
+            const raw = this.safeGet(this.getAssistWeekKey());
+            const arr = raw ? JSON.parse(raw) : null;
+            return Array.isArray(arr) && arr.length === 7 ? arr : Array(7).fill("");
+          } catch {
+            return Array(7).fill("");
+          }
+        },
+
+        saveAssistArray(arr) {
+          this.safeSet(this.getAssistWeekKey(), JSON.stringify(arr));
+          this.saveDraft();
+        },
+
         nameToColorClass(name) {
           const clean = this.normalizeKey(name);
           if (this.C.COLOR_MAP[clean]) return this.C.COLOR_MAP[clean];
@@ -1420,7 +1442,9 @@
           matrix.forEach((row, rowIndex) => {
             row.forEach((cell, colIndex) => {
               const names = this.toNameArray(cell);
-              if (!names.length) emptyCells.push({ rowIndex, colIndex });
+              if (!names.length) {
+                emptyCells.push({ rowIndex, colIndex });
+              }
               names.forEach(name => {
                 if (!allKnownNames.has(name)) unknownNames.add(name);
               });
@@ -1448,12 +1472,48 @@
           }
         },
 
+        pushHistorySnapshot() {
+          if (this.state.suspendHistory) return;
+          this.state.history.push(this.deepClone(this.state.excelMatrix));
+          if (this.state.history.length > 100) this.state.history.shift();
+          this.state.future = [];
+          this.updateUndoRedoButtons();
+        },
+
+        updateUndoRedoButtons() {
+          this.el.undoButton.disabled = this.state.history.length === 0;
+          this.el.redoButton.disabled = this.state.future.length === 0;
+        },
+
+        undo() {
+          if (!this.state.history.length) return;
+          this.state.future.push(this.deepClone(this.state.excelMatrix));
+          this.state.excelMatrix = this.state.history.pop();
+          this.ExcelGrid.render();
+          this.refreshAfterDataChange();
+          this.updateUndoRedoButtons();
+          this.saveDraft();
+        },
+
+        redo() {
+          if (!this.state.future.length) return;
+          this.state.history.push(this.deepClone(this.state.excelMatrix));
+          this.state.excelMatrix = this.state.future.pop();
+          this.ExcelGrid.render();
+          this.refreshAfterDataChange();
+          this.updateUndoRedoButtons();
+          this.saveDraft();
+        },
+
         saveDraft() {
+          if (this.state.suspendAutosave) return;
+          const activeGuards = Array.from(this.el.guardButtonsContainer.querySelectorAll(".guard-btn.active")).map(btn => this.normalizeKey(btn.textContent));
           const payload = {
             startDate: this.el.startDate.value,
             weekStart: this.getWeekStartSetting(),
             matrix: this.state.excelMatrix,
-            activeGuards: Array.from(this.el.guardButtonsContainer.querySelectorAll(".guard-btn.active")).map(btn => this.normalizeKey(btn.textContent))
+            activeGuards,
+            assist: this.loadAssistArray()
           };
           this.safeSet(this.C.STORAGE.DRAFT, JSON.stringify(payload));
         },
@@ -1463,25 +1523,24 @@
             const raw = this.safeGet(this.C.STORAGE.DRAFT);
             if (!raw) return;
             const draft = JSON.parse(raw);
-
             if (draft.weekStart && draft.weekStart !== this.getWeekStartSetting()) {
               this.safeSet(this.C.STORAGE.WEEK_START, draft.weekStart);
               this.state.expectedDays = this.computeExpectedDays(draft.weekStart);
               this.el.weekStartSelect.value = draft.weekStart;
             }
-
             if (draft.startDate) this.el.startDate.value = draft.startDate;
-
             if (Array.isArray(draft.matrix) && draft.matrix.length === this.C.TIME_SLOTS.length) {
               this.state.excelMatrix = draft.matrix;
               this.ExcelGrid.render();
             }
-
             if (Array.isArray(draft.activeGuards)) {
               const set = new Set(draft.activeGuards.map(name => this.normalizeKey(name)));
               this.el.guardButtonsContainer.querySelectorAll(".guard-btn").forEach(btn => {
                 btn.classList.toggle("active", set.has(this.normalizeKey(btn.textContent)));
               });
+            }
+            if (Array.isArray(draft.assist) && draft.assist.length === 7) {
+              this.saveAssistArray(draft.assist);
             }
           } catch {}
         },
@@ -1512,12 +1571,16 @@
         },
 
         convertEditableCellToBubbles(cell, fallbackTime = "") {
-          const raw = String(cell.innerText || "").replace(/בעיה!?/g, "").replace(/משבצת\s*ריקה/g, "");
+          const raw = String(cell.innerText || "")
+            .replace(/בעיה!?/g, "")
+            .replace(/משבצת\s*ריקה/g, "");
+
           const names = Array.from(new Set(raw.split(/[,\n]/).map(v => this.normalizeKey(v)).filter(Boolean)));
-          const dayName = cell.getAttribute("data-day") || "";
-          const timeLabel = cell.getAttribute("data-time") || fallbackTime;
+          const dayName = cell.dataset.dayName || cell.getAttribute("data-day") || "";
+          const timeLabel = cell.dataset.time || cell.getAttribute("data-time") || fallbackTime;
           const dayIndex = this.state.expectedDays.indexOf(dayName);
           const dayIso = dayIndex >= 0 ? this.getIsoDatesForWeek(this.el.startDate.value)[dayIndex] : "";
+
           cell.innerHTML = this.renderPersonBubbles(names, dayName, timeLabel, dayIso);
         },
 
@@ -1529,6 +1592,15 @@
           root.querySelectorAll(".person").forEach(el => {
             el.classList.toggle("highlight-name", el.textContent.trim() === name);
           });
+        },
+
+        showStatus(message, type = "success") {
+          const el = this.el.statusBanner;
+          clearTimeout(this.state.statusTimer);
+          el.className = `status-banner ${type}`;
+          el.textContent = message;
+          el.style.display = "block";
+          this.state.statusTimer = setTimeout(() => { el.style.display = "none"; }, 7000);
         },
 
         nextAllowedSameDayAfter(index) {
@@ -1614,7 +1686,7 @@
           return { allShifts, night2to6Count, exceptions };
         },
 
-        renderScheduleHeader(days, datesForWeek) {
+        renderScheduleHeader(days, datesForWeek, assistValues, isoDates) {
           let html = `<colgroup><col class="time-col">${days.map(() => `<col>`).join("")}</colgroup>`;
           html += `<thead><tr><th scope="col" rowspan="2">שעות / יום</th>`;
           days.forEach((day, idx) => {
@@ -1622,25 +1694,19 @@
             html += `<th scope="col" class="${weekendClass}"><span class="date-text">${datesForWeek[idx]}</span></th>`;
           });
           html += `</tr><tr>`;
-          days.forEach(day => {
+          days.forEach((day, idx) => {
             const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
             const dayDisplay = this.getWeekStartSetting() === "mon" && day === "יום ראשון" ? "יום ראשון" : day.replace("יום ", "");
-            html += `<th scope="col" class="${weekendClass}"><span class="day-header-name">${this.escapeHtml(dayDisplay)}</span></th>`;
+            const assistBubbles = this.renderPersonBubbles(this.toNameArray(assistValues[idx] || ""), day, "ליווי 07:40", isoDates[idx]);
+            html += `
+              <th scope="col" class="${weekendClass}" data-day-name="${this.escapeHtml(day)}">
+                <span class="day-header-name">${this.escapeHtml(dayDisplay)}</span>
+                <div class="assist-cell" contenteditable="true" data-day-index="${idx}" data-day-name="${this.escapeHtml(day)}">${assistBubbles}</div>
+              </th>
+            `;
           });
           html += `</tr></thead>`;
           return html;
-        },
-
-        renderTimeSlotCell(rowIdx, label) {
-          const icon = this.C.SLOT_ICONS[rowIdx] || "🕒";
-          return `
-            <th scope="row" class="time-slot" data-time-index="${rowIdx}">
-              <div class="slot-wrap">
-                <span class="slot-icon">${icon}</span>
-                <span>${label}</span>
-              </div>
-            </th>
-          `;
         },
 
         renderScheduleBody(scheduleData, days, isoDates) {
@@ -1649,7 +1715,7 @@
             const timeFull = this.C.TIME_SLOTS[rowIdx];
             const timeDisplay = timeFull.replace(" (Night)", "").replace(" - ", "<br>");
             const required = this.getRequiredPerShift(rowIdx);
-            html += `<tr>${this.renderTimeSlotCell(rowIdx, timeDisplay)}`;
+            html += `<tr><th scope="row" class="time-slot" data-time-index="${rowIdx}">${timeDisplay}</th>`;
 
             row.forEach((cell, colIdx) => {
               const day = days[colIdx];
@@ -1697,7 +1763,7 @@
         },
 
         renderSummaryTable(allShifts, night2to6Count) {
-          let html = `<h3>סיכום הופעות</h3>`;
+          let html = `<h3>סיכום הופעות (ללא ליווי)</h3>`;
           html += `<table class="summary-table"><thead><tr><th>מס'</th><th>שם העובד</th><th>סה"כ הופעות</th><th>משמרות 02–06</th><th>סטטוס</th></tr></thead><tbody>`;
 
           const sortedNames = Object.keys(allShifts).sort((a, b) => {
@@ -1761,6 +1827,7 @@
           const scheduleData = parsed.data;
           const datesForWeek = this.getDatesForWeek(this.el.startDate.value);
           const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
+          const assistValues = this.loadAssistArray();
           const { allShifts, night2to6Count, exceptions } = this.calculateScheduleInsights(scheduleData, days);
 
           const doubleShifts = this.C.TIME_SLOTS
@@ -1772,14 +1839,47 @@
           let html = `<h3>טבלת משמרות</h3>`;
           html += `<div class="results-info">${doubleShifts ? `משמרות עם 2 שומרים: ${doubleShifts}.` : "כל המשמרות = 1 שומר."} מינימום ${this.C.MIN_REQUIRED} לעובד.</div>`;
           html += `<table id="scheduleTable" class="schedule-table" role="table">`;
-          html += this.renderScheduleHeader(days, datesForWeek);
+          html += this.renderScheduleHeader(days, datesForWeek, assistValues, isoDates);
           html += this.renderScheduleBody(scheduleData, days, isoDates);
           html += `</table>`;
           html += this.renderExceptionsTable(exceptions);
           html += this.renderSummaryTable(allShifts, night2to6Count);
 
           this.el.resultsContainer.innerHTML = html;
+          this.setupAssistEditors();
           this.setupScheduleEditors();
+        },
+
+        setupAssistEditors() {
+          this.el.resultsContainer.querySelectorAll(".assist-cell[contenteditable='true']").forEach(cell => {
+            if (cell.dataset.bound === "1") return;
+            cell.dataset.bound = "1";
+
+            const commit = () => {
+              const dayIndex = Number(cell.dataset.dayIndex || 0);
+              const dayName = cell.dataset.dayName || "";
+              const dayIso = this.getIsoDatesForWeek(this.el.startDate.value)[dayIndex];
+              const names = String(cell.innerText || "").split(/[,\n]/).map(name => this.normalizeKey(name)).filter(Boolean);
+
+              cell.innerHTML = this.renderPersonBubbles(names, dayName, "ליווי 07:40", dayIso);
+
+              const arr = this.loadAssistArray();
+              arr[dayIndex] = names.join(", ");
+              this.saveAssistArray(arr);
+              this.placeCaretAtEnd(cell);
+              this.saveDraft();
+            };
+
+            cell.addEventListener("keydown", e => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                commit();
+                cell.blur();
+              }
+            });
+
+            cell.addEventListener("blur", commit);
+          });
         },
 
         setupScheduleEditors() {
@@ -2034,14 +2134,14 @@
           if (!url || !url.startsWith("https://script.google.com/macros/s/")) {
             statusEl.textContent = "❌ כתובת Web App לא תקינה.";
             statusEl.style.display = "block";
-            statusEl.style.color = "var(--danger)";
+            statusEl.style.color = "var(--artifact-danger)";
             return;
           }
 
           this.safeSet(this.C.STORAGE.SHEET_URL, url);
           statusEl.textContent = "טוען נתונים... 🔄";
           statusEl.style.display = "block";
-          statusEl.style.color = "var(--accent)";
+          statusEl.style.color = "var(--artifact-accent)";
           this.el.fetchFromSheetButton.disabled = true;
 
           try {
@@ -2056,11 +2156,11 @@
             this.pushHistorySnapshot();
             this.ExcelGrid.loadFromText(text);
             statusEl.textContent = "✅ הנתונים נטענו בהצלחה";
-            statusEl.style.color = "var(--success)";
+            statusEl.style.color = "var(--artifact-success)";
             this.showStatus("הנתונים נטענו לטבלת הקלט.", "success");
           } catch (err) {
             statusEl.textContent = `❌ שגיאה: ${err.message}`;
-            statusEl.style.color = "var(--danger)";
+            statusEl.style.color = "var(--artifact-danger)";
             this.showStatus(`שגיאה בטעינה: ${err.message}`, "error");
           } finally {
             this.el.fetchFromSheetButton.disabled = false;
@@ -2092,6 +2192,7 @@
           const night2to6Count = {};
           const newSchedule = parsed.data.map(row => row.map(() => []));
           const availabilityMap = {};
+          const assistOccupancy = parsed.days.map(() => new Set());
           const night2202Blocks = parsed.days.map(() => new Set());
           const night0206Blocks = parsed.days.map(() => new Set());
           const minNextAllowed = parsed.days.map(() => ({}));
@@ -2099,6 +2200,10 @@
           allEmployees.forEach(name => {
             employeeShiftCount[name] = 0;
             night2to6Count[name] = 0;
+          });
+
+          this.loadAssistArray().forEach((csv, dayIdx) => {
+            this.toNameArray(csv).forEach(name => assistOccupancy[dayIdx].add(name));
           });
 
           const isOnLeaveThisWeek = name => {
@@ -2133,6 +2238,7 @@
             }
 
             if ((employeeShiftCount[name] || 0) >= this.C.MAX_ALLOWED) return false;
+            if (assistOccupancy[dayIdx].has(name)) return false;
 
             const minAllowed = minNextAllowed[dayIdx][name];
             if (minAllowed !== undefined && shiftIdx < minAllowed) return false;
