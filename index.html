@@ -1,46 +1,35 @@
 <![CDATA[
 <!DOCTYPE html>
-<html lang="he" dir="rtl" data-theme="light">
+<html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>מנתח טבלת משמרות 📅</title>
   <style>
     :root {
-      --artifact-background: var(--theme-background, #ffffff);
-      --artifact-background-light: var(--theme-background-light, #f6f6f6);
-      --artifact-background-mid: var(--theme-background-mid, #efefef);
-      --artifact-border-light: var(--theme-border-light, #e5e5e5);
-      --artifact-border-dark: var(--theme-border-dark, #cccccc);
-      --artifact-text-primary: var(--theme-text-primary, #1b1b1b);
-      --artifact-text-secondary: var(--theme-text-secondary, #727272);
-      --artifact-primary-highlight: var(--theme-primary-highlight, #1b1b1b);
-      --artifact-selected: var(--theme-selected, #ececec);
+      --bg: #f6f7fb;
+      --surface: #ffffff;
+      --surface-2: #f0f3f8;
+      --text: #18212f;
+      --muted: #64748b;
+      --border: #dbe2ea;
+      --border-strong: #c5d0dd;
 
-      --page-bg: var(--artifact-background-light);
-      --surface: var(--artifact-background);
-      --surface-2: var(--artifact-background-mid);
-      --text: var(--artifact-text-primary);
-      --muted: var(--artifact-text-secondary);
-      --border: var(--artifact-border-light);
-      --border-strong: var(--artifact-border-dark);
-
-      --accent: #004d40;
-      --accent-2: #4db6ac;
+      --accent: #0f766e;
       --accent-text: #ffffff;
+      --accent-2: #7dd3c7;
+      --accent-2-text: #0b2d29;
 
-      --success: #2e7d32;
-      --warning: #ef6c00;
-      --danger: #d32f2f;
-      --info: #1976d2;
+      --success: #16a34a;
+      --warning: #ea580c;
+      --danger: #dc2626;
+      --info: #2563eb;
 
-      --success-soft: #e7f6ea;
-      --warning-soft: #fff3e8;
+      --success-soft: #eaf8ef;
       --danger-soft: #fdecec;
-      --info-soft: #e8f1ff;
+      --info-soft: #eaf1ff;
 
-      --weekend-bg: #ffd6bf;
-      --weekend-hover: #ffc7a7;
+      --weekend-bg: #ffd9c5;
       --weekend-text: #7a3e1d;
 
       --unknown-bg: #fff8e1;
@@ -53,10 +42,10 @@
       --guard-active-bg: #fffbeb;
       --guard-active-text: #92400e;
 
-      --shadow: 0 10px 24px rgba(0,0,0,.08);
-      --shadow-soft: 0 4px 12px rgba(0,0,0,.06);
+      --shadow: 0 10px 24px rgba(15, 23, 42, .08);
+      --shadow-soft: 0 4px 12px rgba(15, 23, 42, .06);
       --radius: 18px;
-      --time-col-width: 112px;
+      --time-col-width: 116px;
       --table-min-width: 1120px;
 
       --toolbar-fetch: linear-gradient(135deg, #00d2ff, #3a7bd5);
@@ -65,36 +54,38 @@
       --toolbar-download: linear-gradient(135deg, #0ea5e9, #0284c7);
       --toolbar-sheet: linear-gradient(135deg, #22c55e, #16a34a);
 
-      --name-אמיר-bg: #2563eb;   --name-אמיר-text: #ffffff;
-      --name-נמרוד-bg: #06b6d4;  --name-נמרוד-text: #062c33;
-      --name-יובי-bg: #f59e0b;   --name-יובי-text: #402100;
-      --name-טגניה-bg: #22c55e;  --name-טגניה-text: #052e16;
-      --name-ישי-bg: #8b5cf6;    --name-ישי-text: #ffffff;
-      --name-חסון-bg: #0f172a;   --name-חסון-text: #ffffff;
-      --name-לישע-bg: #84cc16;   --name-לישע-text: #1f2f06;
-      --name-עידן-bg: #ec4899;   --name-עידן-text: #ffffff;
-      --name-חגי-bg: #fb7185;    --name-חגי-text: #4c0519;
-      --name-סתיו-bg: #fde047;   --name-סתיו-text: #3f3200;
-      --name-אסף-bg: #b91c1c;    --name-אסף-text: #ffffff;
-      --name-ליאני-bg: #4c1d95;  --name-ליאני-text: #ffffff;
-      --name-נתי-bg: #0ea5e9;    --name-נתי-text: #ffffff;
-      --name-ערן-bg: #64748b;    --name-ערן-text: #ffffff;
-      --name-מאור-bg: #fef3c7;   --name-מאור-text: #1f2937;
-      --name-ניר-bg: #ef4444;    --name-ניר-text: #ffffff;
-      --name-חורחה-bg: #f472b6;  --name-חורחה-text: #4a044e;
-      --name-שלומי-bg: #8b5e3c;  --name-שלומי-text: #ffffff;
-      --name-יפתח-bg: #bef264;   --name-יפתח-text: #365314;
-      --name-חברוני-bg: #14b8a6; --name-חברוני-text: #042f2e;
-      --name-ויקטור-bg: #fb923c; --name-ויקטור-text: #4a1d00;
+      --person-dim: .24;
+
+      --name-אמיר-bg: linear-gradient(135deg, #3b82f6, #2563eb); --name-אמיר-text: #fff;
+      --name-נמרוד-bg: linear-gradient(135deg, #22d3ee, #0891b2); --name-נמרוד-text: #082f49;
+      --name-יובי-bg: linear-gradient(135deg, #fbbf24, #f59e0b); --name-יובי-text: #422006;
+      --name-טגניה-bg: linear-gradient(135deg, #34d399, #10b981); --name-טגניה-text: #052e16;
+      --name-ישי-bg: linear-gradient(135deg, #a78bfa, #7c3aed); --name-ישי-text: #fff;
+      --name-חסון-bg: linear-gradient(135deg, #1f2937, #0f172a); --name-חסון-text: #fff;
+      --name-לישע-bg: linear-gradient(135deg, #a3e635, #65a30d); --name-לישע-text: #243a0a;
+      --name-עידן-bg: linear-gradient(135deg, #f472b6, #db2777); --name-עידן-text: #fff;
+      --name-חגי-bg: linear-gradient(135deg, #fb7185, #e11d48); --name-חגי-text: #fff;
+      --name-סתיו-bg: linear-gradient(135deg, #fde047, #facc15); --name-סתיו-text: #3f3200;
+      --name-אסף-bg: linear-gradient(135deg, #ef4444, #b91c1c); --name-אסף-text: #fff;
+      --name-ליאני-bg: linear-gradient(135deg, #7c3aed, #4c1d95); --name-ליאני-text: #fff;
+      --name-נתי-bg: linear-gradient(135deg, #38bdf8, #0284c7); --name-נתי-text: #fff;
+      --name-ערן-bg: linear-gradient(135deg, #94a3b8, #64748b); --name-ערן-text: #fff;
+      --name-מאור-bg: linear-gradient(135deg, #fef3c7, #fde68a); --name-מאור-text: #1f2937;
+      --name-ניר-bg: linear-gradient(135deg, #fb7185, #ef4444); --name-ניר-text: #fff;
+      --name-חורחה-bg: linear-gradient(135deg, #f9a8d4, #ec4899); --name-חורחה-text: #500724;
+      --name-שלומי-bg: linear-gradient(135deg, #a16207, #78350f); --name-שלומי-text: #fff;
+      --name-יפתח-bg: linear-gradient(135deg, #d9f99d, #84cc16); --name-יפתח-text: #365314;
+      --name-חברוני-bg: linear-gradient(135deg, #2dd4bf, #0f766e); --name-חברוני-text: #e6fffb;
+      --name-ויקטור-bg: linear-gradient(135deg, #fdba74, #f97316); --name-ויקטור-text: #4a1d00;
       --name-גולן-text: #111827;
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0,0,0,0.08); }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0,0,0,.08); }
 
     html, body {
       margin: 0;
       min-height: 100dvh;
-      background: var(--page-bg);
+      background: var(--bg);
       color: var(--text);
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       -webkit-text-size-adjust: 100%;
@@ -181,7 +172,7 @@
 
     .input:focus, .select:focus, .date-input:focus {
       border-color: var(--info);
-      box-shadow: 0 0 0 3px rgba(25,118,210,.16);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .16);
     }
 
     .url-input {
@@ -319,8 +310,8 @@
 
     .excel-grid td.cell:focus {
       background: var(--info-soft);
-      color: var(--info-soft-text);
-      box-shadow: inset 0 0 0 2px rgba(25,118,210,.26);
+      color: #12306b;
+      box-shadow: inset 0 0 0 2px rgba(37, 99, 235, .26);
     }
 
     .excel-grid td.cell.has-unknown {
@@ -354,7 +345,7 @@
     .guard-btn.active {
       background: var(--guard-active-bg);
       color: var(--guard-active-text);
-      box-shadow: 0 0 0 3px rgba(252, 211, 77, 0.22);
+      box-shadow: 0 0 0 3px rgba(252, 211, 77, .22);
     }
 
     .collapsible {
@@ -426,6 +417,11 @@
       background: var(--surface);
     }
 
+    .muted {
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
     .status-banner {
       display: none;
       margin-top: 12px;
@@ -445,7 +441,7 @@
       padding: 12px 14px;
       border-radius: 12px;
       background: var(--info-soft);
-      color: var(--info-soft-text);
+      color: #174095;
       font-size: .94rem;
       text-align: center;
       line-height: 1.5;
@@ -536,16 +532,6 @@
       outline-offset: -2px;
     }
 
-    .schedule-table tbody tr:hover td:not(.friday-col):not(.saturday-col):not(.time-slot) {
-      background: var(--artifact-selected);
-    }
-
-    .schedule-table tbody tr:hover td.friday-col,
-    .schedule-table tbody tr:hover td.saturday-col {
-      background: var(--weekend-hover) !important;
-      color: var(--weekend-text) !important;
-    }
-
     .time-slot {
       background: var(--accent-2) !important;
       color: var(--accent-2-text) !important;
@@ -570,7 +556,7 @@
     }
 
     .time-slot .slot-icon {
-      font-size: 1.12rem;
+      font-size: 1.14rem;
       line-height: 1;
     }
 
@@ -612,12 +598,28 @@
       letter-spacing: .18px;
       border: 1px solid rgba(0,0,0,.06);
       box-shadow: 0 2px 6px rgba(0,0,0,.10);
-      text-shadow: 0 1px 0 rgba(0,0,0,.12);
-      -webkit-text-stroke: .15px rgba(0,0,0,.18);
+      text-shadow: 0 1px 0 rgba(0,0,0,.10);
+      -webkit-text-stroke: .1px rgba(0,0,0,.12);
       user-select: none;
       cursor: default;
       background: var(--surface-2);
       color: var(--text);
+      transition: transform .12s ease, opacity .12s ease, box-shadow .12s ease, filter .12s ease;
+    }
+
+    .spotlight-active .person:not(.highlight-name) {
+      opacity: var(--person-dim);
+      filter: grayscale(.35) saturate(.7);
+    }
+
+    .person.highlight-name {
+      transform: scale(1.03);
+      box-shadow:
+        0 0 0 3px rgba(255,255,255,.85),
+        0 0 0 6px rgba(37, 99, 235, .22),
+        0 10px 20px rgba(15,23,42,.18);
+      opacity: 1 !important;
+      filter: none !important;
     }
 
     .person.unknown-name {
@@ -693,7 +695,7 @@
     }
 
     .summary-table thead {
-      background: var(--artifact-primary-highlight);
+      background: var(--accent);
       color: #fff;
     }
 
@@ -711,7 +713,7 @@
 
     .shifts-5-count {
       background: var(--info-soft);
-      color: var(--info-soft-text);
+      color: #12306b;
       font-weight: 800;
     }
 
@@ -765,57 +767,6 @@
         padding: 9px 13px;
       }
     }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-      }
-    }
-
-    @media print {
-      body {
-        margin: 0;
-        padding: 0.4in 0.6in;
-        background: #fff;
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
-      }
-
-      .app-shell, .card, .results-shell, main {
-        max-width: 100% !important;
-        width: 100% !important;
-      }
-
-      section, .card, .hero {
-        break-inside: avoid;
-        margin-bottom: 20px !important;
-      }
-
-      .card {
-        padding: 18px !important;
-        box-shadow: none !important;
-        border: 1px solid rgba(0,0,0,0.08);
-      }
-
-      .toolbar, .row, .inline-actions {
-        gap: 10px !important;
-        margin-bottom: 20px !important;
-      }
-
-      table, thead, .list {
-        break-inside: avoid;
-      }
-
-      *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-      }
-
-      button, [role="button"], .interactive-only {
-        display: none !important;
-      }
-    }
   </style>
 </head>
 <body>
@@ -851,7 +802,7 @@
         </div>
 
         <div id="validationPanel" class="validation-panel" style="display:none;"></div>
-        <div class="subtle">ליווי הוסר מהמערכת כרגע. האייקונים נוספו ליד שעות המשמרות בלבד.</div>
+        <div class="subtle">ליווי הוסר מהמערכת כרגע. הבלטת שמות חזרה, בלי סימון עמודה או שורה.</div>
       </div>
 
       <div class="card">
@@ -949,7 +900,7 @@
             SHEET_URL: "googleSheetUrl",
             SHIFT_REQ_SCOPE_WEEK: "shiftReqScopeWeek",
             LEAVE_SCOPE_WEEK: "leaveScopeWeek",
-            DRAFT: "shiftSchedulerDraftV5"
+            DRAFT: "shiftSchedulerDraftV6"
           },
           SHIFT_INDEX: Object.freeze({
             NIGHT_2_6: 0,
@@ -967,7 +918,7 @@
             "18:00 - 22:00",
             "22:00 - 02:00 (Night)"
           ],
-          SLOT_ICONS: ["🌙","🌅","☀️","🌤️","🌆","🌃"],
+          SLOT_ICONS: ["🦉","☕","🍔","😎","🍕","😴"],
           HEB_DAYS: ["יום ראשון","יום שני","יום שלישי","יום רביעי","יום חמישי","יום שישי","יום שבת"],
           COLOR_MAP: {
             "אמיר":"color-אמיר","נמרוד":"color-נמרוד","יובי":"color-יובי","טגניה":"color-טגניה",
@@ -982,6 +933,7 @@
         state: {
           expectedDays: [],
           excelMatrix: [],
+          lockedName: null,
           statusTimer: null,
           history: [],
           future: []
@@ -1035,7 +987,37 @@
           this.el.redoButton.addEventListener("click", () => this.redo());
           this.el.resetDraftButton.addEventListener("click", () => this.resetDraft());
 
+          document.addEventListener("mouseover", e => {
+            const bubble = e.target.closest(".person");
+            if (!bubble || this.state.lockedName) return;
+            this.updateHighlights(bubble.textContent.trim());
+          }, { passive: true });
+
+          document.addEventListener("mouseout", e => {
+            if (!e.target.closest(".person") || this.state.lockedName) return;
+            this.updateHighlights(null);
+          }, { passive: true });
+
+          document.addEventListener("click", e => {
+            const bubble = e.target.closest(".person");
+            if (bubble) {
+              const name = bubble.textContent.trim();
+              this.state.lockedName = this.state.lockedName === name ? null : name;
+              this.updateHighlights(this.state.lockedName);
+              return;
+            }
+            const isUi = !!(e.target.closest("button") || e.target.closest("input") || e.target.closest("select") || e.target.closest("a"));
+            if (!isUi) {
+              this.state.lockedName = null;
+              this.updateHighlights(null);
+            }
+          }, { passive: true });
+
           document.addEventListener("keydown", e => {
+            if (e.key === "Escape") {
+              this.state.lockedName = null;
+              this.updateHighlights(null);
+            }
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !e.shiftKey) {
               e.preventDefault();
               this.undo();
@@ -1346,8 +1328,18 @@
             else classes.push("unknown-name");
             if (dayIso && this.isOnVacation(clean, dayIso)) classes.push("on-leave");
             const title = `${this.escapeHtml(clean)} - ${this.escapeHtml(dayLabel)}, ${this.escapeHtml(timeLabel)}`;
-            return `<span class="${classes.join(" ")}" title="${title}" aria-label="${title}">${this.escapeHtml(clean)}</span>`;
+            return `<span class="${classes.join(" ")}" title="${title}" role="button" tabindex="0" aria-label="${title}">${this.escapeHtml(clean)}</span>`;
           }).join("");
+        },
+
+        updateHighlights(name) {
+          const root = this.el.resultsContainer;
+          if (!root) return;
+          if (name) root.classList.add("spotlight-active");
+          else root.classList.remove("spotlight-active");
+          root.querySelectorAll(".person").forEach(el => {
+            el.classList.toggle("highlight-name", el.textContent.trim() === name);
+          });
         },
 
         getValidationSummary() {
@@ -1570,7 +1562,7 @@
         },
 
         renderTimeSlotCell(rowIdx, label) {
-          const icon = this.C.SLOT_ICONS[rowIdx] || "🕒";
+          const icon = this.C.SLOT_ICONS[rowIdx] || "😂";
           return `
             <th scope="row" class="time-slot" data-time-index="${rowIdx}">
               <div class="slot-wrap">
@@ -1718,6 +1710,7 @@
 
           this.el.resultsContainer.innerHTML = html;
           this.setupScheduleEditors();
+          this.updateHighlights(this.state.lockedName);
         },
 
         setupScheduleEditors() {
@@ -2269,10 +2262,6 @@
     window.GleanBridge.onMessage('action', function(data) {
       if (data.actionId === 'export-pdf') window.print();
     });
-    function prepareChartsForPrint() {}
-    function cleanUpAfterPrint() {}
-    window.addEventListener('beforeprint', prepareChartsForPrint);
-    window.addEventListener('afterprint', cleanUpAfterPrint);
   <\/script>
 </body>
 </html>`.trim();
@@ -2485,11 +2474,6 @@
       window.GleanBridge.onMessage('action', function(data) {
         if (data.actionId === 'export-pdf') window.print();
       });
-
-      function prepareChartsForPrint() {}
-      function cleanUpAfterPrint() {}
-      window.addEventListener('beforeprint', prepareChartsForPrint);
-      window.addEventListener('afterprint', cleanUpAfterPrint);
     })();
   </script>
 </body>
