@@ -54,6 +54,7 @@
       --artifact-toolbar-sheet: linear-gradient(135deg, #22c55e, #16a34a);
       --artifact-toolbar-lock: linear-gradient(135deg, #f59e0b, #d97706);
       --artifact-toolbar-rules: linear-gradient(135deg, #0f766e, #115e59);
+      --artifact-toolbar-search: linear-gradient(135deg, #ec4899, #be185d);
 
       --artifact-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
       --artifact-shadow-soft: 0 4px 12px rgba(15, 23, 42, 0.06);
@@ -189,7 +190,7 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: repeat(7, minmax(120px, 1fr));
+      grid-template-columns: repeat(8, minmax(120px, 1fr));
       gap: 12px;
       margin-top: 10px;
     }
@@ -219,6 +220,7 @@
     .tool-sheet { background: var(--artifact-toolbar-sheet); }
     .tool-lock { background: var(--artifact-toolbar-lock); }
     .tool-rules { background: var(--artifact-toolbar-rules); }
+    .tool-search { background: var(--artifact-toolbar-search); }
     .tool-btn.active-mode {
       box-shadow:
         0 0 0 3px rgba(255,255,255,.85),
@@ -231,6 +233,26 @@
     @keyframes pulseAutoButton {
       0%, 100% { transform: scale(1); box-shadow: var(--artifact-shadow); }
       50% { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.22), var(--artifact-shadow); }
+    }
+
+    .search-panel {
+      display: none;
+      margin-top: 12px;
+      background: linear-gradient(180deg, #fff7fc, #ffffff);
+    }
+    .search-controls {
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) auto auto auto;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .search-meta {
+      margin-top: 8px;
+      font-size: .9rem;
+      color: var(--artifact-text-secondary);
+      text-align: center;
+      min-height: 20px;
     }
 
     .grid-wrap {
@@ -585,6 +607,18 @@
         0 0 0 6px rgba(15, 118, 110, 0.24),
         0 10px 18px rgba(0, 0, 0, 0.18);
     }
+    .person.search-hit {
+      box-shadow:
+        0 0 0 2px rgba(236,72,153,.18),
+        0 6px 12px rgba(236,72,153,.16);
+    }
+    .person.search-current {
+      box-shadow:
+        0 0 0 3px rgba(255,255,255,.82),
+        0 0 0 6px rgba(236,72,153,.34),
+        0 10px 18px rgba(236,72,153,.22);
+      transform: scale(1.05);
+    }
     .spotlight-active .person:not(.highlight-name) {
       opacity: var(--artifact-person-dim);
       filter: grayscale(55%) saturate(75%);
@@ -671,6 +705,7 @@
     @media (max-width: 1280px) {
       .toolbar { grid-template-columns: repeat(4, minmax(120px, 1fr)); }
       .summary-bar { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+      .search-controls { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 1100px) {
       .guard-grid { grid-template-columns: repeat(4, minmax(110px, 1fr)); }
@@ -680,7 +715,7 @@
       .hero { font-size: 1.48rem; padding: 12px 18px; }
       .row { flex-direction: column; align-items: stretch; }
       .row.mobile-inline { flex-direction: row; align-items: center; }
-      .toolbar, .req-grid, .summary-bar { grid-template-columns: 1fr; }
+      .toolbar, .req-grid, .summary-bar, .search-controls { grid-template-columns: 1fr; }
       .guard-grid { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
       .schedule-table { min-width: 900px; }
       .time-slot {
@@ -785,6 +820,21 @@
         <button id="openSheetButton" class="tool-btn tool-sheet"><span class="icon">📄</span><span>פתח גיליון נתונים</span></button>
         <button id="toggleLockModeButton" class="tool-btn tool-lock"><span class="icon">🔒</span><span>מצב נעילה</span></button>
         <button id="showRulesButton" class="tool-btn tool-rules"><span class="icon">📏</span><span>חוקי מערכת</span></button>
+        <button id="showSearchButton" class="tool-btn tool-search"><span class="icon">🎯</span><span>חיפוש שומר</span></button>
+      </div>
+
+      <div id="searchPanel" class="card search-panel">
+        <div class="row between">
+          <div class="label-strong">חיפוש שומר מהיר</div>
+          <button id="searchCloseBtn" type="button" class="btn btn-neutral">סגור</button>
+        </div>
+        <div class="search-controls">
+          <input id="searchInput" type="text" class="input" placeholder="הקלד שם שומר..." />
+          <button id="searchPrevBtn" type="button" class="btn btn-neutral">קודם</button>
+          <button id="searchNextBtn" type="button" class="btn btn-primary">הבא</button>
+          <button id="searchClearBtn" type="button" class="btn btn-danger">נקה</button>
+        </div>
+        <div id="searchMeta" class="search-meta">אפשר לחפש חלק מהשם ולקפוץ בין ההופעות.</div>
       </div>
 
       <div id="rulesPanel" class="card collapsible">
@@ -907,7 +957,10 @@
           excelMatrix: [],
           lockedName: null,
           statusTimer: null,
-          lockMode: false
+          lockMode: false,
+          searchQuery: "",
+          searchMatches: [],
+          searchCurrentIndex: -1
         },
 
         el: {},
@@ -934,7 +987,8 @@
             "weekStartSelect","shiftReqGrid","openVacationsBtn","vacationsPanel",
             "leaveScopeWeek","leaveNameInput","leaveFromInput","leaveToInput",
             "leaveAddBtn","leaveClearBtn","vacationsList","statusBanner","resultsContainer",
-            "excel-grid","toggleLockModeButton","showRulesButton","rulesPanel","rulesCloseBtn"
+            "excel-grid","toggleLockModeButton","showRulesButton","rulesPanel","rulesCloseBtn",
+            "showSearchButton","searchPanel","searchInput","searchPrevBtn","searchNextBtn","searchClearBtn","searchCloseBtn","searchMeta"
           ].forEach(id => {
             this.el[id] = document.getElementById(id);
           });
@@ -950,12 +1004,31 @@
           this.el.downloadHtmlButton.addEventListener("click", () => this.downloadHtmlTable());
           this.el.openSheetButton.addEventListener("click", () => window.open(this.C.SHEET_URL, "_blank", "noopener,noreferrer"));
           this.el.toggleLockModeButton.addEventListener("click", () => this.toggleLockMode());
+
           this.el.showRulesButton.addEventListener("click", () => {
             this.el.rulesPanel.style.display = this.el.rulesPanel.style.display === "block" ? "none" : "block";
           });
           this.el.rulesCloseBtn.addEventListener("click", () => {
             this.el.rulesPanel.style.display = "none";
           });
+
+          this.el.showSearchButton.addEventListener("click", () => {
+            this.el.searchPanel.style.display = this.el.searchPanel.style.display === "block" ? "none" : "block";
+            if (this.el.searchPanel.style.display === "block") this.el.searchInput.focus();
+          });
+          this.el.searchCloseBtn.addEventListener("click", () => {
+            this.el.searchPanel.style.display = "none";
+          });
+          this.el.searchInput.addEventListener("input", () => this.applySearch(this.el.searchInput.value));
+          this.el.searchInput.addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              this.jumpToNextSearchHit();
+            }
+          });
+          this.el.searchNextBtn.addEventListener("click", () => this.jumpToNextSearchHit());
+          this.el.searchPrevBtn.addEventListener("click", () => this.jumpToPrevSearchHit());
+          this.el.searchClearBtn.addEventListener("click", () => this.clearSearch());
 
           this.el.startDate.addEventListener("change", () => {
             this.updateStartDateLabelBySetting();
@@ -1117,6 +1190,81 @@
           void btn.offsetWidth;
           btn.classList.add("pulse-target");
           setTimeout(() => btn.classList.remove("pulse-target"), 4500);
+        },
+
+        clearSearchClasses() {
+          this.el.resultsContainer.querySelectorAll(".person.search-hit, .person.search-current").forEach(el => {
+            el.classList.remove("search-hit", "search-current");
+          });
+        },
+
+        applySearch(query) {
+          this.state.searchQuery = this.normalizeKey(query);
+          this.clearSearchClasses();
+          this.state.searchMatches = [];
+          this.state.searchCurrentIndex = -1;
+
+          if (!this.state.searchQuery) {
+            this.el.searchMeta.textContent = "אפשר לחפש חלק מהשם ולקפוץ בין ההופעות.";
+            return;
+          }
+
+          const people = Array.from(this.el.resultsContainer.querySelectorAll(".person"));
+          const matches = people.filter(el => this.normalizeKey(el.textContent).includes(this.state.searchQuery));
+          this.state.searchMatches = matches;
+
+          matches.forEach(el => el.classList.add("search-hit"));
+
+          if (!matches.length) {
+            this.el.searchMeta.textContent = "לא נמצאו התאמות.";
+            return;
+          }
+
+          this.state.searchCurrentIndex = 0;
+          this.focusSearchHit(0);
+        },
+
+        focusSearchHit(index) {
+          if (!this.state.searchMatches.length) return;
+          this.state.searchMatches.forEach(el => el.classList.remove("search-current"));
+          const normalizedIndex = ((index % this.state.searchMatches.length) + this.state.searchMatches.length) % this.state.searchMatches.length;
+          this.state.searchCurrentIndex = normalizedIndex;
+          const target = this.state.searchMatches[normalizedIndex];
+          target.classList.add("search-current");
+          target.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+          this.el.searchMeta.textContent = `נמצאו ${this.state.searchMatches.length} התאמות • תוצאה ${normalizedIndex + 1} מתוך ${this.state.searchMatches.length}`;
+        },
+
+        jumpToNextSearchHit() {
+          if (!this.state.searchMatches.length) {
+            this.applySearch(this.el.searchInput.value);
+            return;
+          }
+          this.focusSearchHit(this.state.searchCurrentIndex + 1);
+        },
+
+        jumpToPrevSearchHit() {
+          if (!this.state.searchMatches.length) {
+            this.applySearch(this.el.searchInput.value);
+            return;
+          }
+          this.focusSearchHit(this.state.searchCurrentIndex - 1);
+        },
+
+        clearSearch() {
+          this.el.searchInput.value = "";
+          this.state.searchQuery = "";
+          this.state.searchMatches = [];
+          this.state.searchCurrentIndex = -1;
+          this.clearSearchClasses();
+          this.el.searchMeta.textContent = "אפשר לחפש חלק מהשם ולקפוץ בין ההופעות.";
+        },
+
+        reapplySearchIfNeeded() {
+          if (this.state.searchQuery) {
+            this.applySearch(this.state.searchQuery);
+            this.el.searchInput.value = this.state.searchQuery;
+          }
         },
 
         getHebDayNameFromIso(isoDate) {
@@ -1691,6 +1839,7 @@
           this.el.resultsContainer.innerHTML = html;
           this.setupScheduleEditors();
           this.updateHighlights(this.state.lockedName);
+          this.reapplySearchIfNeeded();
         },
 
         setupScheduleEditors() {
@@ -2274,7 +2423,7 @@
             app.state.excelMatrix = app.C.TIME_SLOTS.map(() => app.state.expectedDays.map(() => ""));
             this.render();
 
-            const wrapper = app.el.excel-grid?.parentElement || app.el["excel-grid"].parentElement;
+            const wrapper = app.el["excel-grid"].parentElement;
             if (!wrapper.dataset.bound) {
               wrapper.dataset.bound = "1";
 
@@ -2411,55 +2560,4 @@
 
             if (startDate) {
               const isoDays = app.getIsoDatesForWeek(startDate);
-              const unique = Array.from(new Set(values));
-              leaveNames = unique.filter(name => {
-                const map = app.loadVacationsMap();
-                const entry = map[name] || map[name.replace(/\s+/g, "_")];
-                if (!entry?.from || !entry?.to) return false;
-                return isoDays.some(iso => iso >= entry.from && iso <= entry.to);
-              });
-            }
-
-            cell.classList.remove("has-unknown", "on-leave-cell");
-            cell.removeAttribute("title");
-
-            if (unknowns.length) {
-              cell.classList.add("has-unknown");
-              cell.title = `שמות לא מזוהים: ${unknowns.join(", ")}`;
-            } else if (leaveNames.length) {
-              cell.classList.add("on-leave-cell");
-              cell.title = `בחופשה: ${leaveNames.join(", ")}`;
-            }
-          },
-
-          validateAllGridCells() {
-            document.querySelectorAll("#excel-grid td.cell").forEach(cell => this.validateCellElement(cell));
-          },
-
-          clear() {
-            const app = App;
-            app.state.excelMatrix = app.C.TIME_SLOTS.map(() => app.state.expectedDays.map(() => ""));
-            app.saveLockedCells({});
-            this.render();
-            app.el.resultsContainer.innerHTML = `<p id="initialMessage">הדבק נתונים או משוך אותם מה‑Web App, ואז לחץ על ניתוח או סידור אוטומטי.</p>`;
-          }
-        }
-      };
-
-      window.ShiftSchedulerApp = App;
-      document.addEventListener("DOMContentLoaded", () => App.init());
-
-      window.GleanBridge = window.GleanBridge || { postMessage() {}, onMessage() {} };
-      window.GleanBridge.postMessage({
-        actionId: "export-pdf",
-        type: "glean-add-menu",
-        metadata: { label: "Export as PDF", icon: "export" }
-      });
-      window.GleanBridge.onMessage("action", function(data) {
-        if (data.actionId === "export-pdf") window.print();
-      });
-    })();
-  </script>
-</body>
-</html>
-]]>
+              const unique =
