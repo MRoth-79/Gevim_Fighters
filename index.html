@@ -225,7 +225,7 @@
     }
 
     .input,
-    .select,
+.select,
     .date-input {
       background: var(--artifact-surface);
       color: var(--artifact-text-primary);
@@ -557,14 +557,27 @@
     .schedule-table th,
     .schedule-table td {
       border: 1px solid var(--artifact-border-dark);
-      padding: 10px 8px;
-      min-height: 58px;
+      padding: 8px 6px;
+      min-height: 52px;
       vertical-align: top;
       overflow: hidden;
     }
 
     .schedule-table th {
       text-align: center;
+    }
+
+    .schedule-table thead th {
+      padding: 6px 6px;
+    }
+
+    .schedule-table thead th[rowspan="2"] {
+      font-size: 1rem;
+      line-height: 1.15;
+      white-space: normal;
+      vertical-align: middle;
+      width: 92px;
+      min-width: 92px;
     }
 
     .schedule-table td {
@@ -593,22 +606,24 @@
 
     .friday-col,
     .saturday-col {
-      background: var(--artifact-warning-soft) !important;
-      color: var(--artifact-warning-soft-text) !important;
+      background: #FFDAB9 !important;
+      color: #7A3E1D !important;
     }
 
     .day-header-name {
       display: block;
-      font-size: 1.26rem;
+      font-size: 1.02rem;
       font-weight: 800;
-      margin: 4px 0;
+      margin: 2px 0;
+      line-height: 1.1;
     }
 
     .date-text {
       display: block;
-      font-size: 1.08rem;
+      font-size: 0.9rem;
       font-weight: 700;
       opacity: 0.96;
+      line-height: 1.05;
     }
 
     .assist-cell {
@@ -2544,7 +2559,7 @@
                 const entry = map[name] || map[name.replace(/\s+/g, "_")];
                 if (!entry?.from || !entry?.to) return false;
                 return isoDays.some(iso => iso >= entry.from && iso <= entry.to);
-              });
+});
             }
 
             cell.classList.remove("has-unknown", "on-leave-cell");
