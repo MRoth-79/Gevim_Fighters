@@ -33,6 +33,9 @@
       --artifact-warning-soft: #fff3e8;
       --artifact-danger: #dc2626;
       --artifact-danger-soft: #fdecec;
+      --artifact-fair: #7c3aed;
+      --artifact-fair-soft: #f3e8ff;
+      --artifact-fair-soft-2: #faf5ff;
 
       --artifact-weekend-bg: #ffd9c5;
       --artifact-weekend-text: #7a3e1d;
@@ -52,6 +55,7 @@
       --artifact-toolbar-analyze: linear-gradient(135deg, #00b09b, #96c93d);
       --artifact-toolbar-download: linear-gradient(135deg, #0ea5e9, #0284c7);
       --artifact-toolbar-sheet: linear-gradient(135deg, #22c55e, #16a34a);
+      --artifact-toolbar-fair: linear-gradient(135deg, #8b5cf6, #7c3aed);
 
       --artifact-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
       --artifact-shadow-soft: 0 4px 12px rgba(15, 23, 42, 0.06);
@@ -220,7 +224,7 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
       gap: 12px;
       margin-top: 10px;
     }
@@ -250,6 +254,151 @@
     .tool-analyze { background: var(--artifact-toolbar-analyze); }
     .tool-download { background: var(--artifact-toolbar-download); }
     .tool-sheet { background: var(--artifact-toolbar-sheet); }
+    .tool-fair { background: var(--artifact-toolbar-fair); }
+
+    .collapsible {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .fairness-panel {
+      display: none;
+      margin-top: 12px;
+      border: 1px solid var(--artifact-border-light);
+      background:
+        linear-gradient(180deg, var(--artifact-fair-soft-2), var(--artifact-surface));
+    }
+
+    .fairness-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(140px, 1fr));
+      gap: 12px;
+      margin: 12px 0 18px;
+    }
+
+    .fairness-card {
+      background: var(--artifact-surface);
+      border: 1px solid var(--artifact-border-light);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: var(--artifact-shadow-soft);
+    }
+
+    .fairness-card .label {
+      display: block;
+      font-size: .86rem;
+      color: var(--artifact-text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .fairness-card .value {
+      display: block;
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--artifact-text-primary);
+    }
+
+    .fairness-layout {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .fairness-section {
+      background: var(--artifact-surface);
+      border: 1px solid var(--artifact-border-light);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: var(--artifact-shadow-soft);
+    }
+
+    .fairness-section h3 {
+      margin: 0 0 10px;
+      color: var(--artifact-fair);
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .fairness-table-wrap {
+      overflow: auto;
+      border-radius: 12px;
+      border: 1px solid var(--artifact-border-light);
+      background: var(--artifact-surface);
+    }
+
+    .fairness-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      background: var(--artifact-surface);
+    }
+
+    .fairness-table th,
+    .fairness-table td {
+      border-bottom: 1px solid var(--artifact-border-light);
+      border-left: 1px solid var(--artifact-border-light);
+      padding: 10px 8px;
+      vertical-align: top;
+      text-align: center;
+      color: var(--artifact-text-primary);
+    }
+
+    .fairness-table th:last-child,
+    .fairness-table td:last-child {
+      border-left: 0;
+    }
+
+    .fairness-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--artifact-fair);
+      color: #ffffff;
+    }
+
+    .reason-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 6px;
+      text-align: right;
+    }
+
+    .reason-list li {
+      background: var(--artifact-background-light);
+      border: 1px solid var(--artifact-border-light);
+      border-radius: 10px;
+      padding: 6px 8px;
+      font-size: .9rem;
+      color: var(--artifact-text-primary);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: .8rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .pill.ok { background: var(--artifact-success-soft); color: #166534; border-color: rgba(22,163,74,.18); }
+    .pill.warn { background: var(--artifact-warning-soft); color: #9a3412; border-color: rgba(234,88,12,.18); }
+    .pill.bad { background: var(--artifact-danger-soft); color: #991b1b; border-color: rgba(220,38,38,.18); }
+    .pill.info { background: var(--artifact-info-soft); color: #1d4ed8; border-color: rgba(37,99,235,.18); }
+
+    .empty-state {
+      padding: 18px 12px;
+      text-align: center;
+      color: var(--artifact-text-secondary);
+    }
 
     .grid-wrap {
       overflow: auto;
@@ -351,11 +500,6 @@
       box-shadow: 0 0 0 3px rgba(252, 211, 77, 0.22);
     }
 
-    .collapsible {
-      display: none;
-      margin-top: 12px;
-    }
-
     .req-grid {
       display: grid;
       grid-template-columns: 1fr auto;
@@ -427,20 +571,6 @@
       color: var(--artifact-text-secondary);
       font-size: .92rem;
     }
-
-    .status-banner {
-      display: none;
-      margin-top: 12px;
-      border-radius: 12px;
-      padding: 12px 14px;
-      text-align: center;
-      font-weight: 800;
-      box-shadow: var(--artifact-shadow-soft);
-    }
-
-    .status-banner.success { background: var(--artifact-success); color: #ffffff; }
-    .status-banner.warning { background: var(--artifact-warning); color: #ffffff; }
-    .status-banner.error { background: var(--artifact-danger); color: #ffffff; }
 
     .results-shell {
       overflow-x: auto;
@@ -774,8 +904,10 @@
     .night-limit-fail { color: var(--artifact-danger); font-weight: 800; }
 
     @media (max-width: 1280px) {
-      .toolbar { grid-template-columns: repeat(4, minmax(120px, 1fr)); }
-      .summary-bar { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+      .toolbar { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
+      .summary-bar,
+      .fairness-summary { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+      .fairness-layout { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 1100px) {
@@ -787,11 +919,14 @@
       .hero { font-size: 1.48rem; padding: 12px 18px; }
       .row { flex-direction: column; align-items: stretch; }
       .row.mobile-inline { flex-direction: row; align-items: center; }
-      .toolbar { grid-template-columns: 1fr; }
+      .toolbar,
+      .guard-grid,
+      .req-grid,
+      .summary-bar,
+      .fairness-summary { grid-template-columns: 1fr; }
       .guard-grid { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
-      .req-grid { grid-template-columns: 1fr; }
-      .summary-bar { grid-template-columns: 1fr; }
       .schedule-table { min-width: 900px; }
+      .fairness-table { min-width: 620px; }
       .time-slot {
         position: sticky;
         inset-inline-end: 0;
@@ -837,8 +972,12 @@
         margin-bottom: 20px !important;
       }
 
-      table, thead, .list, .summary-bar {
+      table, thead, .list, .summary-bar, .fairness-summary {
         break-inside: avoid;
+      }
+
+      .fairness-panel {
+        display: block !important;
       }
 
       *, *::before, *::after {
@@ -902,6 +1041,15 @@
         <button id="analyzeButton" class="tool-btn tool-analyze"><span class="icon">🔍</span><span>נתח נתונים</span></button>
         <button id="downloadHtmlButton" class="tool-btn tool-download"><span class="icon">💾</span><span>הורד HTML</span></button>
         <button id="openSheetButton" class="tool-btn tool-sheet"><span class="icon">📄</span><span>פתח גיליון נתונים</span></button>
+        <button id="toggleFairnessButton" class="tool-btn tool-fair"><span class="icon">⚖️</span><span>פאנל הוגנות</span></button>
+      </div>
+
+      <div id="fairnessPanel" class="card fairness-panel">
+        <div class="row between">
+          <div class="label-strong">פאנל הוגנות וחריגות</div>
+          <button id="fairnessCloseBtn" type="button" class="btn btn-neutral">סגור</button>
+        </div>
+        <div id="fairnessContent" class="subtle" style="margin-top:12px;">בצע ניתוח כדי לראות הסבר למה כל תא/עובד מסומן.</div>
       </div>
 
       <div class="row center" style="margin-top:14px;">
@@ -1034,7 +1182,7 @@
             "weekStartSelect","shiftReqGrid","openVacationsBtn","vacationsPanel",
             "leaveScopeWeek","leaveNameInput","leaveFromInput","leaveToInput",
             "leaveAddBtn","leaveClearBtn","vacationsList","statusBanner","resultsContainer",
-            "excel-grid"
+            "excel-grid","toggleFairnessButton","fairnessPanel","fairnessCloseBtn","fairnessContent"
           ].forEach(id => {
             this.el[id] = document.getElementById(id);
           });
@@ -1049,6 +1197,13 @@
           this.el.quickFetchButton.addEventListener("click", () => this.fetchFromGoogleSheet());
           this.el.downloadHtmlButton.addEventListener("click", () => this.downloadHtmlTable());
           this.el.openSheetButton.addEventListener("click", () => window.open(this.C.SHEET_URL, "_blank", "noopener,noreferrer"));
+          this.el.toggleFairnessButton.addEventListener("click", () => {
+            this.el.fairnessPanel.style.display = this.el.fairnessPanel.style.display === "block" ? "none" : "block";
+          });
+          this.el.fairnessCloseBtn.addEventListener("click", () => {
+            this.el.fairnessPanel.style.display = "none";
+          });
+
           this.el.startDate.addEventListener("change", () => {
             this.updateStartDateLabelBySetting();
             this.refreshAfterDataChange();
@@ -1128,6 +1283,10 @@
 
         cx(...classes) {
           return classes.filter(Boolean).join(" ");
+        },
+
+        allEmployeeNames() {
+          return Object.keys(this.C.COLOR_MAP).map(name => name.replace(/_/g, " ")).sort((a, b) => a.localeCompare(b, "he"));
         },
 
         getWeekStartSetting() {
@@ -1503,6 +1662,201 @@
           return { allShifts, night2to6Count, exceptions, cellFlags };
         },
 
+        getCellReasonParts(day, slot, names, required, dayIso, cellFlags) {
+          const reasons = [];
+          const leaveNames = names.filter(name => this.isOnVacation(name, dayIso));
+          if (!names.length) reasons.push("המשבצת ריקה.");
+          else if (names.length < required) reasons.push(`חסרים ${required - names.length} שומרים (שובצו ${names.length} מתוך ${required}).`);
+          else if (names.length > required) reasons.push(`יש עודף של ${names.length - required} שומרים (נדרשים ${required}).`);
+          if (leaveNames.length) reasons.push(`מסומנים בחופשה/מילואים: ${leaveNames.join(", ")}.`);
+          const key = `${day}__${slot}`;
+          if (cellFlags[key]?.has("rest")) reasons.push("קיימת התנגשות עם חוק המנוחה במשבצת הזאת.");
+          return reasons;
+        },
+
+        buildFairnessData(parsed, insights) {
+          const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
+          const employees = this.allEmployeeNames().map(name => {
+            const count = insights.allShifts[name] || 0;
+            const nights = insights.night2to6Count[name] || 0;
+            const leaveDays = isoDates.filter(iso => this.isOnVacation(name, iso)).length;
+            const reasons = [];
+            let status = { cls: "ok", text: "מאוזן" };
+
+            if (count === 0) {
+              status = { cls: "bad", text: "לא שובץ" };
+              reasons.push(leaveDays ? `לא שובץ השבוע. קיימים ${leaveDays} ימי חופשה/מילואים.` : "לא שובץ בכלל השבוע.");
+            } else {
+              if (count < this.C.MIN_REQUIRED) {
+                status = { cls: "bad", text: "פחות מדי" };
+                reasons.push(`פחות מהמינימום: ${count} משמרות מתוך ${this.C.MIN_REQUIRED}.`);
+              } else if (count > this.C.MAX_ALLOWED) {
+                status = { cls: "bad", text: "יותר מדי" };
+                reasons.push(`מעל המקסימום: ${count} משמרות מתוך ${this.C.MAX_ALLOWED}.`);
+              } else if (count === this.C.MIN_REQUIRED) {
+                status = { cls: "warn", text: "בדיוק מינימום" };
+                reasons.push(`שובץ בדיוק על סף המינימום (${count}).`);
+              } else {
+                reasons.push(`כמות המשמרות בטווח תקין (${count}).`);
+              }
+            }
+
+            if (nights > this.C.MAX_NIGHT_2_6) {
+              status = { cls: "bad", text: "חריגת לילות" };
+              reasons.push(`חריגה בלילות 02–06: שובץ ${nights} פעמים.`);
+            } else if (nights === this.C.MAX_NIGHT_2_6 && count > 0) {
+              reasons.push(`הגיע לתקרת לילות 02–06 (${nights}).`);
+            }
+
+            if (leaveDays > 0) {
+              reasons.push(`חופשה/מילואים ב-${leaveDays} ימים מתוך השבוע.`);
+            }
+
+            if (!reasons.length) {
+              reasons.push("אין חריגות או סימונים מיוחדים.");
+            }
+
+            return { name, count, nights, leaveDays, status, reasons };
+          });
+
+          const cells = [];
+          parsed.data.forEach((row, rowIdx) => {
+            row.forEach((cell, colIdx) => {
+              const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
+              const day = parsed.days[colIdx];
+              const slot = this.C.TIME_SLOTS[rowIdx].replace(" (Night)", "");
+              const required = this.getRequiredPerShift(rowIdx);
+              const dayIso = isoDates[colIdx];
+              const reasons = this.getCellReasonParts(day, slot, names, required, dayIso, insights.cellFlags);
+              if (reasons.length) {
+                cells.push({
+                  day,
+                  date: this.getDatesForWeek(this.el.startDate.value)[colIdx],
+                  slot,
+                  assigned: names.length ? names.join(", ") : "—",
+                  required,
+                  reasons
+                });
+              }
+            });
+          });
+
+          const summary = {
+            balanced: employees.filter(x => x.status.cls === "ok").length,
+            attention: employees.filter(x => x.status.cls !== "ok").length,
+            zeroAssigned: employees.filter(x => x.count === 0).length,
+            markedCells: cells.length
+          };
+
+          return { employees, cells, summary };
+        },
+
+        renderFairnessPanel(parsed, insights) {
+          if (parsed.error) {
+            this.el.fairnessContent.innerHTML = `<div class="empty-state">אין נתונים תקינים להצגת פאנל הוגנות.</div>`;
+            return;
+          }
+
+          const fair = this.buildFairnessData(parsed, insights);
+
+          const employeeRows = fair.employees.map(emp => `
+            <tr>
+              <td><strong>${this.escapeHtml(emp.name)}</strong></td>
+              <td>${emp.count}</td>
+              <td>${emp.nights}</td>
+              <td>${emp.leaveDays}</td>
+              <td><span class="pill ${emp.status.cls}">${this.escapeHtml(emp.status.text)}</span></td>
+              <td>
+                <ul class="reason-list">
+                  ${emp.reasons.map(reason => `<li>${this.escapeHtml(reason)}</li>`).join("")}
+                </ul>
+              </td>
+            </tr>
+          `).join("");
+
+          const cellRows = fair.cells.length
+            ? fair.cells.map(cell => `
+              <tr>
+                <td>${this.escapeHtml(cell.day)}</td>
+                <td>${this.escapeHtml(cell.date)}</td>
+                <td>${this.escapeHtml(cell.slot)}</td>
+                <td>${this.escapeHtml(cell.assigned)}</td>
+                <td>${cell.required}</td>
+                <td>
+                  <ul class="reason-list">
+                    ${cell.reasons.map(reason => `<li>${this.escapeHtml(reason)}</li>`).join("")}
+                  </ul>
+                </td>
+              </tr>
+            `).join("")
+            : `<tr><td colspan="6" class="empty-state">אין תאים מסומנים כרגע.</td></tr>`;
+
+          this.el.fairnessContent.innerHTML = `
+            <div class="fairness-summary">
+              <div class="fairness-card">
+                <span class="label">עובדים מאוזנים</span>
+                <span class="value">${fair.summary.balanced}</span>
+              </div>
+              <div class="fairness-card">
+                <span class="label">עובדים שדורשים תשומת לב</span>
+                <span class="value">${fair.summary.attention}</span>
+              </div>
+              <div class="fairness-card">
+                <span class="label">עובדים בלי שיבוץ</span>
+                <span class="value">${fair.summary.zeroAssigned}</span>
+              </div>
+              <div class="fairness-card">
+                <span class="label">תאים מסומנים עם הסבר</span>
+                <span class="value">${fair.summary.markedCells}</span>
+              </div>
+            </div>
+
+            <div class="fairness-layout">
+              <section class="fairness-section">
+                <h3>הוגנות עובדים — למה כל עובד מסומן</h3>
+                <div class="fairness-table-wrap">
+                  <table class="fairness-table">
+                    <thead>
+                      <tr>
+                        <th>עובד</th>
+                        <th>סה"כ</th>
+                        <th>02–06</th>
+                        <th>ימי חופשה</th>
+                        <th>סטטוס</th>
+                        <th>הסבר</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${employeeRows}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="fairness-section">
+                <h3>תאים מסומנים — למה כל תא קיבל סימון</h3>
+                <div class="fairness-table-wrap">
+                  <table class="fairness-table">
+                    <thead>
+                      <tr>
+                        <th>יום</th>
+                        <th>תאריך</th>
+                        <th>משמרת</th>
+                        <th>שובצו</th>
+                        <th>נדרש</th>
+                        <th>הסבר</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${cellRows}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            </div>
+          `;
+        },
+
         buildDashboardSummary(parsed, insights) {
           const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
           let emptyCells = 0;
@@ -1522,8 +1876,8 @@
             });
           });
 
-          const underMinimumEmployees = Object.values(insights.allShifts).filter(count => count < this.C.MIN_REQUIRED).length;
-          const nightViolations = Object.values(insights.night2to6Count).filter(count => count > this.C.MAX_NIGHT_2_6).length;
+          const underMinimumEmployees = this.allEmployeeNames().filter(name => (insights.allShifts[name] || 0) < this.C.MIN_REQUIRED).length;
+          const nightViolations = this.allEmployeeNames().filter(name => (insights.night2to6Count[name] || 0) > this.C.MAX_NIGHT_2_6).length;
 
           return {
             emptyCells,
@@ -1625,8 +1979,10 @@
             const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
             const bubbles = this.renderPersonBubbles(names, day, slot, isoDates[colIdx]);
             const badges = this.renderCellBadges(day, slot, names, required, isoDates[colIdx], cellFlags);
+            const reasons = this.getCellReasonParts(day, slot, names, required, isoDates[colIdx], cellFlags);
             const tdClass = this.cx(weekendClass);
-            html += `<td class="${tdClass}" data-day="${this.escapeHtml(day)}" data-time="${this.escapeHtml(slot)}" contenteditable="true">${bubbles}${badges}</td>`;
+            const title = reasons.length ? this.escapeHtml(reasons.join(" | ")) : "";
+            html += `<td class="${tdClass}" data-day="${this.escapeHtml(day)}" data-time="${this.escapeHtml(slot)}" title="${title}" contenteditable="true">${bubbles}${badges}</td>`;
           });
 
           html += `</tr>`;
@@ -1651,14 +2007,16 @@
           let html = `<h3>סיכום הופעות (ללא ליווי)</h3>`;
           html += `<table class="summary-table"><thead><tr><th>מס'</th><th>שם העובד</th><th>סה"כ הופעות</th><th>משמרות 02–06</th><th>סטטוס</th></tr></thead><tbody>`;
 
-          const sortedNames = Object.keys(allShifts).sort((a, b) => {
-            if (allShifts[b] !== allShifts[a]) return allShifts[b] - allShifts[a];
+          const sortedNames = this.allEmployeeNames().sort((a, b) => {
+            const aCount = allShifts[a] || 0;
+            const bCount = allShifts[b] || 0;
+            if (bCount !== aCount) return bCount - aCount;
             return a.localeCompare(b, "he");
           });
 
           let serial = 1;
           sortedNames.forEach(name => {
-            const count = allShifts[name];
+            const count = allShifts[name] || 0;
             const nights = night2to6Count[name] || 0;
             let rowClass = "";
             let status = "";
@@ -1674,7 +2032,7 @@
               status = "🆗 עמד (3)";
             } else {
               rowClass = "low-shifts";
-              status = `❌ פחות מ־3 (${count})`;
+              status = count === 0 ? "❌ לא שובץ" : `❌ פחות מ־3 (${count})`;
             }
 
             if (nights > this.C.MAX_NIGHT_2_6) rowClass += " night-limit-fail-row";
@@ -1711,11 +2069,13 @@
         renderScheduleView(parsed) {
           if (parsed.error) {
             this.el.resultsContainer.innerHTML = `<p class="warning-text">❌ ${this.escapeHtml(parsed.error)}</p>`;
+            this.el.fairnessContent.innerHTML = `<div class="empty-state">אין נתונים תקינים להצגת פאנל הוגנות.</div>`;
             return;
           }
 
           if (!this.el.startDate.value) {
             this.el.resultsContainer.innerHTML = `<p class="warning-text">❌ אנא בחר תאריך תחילת שבוע.</p>`;
+            this.el.fairnessContent.innerHTML = `<div class="empty-state">בחר תאריך תחילת שבוע.</div>`;
             return;
           }
 
@@ -1738,6 +2098,7 @@
           html += this.renderSummaryTable(insights.allShifts, insights.night2to6Count);
 
           this.el.resultsContainer.innerHTML = html;
+          this.renderFairnessPanel(parsed, insights);
           this.setupScheduleEditors();
           this.updateHighlights(this.state.lockedName);
         },
@@ -1798,7 +2159,7 @@
         },
 
         renderGuardButtons() {
-          const names = Object.keys(this.C.COLOR_MAP).map(name => name.replace("_", " ")).sort((a, b) => a.localeCompare(b, "he"));
+          const names = this.allEmployeeNames();
           this.el.guardButtonsContainer.innerHTML = "";
           names.forEach(name => {
             const btn = document.createElement("button");
@@ -2030,7 +2391,7 @@
 
           const priorityGuards = this.getPriorityGuardSet();
           const weeklyOnLeave = this.buildWeeklyOnLeaveSet(this.el.startDate.value);
-          const allEmployees = Object.keys(this.C.COLOR_MAP).map(name => name.replace("_", " "));
+          const allEmployees = this.allEmployeeNames();
           const I = this.C.SHIFT_INDEX;
 
           const employeeShiftCount = {};
@@ -2239,6 +2600,8 @@
 
         downloadHtmlTable() {
           const resultsHtml = this.el.resultsContainer.innerHTML;
+          const fairnessHtml = this.el.fairnessContent.innerHTML;
+          const fairnessVisible = this.el.fairnessPanel.style.display === "block";
           const startDate = this.el.startDate.value;
           if (!startDate || !resultsHtml || resultsHtml.includes("הדבק נתונים")) {
             alert("בחר תאריך ובצע ניתוח לפני ההורדה.");
@@ -2266,6 +2629,10 @@
   <div class="app-shell">
     <div class="hero">${title}</div>
     <div class="card results-shell">${resultsHtml.replace(/contenteditable="true"/g, 'contenteditable="false"')}</div>
+    <div class="card fairness-panel" style="display:${fairnessVisible ? "block" : "none"}">
+      <div class="label-strong" style="text-align:center;margin-bottom:12px;">פאנל הוגנות וחריגות</div>
+      ${fairnessHtml}
+    </div>
   </div>
   <script>
     window.GleanBridge = window.GleanBridge || { postMessage() {}, onMessage() {} };
@@ -2467,6 +2834,7 @@
             app.state.excelMatrix = app.C.TIME_SLOTS.map(() => app.state.expectedDays.map(() => ""));
             this.render();
             app.el.resultsContainer.innerHTML = `<p id="initialMessage">הדבק נתונים או משוך אותם מה‑Web App, ואז לחץ על ניתוח או סידור אוטומטי.</p>`;
+            app.el.fairnessContent.innerHTML = `בצע ניתוח כדי לראות הסבר למה כל תא/עובד מסומן.`;
           }
         }
       };
