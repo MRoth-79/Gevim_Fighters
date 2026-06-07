@@ -1,4 +1,4 @@
-
+<![CDATA[
 <!DOCTYPE html>
 <html lang="he" dir="rtl" data-theme="light">
 <head>
@@ -53,7 +53,7 @@
       --artifact-toolbar-download: linear-gradient(135deg, #0ea5e9, #0284c7);
       --artifact-toolbar-sheet: linear-gradient(135deg, #22c55e, #16a34a);
       --artifact-toolbar-lock: linear-gradient(135deg, #f59e0b, #d97706);
-      --artifact-toolbar-rules: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      --artifact-toolbar-rules: linear-gradient(135deg, #0f766e, #115e59);
 
       --artifact-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
       --artifact-shadow-soft: 0 4px 12px rgba(15, 23, 42, 0.06);
@@ -69,7 +69,7 @@
       --person-יובי-bg: linear-gradient(135deg, #fbbf24, #f59e0b); --person-יובי-text: #422006;
       --person-טגניה-bg: linear-gradient(135deg, #34d399, #10b981); --person-טגניה-text: #052e16;
       --person-ישי-bg: linear-gradient(135deg, #a78bfa, #7c3aed); --person-ישי-text: #ffffff;
-      --person-חסון-bg: linear-gradient(135deg, #64748b, #334155); --person-חסון-text: #ffffff;
+      --person-חסון-bg: linear-gradient(135deg, #334155, #0f172a); --person-חסון-text: #ffffff;
       --person-לישע-bg: linear-gradient(135deg, #a3e635, #65a30d); --person-לישע-text: #243a0a;
       --person-עידן-bg: linear-gradient(135deg, #f472b6, #db2777); --person-עידן-text: #ffffff;
       --person-חגי-bg: linear-gradient(135deg, #fb7185, #e11d48); --person-חגי-text: #ffffff;
@@ -237,7 +237,7 @@
       cursor: pointer;
       box-shadow: var(--artifact-shadow);
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
-      transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+      transition: transform .18s ease, filter .18s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -252,24 +252,8 @@
     .tool-analyze { background: var(--artifact-toolbar-analyze); }
     .tool-download { background: var(--artifact-toolbar-download); }
     .tool-sheet { background: var(--artifact-toolbar-sheet); }
-    .tool-lock { background: var(--artifact-toolbar-lock); }
-    .tool-rules { background: var(--artifact-toolbar-rules); }
-
-    .tool-btn.active-mode {
-      box-shadow:
-        0 0 0 3px rgba(255,255,255,.8),
-        0 0 0 6px rgba(245, 158, 11, .24),
-        var(--artifact-shadow);
-    }
-
-    .tool-btn.pulse-target {
-      animation: pulseAutoButton 1s ease-in-out 4;
-    }
-
-    @keyframes pulseAutoButton {
-      0%, 100% { transform: scale(1); box-shadow: var(--artifact-shadow); }
-      50% { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.22), var(--artifact-shadow); }
-    }
+    .tool-csv { background: var(--artifact-toolbar-csv); }
+    .tool-xlsx { background: var(--artifact-toolbar-xlsx); }
 
     .grid-wrap {
       overflow: auto;
@@ -374,42 +358,6 @@
     .collapsible {
       display: none;
       margin-top: 12px;
-    }
-
-    .rules-panel {
-      display: none;
-      margin-top: 12px;
-      background: linear-gradient(180deg, #faf8ff, #ffffff);
-    }
-
-    .rules-grid {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(140px, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .rule-card {
-      border: 1px solid var(--artifact-border-light);
-      border-radius: 14px;
-      padding: 12px;
-      background: var(--artifact-surface);
-      box-shadow: var(--artifact-shadow-soft);
-      text-align: center;
-    }
-
-    .rule-card .rule-title {
-      display: block;
-      font-size: .86rem;
-      color: var(--artifact-text-secondary);
-      margin-bottom: 4px;
-    }
-
-    .rule-card .rule-value {
-      display: block;
-      font-size: 1.15rem;
-      font-weight: 900;
-      color: var(--artifact-text-primary);
     }
 
     .req-grid {
@@ -611,21 +559,6 @@
       outline-offset: -2px;
     }
 
-    .schedule-table td.locked-cell {
-      box-shadow: inset 0 0 0 2px rgba(245, 158, 11, 0.35);
-      background:
-        linear-gradient(180deg, rgba(245, 158, 11, 0.06), rgba(245, 158, 11, 0.02)),
-        var(--artifact-surface);
-    }
-
-    .lock-mode-active .schedule-table td[contenteditable="true"] {
-      cursor: pointer;
-    }
-
-    .lock-mode-active .schedule-table td[contenteditable="true"]:hover {
-      box-shadow: inset 0 0 0 2px rgba(245, 158, 11, 0.24);
-    }
-
     .time-slot {
       background: var(--artifact-accent-2) !important;
       color: var(--artifact-accent-2-text) !important;
@@ -701,7 +634,6 @@
     .badge.extra { background: var(--artifact-info-soft); color: #12306b; border-color: rgba(37,99,235,.18); }
     .badge.rest { background: var(--artifact-danger-soft); color: #8f1f1f; border-color: rgba(220,38,38,.18); }
     .badge.leave { background: #eef2f7; color: #475569; border-color: rgba(71,85,105,.18); }
-    .badge.lock { background: #fff4d9; color: #9a5a00; border-color: rgba(245,158,11,.22); }
 
     .person {
       display: block;
@@ -797,6 +729,13 @@
       background-position: 0 0, 0 4px, 4px -4px, -4px 0;
     }
 
+    .warning-text {
+      display: inline-block;
+      margin-top: 4px;
+      color: var(--artifact-danger);
+      font-weight: 800;
+    }
+
     .summary-table,
     .exceptions-table {
       width: min(1200px, 100%);
@@ -841,7 +780,6 @@
     @media (max-width: 1280px) {
       .toolbar { grid-template-columns: repeat(4, minmax(120px, 1fr)); }
       .summary-bar { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
-      .rules-grid { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
     }
 
     @media (max-width: 1100px) {
@@ -855,7 +793,8 @@
       .row.mobile-inline { flex-direction: row; align-items: center; }
       .toolbar { grid-template-columns: 1fr; }
       .guard-grid { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
-      .req-grid, .summary-bar, .rules-grid { grid-template-columns: 1fr; }
+      .req-grid { grid-template-columns: 1fr; }
+      .summary-bar { grid-template-columns: 1fr; }
       .schedule-table { min-width: 900px; }
       .time-slot {
         position: sticky;
@@ -902,7 +841,7 @@
         margin-bottom: 20px !important;
       }
 
-      table, thead, .list, .summary-bar, .rules-grid {
+      table, thead, .list, .summary-bar {
         break-inside: avoid;
       }
 
@@ -967,20 +906,22 @@
         <button id="analyzeButton" class="tool-btn tool-analyze"><span class="icon">🔍</span><span>נתח נתונים</span></button>
         <button id="downloadHtmlButton" class="tool-btn tool-download"><span class="icon">💾</span><span>הורד HTML</span></button>
         <button id="openSheetButton" class="tool-btn tool-sheet"><span class="icon">📄</span><span>פתח גיליון נתונים</span></button>
-        <button id="lockModeButton" class="tool-btn tool-lock"><span class="icon">🔒</span><span>מצב נעילה</span></button>
-        <button id="openRulesBtn" class="tool-btn tool-rules"><span class="icon">📜</span><span>חוקי מערכת</span></button>
+        <button id="toggleLockModeButton" class="tool-btn tool-lock"><span class="icon">🔒</span><span>מצב נעילה</span></button>
+        <button id="showRulesButton" class="tool-btn tool-rules"><span class="icon">📏</span><span>חוקי מערכת</span></button>
       </div>
 
-      <div id="rulesPanel" class="card rules-panel">
-        <h3 class="section-title">חוקי מערכת קבועים</h3>
-        <div class="rules-grid">
-          <div class="rule-card"><span class="rule-title">מינימום משמרות</span><span class="rule-value">3</span></div>
-          <div class="rule-card"><span class="rule-title">מקסימום משמרות</span><span class="rule-value">5</span></div>
-          <div class="rule-card"><span class="rule-title">מקסימום 02–06</span><span class="rule-value">2</span></div>
-          <div class="rule-card"><span class="rule-title">מנוחה בין משמרות</span><span class="rule-value">8 שעות</span></div>
-          <div class="rule-card"><span class="rule-title">תא נעול</span><span class="rule-value">לא נדרס באוטומטי</span></div>
+      <div id="rulesPanel" class="card collapsible">
+        <div class="row between">
+          <div class="label-strong">חוקי מערכת</div>
+          <button id="rulesCloseBtn" type="button" class="btn btn-neutral">סגור</button>
         </div>
-        <div class="subtle">במצב נעילה לחץ על תא בטבלה כדי לנעול או לשחרר אותו. תאים נעולים נשמרים גם כשמריצים סדר אוטומטי.</div>
+        <div class="list" style="margin-top:12px;">
+          <div class="list-item"><strong>מינימום משמרות:</strong><span>3</span></div>
+          <div class="list-item"><strong>מקסימום משמרות:</strong><span>5</span></div>
+          <div class="list-item"><strong>מקסימום 02:00–06:00:</strong><span>2</span></div>
+          <div class="list-item"><strong>חוק מנוחה:</strong><span>לפחות 8 שעות בין משמרות קרובות</span></div>
+          <div class="list-item"><strong>מצב נעילה:</strong><span>תא נעול לא יידרס בסידור אוטומטי</span></div>
+        </div>
       </div>
 
       <div class="row center" style="margin-top:14px;">
@@ -1053,8 +994,7 @@
             WEEK_START: "weekStart",
             SHEET_URL: "googleSheetUrl",
             SHIFT_REQ_SCOPE_WEEK: "shiftReqScopeWeek",
-            LEAVE_SCOPE_WEEK: "leaveScopeWeek",
-            LOCKS_PREFIX: "locked_cells__"
+            LEAVE_SCOPE_WEEK: "leaveScopeWeek"
           },
           SHIFT_INDEX: Object.freeze({
             NIGHT_2_6: 0,
@@ -1089,7 +1029,8 @@
           excelMatrix: [],
           lockedName: null,
           statusTimer: null,
-          lockMode: false
+          lockMode: false,
+          lockedCells: {}
         },
 
         el: {},
@@ -1115,7 +1056,7 @@
             "weekStartSelect","shiftReqGrid","openVacationsBtn","vacationsPanel",
             "leaveScopeWeek","leaveNameInput","leaveFromInput","leaveToInput",
             "leaveAddBtn","leaveClearBtn","vacationsList","statusBanner","resultsContainer",
-            "excel-grid","lockModeButton","openRulesBtn","rulesPanel"
+            "excel-grid","exportCsvButton","exportXlsxButton"
           ].forEach(id => {
             this.el[id] = document.getElementById(id);
           });
@@ -1130,10 +1071,8 @@
           this.el.quickFetchButton.addEventListener("click", () => this.fetchFromGoogleSheet());
           this.el.downloadHtmlButton.addEventListener("click", () => this.downloadHtmlTable());
           this.el.openSheetButton.addEventListener("click", () => window.open(this.C.SHEET_URL, "_blank", "noopener,noreferrer"));
-          this.el.lockModeButton.addEventListener("click", () => this.toggleLockMode());
-          this.el.openRulesBtn.addEventListener("click", () => {
-            this.el.rulesPanel.style.display = this.el.rulesPanel.style.display === "block" ? "none" : "block";
-          });
+          this.el.exportCsvButton.addEventListener("click", () => this.exportCsv());
+          this.el.exportXlsxButton.addEventListener("click", () => this.exportXlsx());
           this.el.startDate.addEventListener("change", () => {
             this.updateStartDateLabelBySetting();
             this.refreshAfterDataChange();
@@ -1241,55 +1180,6 @@
             const savedUrl = localStorage.getItem(this.C.STORAGE.SHEET_URL);
             if (savedUrl) this.el.googleSheetUrl.value = savedUrl;
           } catch {}
-        },
-
-        getLockStorageKey() {
-          return `${this.C.STORAGE.LOCKS_PREFIX}${this.el.startDate.value || "no-date"}`;
-        },
-
-        loadLockedCellsMap() {
-          try {
-            const raw = localStorage.getItem(this.getLockStorageKey());
-            const parsed = raw ? JSON.parse(raw) : null;
-            return parsed && typeof parsed === "object" ? parsed : {};
-          } catch {
-            return {};
-          }
-        },
-
-        saveLockedCellsMap(map) {
-          try { localStorage.setItem(this.getLockStorageKey(), JSON.stringify(map)); } catch {}
-        },
-
-        isCellLocked(rowIdx, dayIdx) {
-          const map = this.loadLockedCellsMap();
-          return !!map[`${rowIdx}-${dayIdx}`];
-        },
-
-        toggleCellLock(rowIdx, dayIdx) {
-          const map = this.loadLockedCellsMap();
-          const key = `${rowIdx}-${dayIdx}`;
-          if (map[key]) delete map[key];
-          else map[key] = true;
-          this.saveLockedCellsMap(map);
-        },
-
-        toggleLockMode() {
-          this.state.lockMode = !this.state.lockMode;
-          this.el.lockModeButton.classList.toggle("active-mode", this.state.lockMode);
-          document.body.classList.toggle("lock-mode-active", this.state.lockMode);
-          this.showStatus(this.state.lockMode ? "מצב נעילה פעיל. לחץ על תא בטבלה כדי לנעול או לשחרר." : "מצב נעילה כבוי.", "success");
-        },
-
-        guideToAutoSchedule() {
-          const btn = this.el.autoScheduleButton;
-          if (!btn) return;
-          btn.scrollIntoView({ behavior: "smooth", block: "center" });
-          btn.focus({ preventScroll: true });
-          btn.classList.remove("pulse-target");
-          void btn.offsetWidth;
-          btn.classList.add("pulse-target");
-          setTimeout(() => btn.classList.remove("pulse-target"), 4200);
         },
 
         getHebDayNameFromIso(isoDate) {
@@ -1522,13 +1412,15 @@
 
         convertEditableCellToBubbles(cell, fallbackTime = "") {
           const raw = String(cell.innerText || "")
+            .replace(/בעיה!?/g, "")
             .replace(/משבצת\s*ריקה/g, "");
 
           const names = Array.from(new Set(raw.split(/[,\n]/).map(v => this.normalizeKey(v)).filter(Boolean)));
-          const dayName = cell.getAttribute("data-day") || "";
-          const timeLabel = cell.getAttribute("data-time") || fallbackTime;
+          const dayName = cell.dataset.dayName || cell.getAttribute("data-day") || "";
+          const timeLabel = cell.dataset.time || cell.getAttribute("data-time") || fallbackTime;
           const dayIndex = this.state.expectedDays.indexOf(dayName);
           const dayIso = dayIndex >= 0 ? this.getIsoDatesForWeek(this.el.startDate.value)[dayIndex] : "";
+
           cell.innerHTML = this.renderPersonBubbles(names, dayName, timeLabel, dayIso);
         },
 
@@ -1565,7 +1457,6 @@
               const day = days[colIdx];
               const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
               const slot = this.C.TIME_SLOTS[rowIdx].replace(" (Night)", "");
-
               dailyCheck[day] ||= new Set();
 
               names.forEach(name => {
@@ -1640,6 +1531,7 @@
           const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
           let emptyCells = 0;
           let underfilled = 0;
+          let overfilled = 0;
           let leaveCells = 0;
 
           parsed.data.forEach((row, rowIdx) => {
@@ -1648,6 +1540,8 @@
               const required = this.getRequiredPerShift(rowIdx);
               if (names.length === 0) emptyCells += 1;
               else if (names.length < required) underfilled += 1;
+              else if (names.length > required) overfilled += 1;
+
               if (names.some(name => this.isOnVacation(name, isoDates[colIdx]))) leaveCells += 1;
             });
           });
@@ -1661,6 +1555,7 @@
             underMinimumEmployees,
             nightViolations,
             underfilled,
+            overfilled,
             leaveCells
           };
         },
@@ -1688,7 +1583,7 @@
           `;
         },
 
-        renderCellBadges(day, slot, names, required, dayIso, cellFlags, rowIdx, dayIdx) {
+        renderCellBadges(day, slot, names, required, dayIso, cellFlags) {
           const badges = [];
           if (!names.length) badges.push(`<span class="badge empty">ריק</span>`);
           else if (names.length < required) badges.push(`<span class="badge short">חסר</span>`);
@@ -1701,10 +1596,6 @@
           const key = `${day}__${slot}`;
           if (cellFlags[key]?.has("rest")) {
             badges.push(`<span class="badge rest">מנוחה</span>`);
-          }
-
-          if (this.isCellLocked(rowIdx, dayIdx)) {
-            badges.push(`<span class="badge lock">נעול</span>`);
           }
 
           return badges.length ? `<div class="cell-badges">${badges.join("")}</div>` : "";
@@ -1757,9 +1648,9 @@
             const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
             const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
             const bubbles = this.renderPersonBubbles(names, day, slot, isoDates[colIdx]);
-            const badges = this.renderCellBadges(day, slot, names, required, isoDates[colIdx], cellFlags, rowIdx, colIdx);
-            const tdClass = this.cx(weekendClass, this.isCellLocked(rowIdx, colIdx) && "locked-cell");
-            html += `<td class="${tdClass}" data-day-index="${colIdx}" data-row-index="${rowIdx}" data-day="${this.escapeHtml(day)}" data-time="${this.escapeHtml(slot)}" contenteditable="true">${bubbles}${badges}</td>`;
+            const badges = this.renderCellBadges(day, slot, names, required, isoDates[colIdx], cellFlags);
+            const tdClass = this.cx(weekendClass);
+            html += `<td class="${tdClass}" data-day="${this.escapeHtml(day)}" data-time="${this.escapeHtml(slot)}" contenteditable="true">${bubbles}${badges}</td>`;
           });
 
           html += `</tr>`;
@@ -1880,18 +1771,7 @@
             if (td.dataset.bound === "1") return;
             td.dataset.bound = "1";
 
-            td.addEventListener("click", e => {
-              if (!this.state.lockMode) return;
-              e.preventDefault();
-              e.stopPropagation();
-              const rowIdx = Number(td.dataset.rowIndex);
-              const dayIdx = Number(td.dataset.dayIndex);
-              this.toggleCellLock(rowIdx, dayIdx);
-              this.renderScheduleView(this.parseScheduleText(this.serializeMatrixToVerticalText()));
-            });
-
             const enterEditMode = () => {
-              if (this.state.lockMode) return;
               if (td.dataset.editing === "1") return;
               const names = Array.from(td.querySelectorAll(".person")).map(el => this.normalizeKey(el.textContent)).filter(Boolean);
               td.dataset.editing = "1";
@@ -1910,10 +1790,6 @@
 
             td.addEventListener("dblclick", enterEditMode);
             td.addEventListener("keydown", e => {
-              if (this.state.lockMode) {
-                e.preventDefault();
-                return;
-              }
               if (e.key === "Enter" && td.dataset.editing === "1") {
                 e.preventDefault();
                 finishEditMode();
@@ -2159,7 +2035,6 @@
             statusEl.textContent = "✅ הנתונים נטענו בהצלחה";
             statusEl.style.color = "var(--artifact-success)";
             this.showStatus("הנתונים נטענו לטבלת הקלט.", "success");
-            this.guideToAutoSchedule();
           } catch (err) {
             statusEl.textContent = `❌ שגיאה: ${err.message}`;
             statusEl.style.color = "var(--artifact-danger)";
@@ -2181,7 +2056,6 @@
           const weeklyOnLeave = this.buildWeeklyOnLeaveSet(this.el.startDate.value);
           const allEmployees = Object.keys(this.C.COLOR_MAP).map(name => name.replace("_", " "));
           const I = this.C.SHIFT_INDEX;
-          const lockedMap = this.loadLockedCellsMap();
 
           const employeeShiftCount = {};
           const night2to6Count = {};
@@ -2194,32 +2068,6 @@
           allEmployees.forEach(name => {
             employeeShiftCount[name] = 0;
             night2to6Count[name] = 0;
-          });
-
-          const preAssign = (name, dayIdx, shiftIdx) => {
-            if (!name || newSchedule[shiftIdx][dayIdx].includes(name)) return;
-            newSchedule[shiftIdx][dayIdx].push(name);
-            employeeShiftCount[name] = (employeeShiftCount[name] || 0) + 1;
-
-            const nextAllowed = this.nextAllowedSameDayAfter(shiftIdx);
-            const current = minNextAllowed[dayIdx][name];
-            minNextAllowed[dayIdx][name] = current === undefined ? nextAllowed : Infinity;
-
-            if (shiftIdx === I.NIGHT_2_6) {
-              night2to6Count[name] = (night2to6Count[name] || 0) + 1;
-              night0206Blocks[dayIdx].add(name);
-            }
-
-            if (shiftIdx === I.NIGHT_22_2 && dayIdx + 1 < parsed.days.length) {
-              night2202Blocks[dayIdx + 1].add(name);
-            }
-          };
-
-          parsed.data.forEach((row, shiftIdx) => {
-            row.forEach((cell, dayIdx) => {
-              if (!lockedMap[`${shiftIdx}-${dayIdx}`]) return;
-              String(cell || "").split(",").map(v => this.normalizeKey(v)).filter(Boolean).forEach(name => preAssign(name, dayIdx, shiftIdx));
-            });
           });
 
           const isOnLeaveThisWeek = name => {
@@ -2272,7 +2120,23 @@
             return true;
           };
 
-          const assign = (name, dayIdx, shiftIdx) => preAssign(name, dayIdx, shiftIdx);
+          const assign = (name, dayIdx, shiftIdx) => {
+            newSchedule[shiftIdx][dayIdx].push(name);
+            employeeShiftCount[name] = (employeeShiftCount[name] || 0) + 1;
+
+            const nextAllowed = this.nextAllowedSameDayAfter(shiftIdx);
+            const current = minNextAllowed[dayIdx][name];
+            minNextAllowed[dayIdx][name] = current === undefined ? nextAllowed : Infinity;
+
+            if (shiftIdx === I.NIGHT_2_6) {
+              night2to6Count[name] = (night2to6Count[name] || 0) + 1;
+              night0206Blocks[dayIdx].add(name);
+            }
+
+            if (shiftIdx === I.NIGHT_22_2 && dayIdx + 1 < parsed.days.length) {
+              night2202Blocks[dayIdx + 1].add(name);
+            }
+          };
 
           const shiftsOrder = [];
           dayOrderIndices.forEach(dayIndex => {
@@ -2283,8 +2147,6 @@
 
           [1, 2, 3, 4, 5].forEach(roundTarget => {
             shiftsOrder.forEach(({ dayIndex, shiftIndex }) => {
-              if (lockedMap[`${shiftIndex}-${dayIndex}`]) return;
-
               const required = this.getRequiredPerShift(shiftIndex);
               const row = newSchedule[shiftIndex][dayIndex];
               if (row.length >= required) return;
@@ -2331,7 +2193,6 @@
 
           underAssigned.forEach(name => {
             shiftsOrder.forEach(({ dayIndex, shiftIndex }) => {
-              if (lockedMap[`${shiftIndex}-${dayIndex}`]) return;
               if ((employeeShiftCount[name] || 0) >= this.C.MIN_REQUIRED) return;
               if (!availabilityMap[dayIndex]?.[shiftIndex]?.has(name)) return;
 
@@ -2357,7 +2218,6 @@
           });
 
           shiftsOrder.forEach(({ dayIndex, shiftIndex }) => {
-            if (lockedMap[`${shiftIndex}-${dayIndex}`]) return;
             const required = this.getRequiredPerShift(shiftIndex);
             if (required !== 2) return;
 
@@ -2399,6 +2259,62 @@
           } else {
             this.showStatus(`⚠️ ${below.length} עובדים עדיין מתחת למינימום: ${below.map(x => `${x.name} (${x.count})`).join(", ")}`, "warning");
           }
+        },
+
+        exportCsv() {
+          if (!this.el.startDate.value) {
+            this.showStatus("בחר תאריך ונתח טבלה לפני הייצוא.", "warning");
+            return;
+          }
+
+          const dates = this.getDatesForWeek(this.el.startDate.value);
+          const header = ["שעות / יום", ...this.state.expectedDays.map((day, idx) => `${day} ${dates[idx]}`)];
+          const rows = this.C.TIME_SLOTS.map((slot, rowIdx) => [
+            slot.replace(" (Night)", ""),
+            ...this.state.expectedDays.map((_, dayIdx) => this.state.excelMatrix[rowIdx][dayIdx] || "")
+          ]);
+
+          const csv = [header, ...rows]
+            .map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(","))
+            .join("\n");
+
+          const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `sidur_${this.el.startDate.value}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          this.showStatus("קובץ CSV נוצר.", "success");
+        },
+
+        exportXlsx() {
+          if (typeof XLSX === "undefined") {
+            this.showStatus("ספריית XLSX לא נטענה.", "error");
+            return;
+          }
+
+          if (!this.el.startDate.value) {
+            this.showStatus("בחר תאריך ונתח טבלה לפני הייצוא.", "warning");
+            return;
+          }
+
+          const dates = this.getDatesForWeek(this.el.startDate.value);
+          const data = [
+            ["שעות / יום", ...this.state.expectedDays.map((day, idx) => `${day} ${dates[idx]}`)],
+            ...this.C.TIME_SLOTS.map((slot, rowIdx) => [
+              slot.replace(" (Night)", ""),
+              ...this.state.expectedDays.map((_, dayIdx) => this.state.excelMatrix[rowIdx][dayIdx] || "")
+            ])
+          ];
+
+          const ws = XLSX.utils.aoa_to_sheet(data);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "Shifts");
+          XLSX.writeFile(wb, `sidur_${this.el.startDate.value}.xlsx`);
+          this.showStatus("קובץ XLSX נוצר.", "success");
         },
 
         downloadHtmlTable() {
@@ -2651,3 +2567,4 @@
   </script>
 </body>
 </html>
+]]>
