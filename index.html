@@ -12,13 +12,12 @@
       --artifact-background-mid: var(--theme-background-mid, #f0f0f0);
       --artifact-border-light: var(--theme-border-light, #e5e5e5);
       --artifact-border-dark: var(--theme-border-dark, #cfcfcf);
-      --artifact-primary-highlight: var(--theme-primary-highlight, #1b1b1b);
       --artifact-text-primary: var(--theme-text-primary, #1b1b1b);
       --artifact-text-secondary: var(--theme-text-secondary, #727272);
 
-      --artifact-page: var(--artifact-background-light);
-      --artifact-surface: var(--artifact-background);
-      --artifact-surface-muted: var(--artifact-background-mid);
+      --artifact-page: var(--theme-background-light, #f6f6f6);
+      --artifact-surface: var(--theme-background, #ffffff);
+      --artifact-surface-muted: var(--theme-background-mid, #f0f0f0);
 
       --artifact-accent: #0f766e;
       --artifact-accent-text: #ffffff;
@@ -89,11 +88,7 @@
       --person-ויקטור-bg: linear-gradient(135deg, #fdba74, #f97316); --person-ויקטור-text: #4a1d00;
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: rgba(0, 0, 0, 0.08);
-    }
-
+    * { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0.08); }
     html, body {
       margin: 0;
       min-height: 100dvh;
@@ -103,7 +98,6 @@
       -webkit-text-size-adjust: 100%;
       overflow-x: hidden;
     }
-
     body {
       padding:
         max(14px, env(safe-area-inset-top))
@@ -112,11 +106,7 @@
         max(14px, env(safe-area-inset-left));
     }
 
-    .app-shell {
-      max-width: var(--artifact-max-width);
-      margin: 0 auto;
-    }
-
+    .app-shell { max-width: var(--artifact-max-width); margin: 0 auto; }
     .hero {
       width: fit-content;
       margin: 12px auto 22px;
@@ -156,20 +146,10 @@
       text-align: center;
     }
 
-    .row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
     .row.center { justify-content: center; }
     .row.between { justify-content: space-between; }
-
-    .label-strong {
-      font-weight: 800;
-      color: var(--artifact-text-primary);
-    }
+    .label-strong { font-weight: 800; color: var(--artifact-text-primary); }
 
     .input, .select, .date-input {
       background: var(--artifact-surface);
@@ -188,11 +168,7 @@
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
     }
 
-    .url-input {
-      direction: ltr;
-      text-align: left;
-      flex: 1 1 420px;
-    }
+    .url-input { direction: ltr; text-align: left; flex: 1 1 420px; }
 
     .btn {
       appearance: none;
@@ -207,16 +183,8 @@
       box-shadow: var(--artifact-shadow-soft);
     }
 
-    .btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-      filter: brightness(1.03);
-    }
-
-    .btn:disabled {
-      opacity: .56;
-      cursor: not-allowed;
-    }
-
+    .btn:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.03); }
+    .btn:disabled { opacity: .56; cursor: not-allowed; }
     .btn-primary { background: var(--artifact-info); color: #ffffff; }
     .btn-success { background: var(--artifact-success); color: #ffffff; }
     .btn-danger { background: var(--artifact-danger); color: #ffffff; }
@@ -256,17 +224,13 @@
     .tool-sheet { background: var(--artifact-toolbar-sheet); }
     .tool-fair { background: var(--artifact-toolbar-fair); }
 
-    .collapsible {
-      display: none;
-      margin-top: 12px;
-    }
+    .collapsible { display: none; margin-top: 12px; }
 
     .fairness-panel {
       display: none;
       margin-top: 12px;
       border: 1px solid var(--artifact-border-light);
-      background:
-        linear-gradient(180deg, var(--artifact-fair-soft-2), var(--artifact-surface));
+      background: linear-gradient(180deg, var(--artifact-fair-soft-2), var(--artifact-surface));
     }
 
     .fairness-summary {
@@ -276,7 +240,7 @@
       margin: 12px 0 18px;
     }
 
-    .fairness-card {
+    .fairness-card, .summary-card {
       background: var(--artifact-surface);
       border: 1px solid var(--artifact-border-light);
       border-radius: 14px;
@@ -285,14 +249,14 @@
       box-shadow: var(--artifact-shadow-soft);
     }
 
-    .fairness-card .label {
+    .fairness-card .label, .summary-card .label {
       display: block;
       font-size: .86rem;
       color: var(--artifact-text-secondary);
       margin-bottom: 4px;
     }
 
-    .fairness-card .value {
+    .fairness-card .value, .summary-card .value {
       display: block;
       font-size: 1.45rem;
       font-weight: 900;
@@ -321,12 +285,14 @@
       text-align: center;
     }
 
-    .fairness-table-wrap {
+    .fairness-table-wrap, .grid-wrap {
       overflow: auto;
       border-radius: 12px;
       border: 1px solid var(--artifact-border-light);
       background: var(--artifact-surface);
     }
+
+    table { width: 100%; border-collapse: separate; border-spacing: 0; }
 
     .fairness-table {
       width: 100%;
@@ -346,9 +312,7 @@
     }
 
     .fairness-table th:last-child,
-    .fairness-table td:last-child {
-      border-left: 0;
-    }
+    .fairness-table td:last-child { border-left: 0; }
 
     .fairness-table thead th {
       position: sticky;
@@ -392,25 +356,11 @@
     .pill.ok { background: var(--artifact-success-soft); color: #166534; border-color: rgba(22,163,74,.18); }
     .pill.warn { background: var(--artifact-warning-soft); color: #9a3412; border-color: rgba(234,88,12,.18); }
     .pill.bad { background: var(--artifact-danger-soft); color: #991b1b; border-color: rgba(220,38,38,.18); }
-    .pill.info { background: var(--artifact-info-soft); color: #1d4ed8; border-color: rgba(37,99,235,.18); }
 
     .empty-state {
       padding: 18px 12px;
       text-align: center;
       color: var(--artifact-text-secondary);
-    }
-
-    .grid-wrap {
-      overflow: auto;
-      border-radius: 14px;
-      border: 1px solid var(--artifact-border-light);
-      background: var(--artifact-surface);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
     }
 
     .excel-grid {
@@ -445,7 +395,6 @@
       inset-inline-start: 0;
       z-index: 1;
       background: #f8fbff;
-      color: var(--artifact-text-primary);
       font-weight: 800;
       width: 120px;
       min-width: 120px;
@@ -516,10 +465,7 @@
       padding: 10px;
     }
 
-    .req-label {
-      font-weight: 800;
-      background: #eef8f7;
-    }
+    .req-label { font-weight: 800; background: #eef8f7; }
 
     .req-control {
       display: flex;
@@ -544,16 +490,9 @@
       user-select: none;
     }
 
-    .req-opt.active {
-      background: var(--artifact-success-soft);
-      color: #1b5e20;
-    }
+    .req-opt.active { background: var(--artifact-success-soft); color: #1b5e20; }
 
-    .list {
-      display: grid;
-      gap: 8px;
-      margin-top: 12px;
-    }
+    .list { display: grid; gap: 8px; margin-top: 12px; }
 
     .list-item {
       display: flex;
@@ -567,10 +506,21 @@
       color: var(--artifact-text-primary);
     }
 
-    .muted {
-      color: var(--artifact-text-secondary);
-      font-size: .92rem;
+    .muted { color: var(--artifact-text-secondary); font-size: .92rem; }
+
+    .status-banner {
+      display: none;
+      margin-top: 12px;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-align: center;
+      font-weight: 800;
+      box-shadow: var(--artifact-shadow-soft);
     }
+
+    .status-banner.success { background: var(--artifact-success); color: #ffffff; }
+    .status-banner.warning { background: var(--artifact-warning); color: #ffffff; }
+    .status-banner.error { background: var(--artifact-danger); color: #ffffff; }
 
     .results-shell {
       overflow-x: auto;
@@ -579,45 +529,14 @@
       text-align: center;
     }
 
-    .results-shell h3 {
-      margin: 18px 0 10px;
-      color: var(--artifact-accent);
-    }
-
-    .results-info {
-      color: var(--artifact-accent);
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
+    .results-shell h3 { margin: 18px 0 10px; color: var(--artifact-accent); }
+    .results-info { color: var(--artifact-accent); font-weight: 700; margin-bottom: 14px; }
 
     .summary-bar {
       display: grid;
       grid-template-columns: repeat(4, minmax(160px, 1fr));
       gap: 12px;
       margin: 0 0 16px;
-    }
-
-    .summary-card {
-      background: var(--artifact-surface);
-      border: 1px solid var(--artifact-border-light);
-      border-radius: 14px;
-      padding: 12px;
-      text-align: center;
-      box-shadow: var(--artifact-shadow-soft);
-    }
-
-    .summary-card .label {
-      display: block;
-      font-size: .88rem;
-      color: var(--artifact-text-secondary);
-      margin-bottom: 6px;
-    }
-
-    .summary-card .value {
-      display: block;
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: var(--artifact-text-primary);
     }
 
     .summary-card.is-empty { background: var(--artifact-warning-soft); }
@@ -638,9 +557,7 @@
       box-shadow: var(--artifact-shadow-soft);
     }
 
-    .schedule-table col.time-col {
-      width: var(--artifact-time-col-width);
-    }
+    .schedule-table col.time-col { width: var(--artifact-time-col-width); }
 
     .schedule-table th,
     .schedule-table td {
@@ -707,10 +624,7 @@
       gap: 5px;
     }
 
-    .time-slot-icon {
-      font-size: 1.15rem;
-      line-height: 1;
-    }
+    .time-slot-icon { font-size: 1.15rem; line-height: 1; }
 
     .friday-col,
     .saturday-col {
@@ -816,10 +730,7 @@
       text-decoration: line-through;
     }
 
-    .person.on-leave::after {
-      content: " ⛱️";
-      font-size: .9em;
-    }
+    .person.on-leave::after { content: " ⛱️"; font-size: .9em; }
 
     .person.color-אמיר { background: var(--person-אמיר-bg); color: var(--person-אמיר-text); }
     .person.color-נמרוד { background: var(--person-נמרוד-bg); color: var(--person-נמרוד-text); }
@@ -876,15 +787,8 @@
       box-shadow: var(--artifact-shadow-soft);
     }
 
-    .summary-table thead {
-      background: var(--artifact-accent);
-      color: #ffffff;
-    }
-
-    .exceptions-table thead {
-      background: var(--artifact-danger);
-      color: #ffffff;
-    }
+    .summary-table thead { background: var(--artifact-accent); color: #ffffff; }
+    .exceptions-table thead { background: var(--artifact-danger); color: #ffffff; }
 
     .summary-table th,
     .summary-table td,
@@ -905,8 +809,7 @@
 
     @media (max-width: 1280px) {
       .toolbar { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
-      .summary-bar,
-      .fairness-summary { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+      .summary-bar, .fairness-summary { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
       .fairness-layout { grid-template-columns: 1fr; }
     }
 
@@ -919,23 +822,12 @@
       .hero { font-size: 1.48rem; padding: 12px 18px; }
       .row { flex-direction: column; align-items: stretch; }
       .row.mobile-inline { flex-direction: row; align-items: center; }
-      .toolbar,
-      .guard-grid,
-      .req-grid,
-      .summary-bar,
-      .fairness-summary { grid-template-columns: 1fr; }
+      .toolbar, .req-grid, .summary-bar, .fairness-summary { grid-template-columns: 1fr; }
       .guard-grid { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
       .schedule-table { min-width: 900px; }
       .fairness-table { min-width: 620px; }
-      .time-slot {
-        position: sticky;
-        inset-inline-end: 0;
-        z-index: 1;
-      }
-      .person {
-        font-size: 1.18em;
-        padding: 9px 13px;
-      }
+      .time-slot { position: sticky; inset-inline-end: 0; z-index: 1; }
+      .person { font-size: 1.18em; padding: 9px 13px; }
       .spotlight-active .person:not(.highlight-name) {
         opacity: .45 !important;
         filter: grayscale(35%);
@@ -976,9 +868,7 @@
         break-inside: avoid;
       }
 
-      .fairness-panel {
-        display: block !important;
-      }
+      .fairness-panel { display: block !important; }
 
       *, *::before, *::after {
         animation: none !important;
@@ -1001,12 +891,10 @@
       <div class="card">
         <div class="row between">
           <div class="label-strong">טבלת קלט (הדבקה ישירה)</div>
-
           <div class="row mobile-inline">
             <label for="startDate" id="startDateLabel" class="label-strong">תאריך תחילת שבוע:</label>
             <input type="date" id="startDate" class="date-input" />
           </div>
-
           <div class="row mobile-inline">
             <button id="btnExcelAuto" type="button" class="btn btn-primary">סדר אוטומטי ↻</button>
             <button id="btnExcelClear" type="button" class="btn btn-danger">נקה</button>
@@ -1197,6 +1085,7 @@
           this.el.quickFetchButton.addEventListener("click", () => this.fetchFromGoogleSheet());
           this.el.downloadHtmlButton.addEventListener("click", () => this.downloadHtmlTable());
           this.el.openSheetButton.addEventListener("click", () => window.open(this.C.SHEET_URL, "_blank", "noopener,noreferrer"));
+
           this.el.toggleFairnessButton.addEventListener("click", () => {
             this.el.fairnessPanel.style.display = this.el.fairnessPanel.style.display === "block" ? "none" : "block";
           });
@@ -1287,6 +1176,17 @@
 
         allEmployeeNames() {
           return Object.keys(this.C.COLOR_MAP).map(name => name.replace(/_/g, " ")).sort((a, b) => a.localeCompare(b, "he"));
+        },
+
+        getScheduledEmployeeNames(allShifts) {
+          return Object.keys(allShifts)
+            .filter(name => (allShifts[name] || 0) > 0)
+            .sort((a, b) => {
+              const aCount = allShifts[a] || 0;
+              const bCount = allShifts[b] || 0;
+              if (bCount !== aCount) return bCount - aCount;
+              return a.localeCompare(b, "he");
+            });
         },
 
         getWeekStartSetting() {
@@ -1491,10 +1391,6 @@
           return this.C.COLOR_MAP[underscored] || null;
         },
 
-        toNameArray(value) {
-          return String(value || "").split(/[,\n]/).map(v => this.normalizeKey(v)).filter(Boolean);
-        },
-
         renderPersonBubbles(names, dayLabel, timeLabel, dayIso) {
           return (names || []).map(rawName => {
             const clean = this.normalizeKey(rawName);
@@ -1662,6 +1558,38 @@
           return { allShifts, night2to6Count, exceptions, cellFlags };
         },
 
+        buildDashboardSummary(parsed, insights) {
+          const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
+          let emptyCells = 0;
+          let underfilled = 0;
+          let overfilled = 0;
+          let leaveCells = 0;
+
+          parsed.data.forEach((row, rowIdx) => {
+            row.forEach((cell, colIdx) => {
+              const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
+              const required = this.getRequiredPerShift(rowIdx);
+              if (names.length === 0) emptyCells += 1;
+              else if (names.length < required) underfilled += 1;
+              else if (names.length > required) overfilled += 1;
+              if (names.some(name => this.isOnVacation(name, isoDates[colIdx]))) leaveCells += 1;
+            });
+          });
+
+          const underMinimumEmployees = this.allEmployeeNames().filter(name => (insights.allShifts[name] || 0) < this.C.MIN_REQUIRED).length;
+          const nightViolations = this.allEmployeeNames().filter(name => (insights.night2to6Count[name] || 0) > this.C.MAX_NIGHT_2_6).length;
+
+          return {
+            emptyCells,
+            exceptions: insights.exceptions.length,
+            underMinimumEmployees,
+            nightViolations,
+            underfilled,
+            overfilled,
+            leaveCells
+          };
+        },
+
         getCellReasonParts(day, slot, names, required, dayIso, cellFlags) {
           const reasons = [];
           const leaveNames = names.filter(name => this.isOnVacation(name, dayIso));
@@ -1708,13 +1636,8 @@
               reasons.push(`הגיע לתקרת לילות 02–06 (${nights}).`);
             }
 
-            if (leaveDays > 0) {
-              reasons.push(`חופשה/מילואים ב-${leaveDays} ימים מתוך השבוע.`);
-            }
-
-            if (!reasons.length) {
-              reasons.push("אין חריגות או סימונים מיוחדים.");
-            }
+            if (leaveDays > 0) reasons.push(`חופשה/מילואים ב-${leaveDays} ימים מתוך השבוע.`);
+            if (!reasons.length) reasons.push("אין חריגות או סימונים מיוחדים.");
 
             return { name, count, nights, leaveDays, status, reasons };
           });
@@ -1741,14 +1664,169 @@
             });
           });
 
-          const summary = {
-            balanced: employees.filter(x => x.status.cls === "ok").length,
-            attention: employees.filter(x => x.status.cls !== "ok").length,
-            zeroAssigned: employees.filter(x => x.count === 0).length,
-            markedCells: cells.length
+          return {
+            employees,
+            cells,
+            summary: {
+              balanced: employees.filter(x => x.status.cls === "ok").length,
+              attention: employees.filter(x => x.status.cls !== "ok").length,
+              zeroAssigned: employees.filter(x => x.count === 0).length,
+              markedCells: cells.length
+            }
           };
+        },
 
-          return { employees, cells, summary };
+        renderSummaryBar(summary) {
+          return `
+            <div class="summary-bar">
+              <div class="summary-card is-empty">
+                <span class="label">תאים ריקים / חסרים</span>
+                <span class="value">${summary.emptyCells + summary.underfilled}</span>
+              </div>
+              <div class="summary-card is-exceptions">
+                <span class="label">סה״כ חריגות</span>
+                <span class="value">${summary.exceptions}</span>
+              </div>
+              <div class="summary-card is-under">
+                <span class="label">עובדים מתחת למינימום</span>
+                <span class="value">${summary.underMinimumEmployees}</span>
+              </div>
+              <div class="summary-card is-nights">
+                <span class="label">חריגות לילה 02–06</span>
+                <span class="value">${summary.nightViolations}</span>
+              </div>
+            </div>
+          `;
+        },
+
+        renderCellBadges(day, slot, names, required, dayIso, cellFlags) {
+          const badges = [];
+          if (!names.length) badges.push(`<span class="badge empty">ריק</span>`);
+          else if (names.length < required) badges.push(`<span class="badge short">חסר</span>`);
+          else if (names.length > required) badges.push(`<span class="badge extra">עודף</span>`);
+
+          if (names.some(name => this.isOnVacation(name, dayIso))) badges.push(`<span class="badge leave">חופשה</span>`);
+
+          const key = `${day}__${slot}`;
+          if (cellFlags[key]?.has("rest")) badges.push(`<span class="badge rest">מנוחה</span>`);
+
+          return badges.length ? `<div class="cell-badges">${badges.join("")}</div>` : "";
+        },
+
+        renderTimeSlotCell(rowIdx, timeDisplay) {
+          const icon = this.C.SLOT_ICONS[rowIdx] || "😂";
+          return `
+            <th scope="row" class="time-slot">
+              <div class="time-slot-wrap">
+                <span class="time-slot-icon">${icon}</span>
+                <span>${timeDisplay}</span>
+              </div>
+            </th>
+          `;
+        },
+
+        renderScheduleHeader(days, datesForWeek) {
+          let html = `<colgroup><col class="time-col">${days.map(() => `<col>`).join("")}</colgroup>`;
+          html += `<thead><tr><th scope="col" rowspan="2">שעות / יום</th>`;
+          days.forEach((day, idx) => {
+            const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
+            html += `<th scope="col" class="${weekendClass}"><span class="date-text">${datesForWeek[idx]}</span></th>`;
+          });
+          html += `</tr><tr>`;
+          days.forEach(day => {
+            const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
+            const dayDisplay = this.getWeekStartSetting() === "mon" && day === "יום ראשון" ? "יום ראשון" : day.replace("יום ", "");
+            html += `<th scope="col" class="${weekendClass}"><span class="day-header-name">${this.escapeHtml(dayDisplay)}</span></th>`;
+          });
+          html += `</tr></thead>`;
+          return html;
+        },
+
+        renderScheduleRow(row, rowIdx, days, isoDates, cellFlags) {
+          const timeFull = this.C.TIME_SLOTS[rowIdx];
+          const slot = timeFull.replace(" (Night)", "");
+          const timeDisplay = slot.replace(" - ", "<br>");
+          const required = this.getRequiredPerShift(rowIdx);
+          let html = `<tr>${this.renderTimeSlotCell(rowIdx, timeDisplay)}`;
+
+          row.forEach((cell, colIdx) => {
+            const day = days[colIdx];
+            const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
+            const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
+            const bubbles = this.renderPersonBubbles(names, day, slot, isoDates[colIdx]);
+            const badges = this.renderCellBadges(day, slot, names, required, isoDates[colIdx], cellFlags);
+            const reasons = this.getCellReasonParts(day, slot, names, required, isoDates[colIdx], cellFlags);
+            const title = reasons.length ? this.escapeHtml(reasons.join(" | ")) : "";
+            html += `<td class="${this.cx(weekendClass)}" data-day="${this.escapeHtml(day)}" data-time="${this.escapeHtml(slot)}" title="${title}" contenteditable="true">${bubbles}${badges}</td>`;
+          });
+
+          html += `</tr>`;
+          return html;
+        },
+
+        renderExceptionsTable(exceptions) {
+          let html = `<h3>⚠️ ריכוז חריגות ואזהרות</h3>`;
+          html += `<table class="exceptions-table"><thead><tr><th>יום</th><th>משמרת</th><th>עובד</th><th>פירוט החריגה</th></tr></thead><tbody>`;
+          if (!exceptions.length) {
+            html += `<tr><td colspan="4">אין חריגות בסידור! ✅</td></tr>`;
+          } else {
+            exceptions.forEach(ex => {
+              html += `<tr><td>${this.escapeHtml(ex.day)}</td><td>${this.escapeHtml(ex.slot)}</td><td><b>${this.escapeHtml(ex.name)}</b></td><td>${this.escapeHtml(ex.msg)}</td></tr>`;
+            });
+          }
+          html += `</tbody></table>`;
+          return html;
+        },
+
+        renderSummaryTable(allShifts, night2to6Count) {
+          let html = `<h3>סיכום הופעות (ללא ליווי)</h3>`;
+          html += `<table class="summary-table"><thead><tr><th>מס'</th><th>שם העובד</th><th>סה"כ הופעות</th><th>משמרות 02–06</th><th>סטטוס</th></tr></thead><tbody>`;
+
+          const sortedNames = this.getScheduledEmployeeNames(allShifts);
+
+          if (!sortedNames.length) {
+            html += `<tr><td colspan="5">אין עובדים משובצים השבוע.</td></tr>`;
+          } else {
+            let serial = 1;
+            sortedNames.forEach(name => {
+              const count = allShifts[name] || 0;
+              const nights = night2to6Count[name] || 0;
+              let rowClass = "";
+              let status = "";
+
+              if (count >= this.C.MAX_ALLOWED) {
+                rowClass = "shifts-5-count";
+                status = `✅ עמד (${count})`;
+              } else if (count === 4) {
+                rowClass = "shifts-4-count";
+                status = "✅ עמד (4)";
+              } else if (count === 3) {
+                rowClass = "shifts-3-count";
+                status = "🆗 עמד (3)";
+              } else {
+                rowClass = "low-shifts";
+                status = `❌ פחות מ־3 (${count})`;
+              }
+
+              if (nights > this.C.MAX_NIGHT_2_6) rowClass += " night-limit-fail-row";
+
+              html += `
+                <tr class="${rowClass}">
+                  <td>${serial++}</td>
+                  <td>${this.escapeHtml(name)}</td>
+                  <td>${count}</td>
+                  <td>${nights > this.C.MAX_NIGHT_2_6
+                    ? `<span class="night-limit-fail">❌ ${nights}</span>`
+                    : `<span class="night-limit-ok">✅ ${nights}</span>`}
+                  </td>
+                  <td>${status}</td>
+                </tr>
+              `;
+            });
+          }
+
+          html += `</tbody></table>`;
+          return html;
         },
 
         renderFairnessPanel(parsed, insights) {
@@ -1766,11 +1844,7 @@
               <td>${emp.nights}</td>
               <td>${emp.leaveDays}</td>
               <td><span class="pill ${emp.status.cls}">${this.escapeHtml(emp.status.text)}</span></td>
-              <td>
-                <ul class="reason-list">
-                  ${emp.reasons.map(reason => `<li>${this.escapeHtml(reason)}</li>`).join("")}
-                </ul>
-              </td>
+              <td><ul class="reason-list">${emp.reasons.map(r => `<li>${this.escapeHtml(r)}</li>`).join("")}</ul></td>
             </tr>
           `).join("");
 
@@ -1782,11 +1856,7 @@
                 <td>${this.escapeHtml(cell.slot)}</td>
                 <td>${this.escapeHtml(cell.assigned)}</td>
                 <td>${cell.required}</td>
-                <td>
-                  <ul class="reason-list">
-                    ${cell.reasons.map(reason => `<li>${this.escapeHtml(reason)}</li>`).join("")}
-                  </ul>
-                </td>
+                <td><ul class="reason-list">${cell.reasons.map(r => `<li>${this.escapeHtml(r)}</li>`).join("")}</ul></td>
               </tr>
             `).join("")
             : `<tr><td colspan="6" class="empty-state">אין תאים מסומנים כרגע.</td></tr>`;
@@ -1826,9 +1896,7 @@
                         <th>הסבר</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      ${employeeRows}
-                    </tbody>
+                    <tbody>${employeeRows}</tbody>
                   </table>
                 </div>
               </section>
@@ -1847,212 +1915,12 @@
                         <th>הסבר</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      ${cellRows}
-                    </tbody>
+                    <tbody>${cellRows}</tbody>
                   </table>
                 </div>
               </section>
             </div>
           `;
-        },
-
-        buildDashboardSummary(parsed, insights) {
-          const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
-          let emptyCells = 0;
-          let underfilled = 0;
-          let overfilled = 0;
-          let leaveCells = 0;
-
-          parsed.data.forEach((row, rowIdx) => {
-            row.forEach((cell, colIdx) => {
-              const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
-              const required = this.getRequiredPerShift(rowIdx);
-              if (names.length === 0) emptyCells += 1;
-              else if (names.length < required) underfilled += 1;
-              else if (names.length > required) overfilled += 1;
-
-              if (names.some(name => this.isOnVacation(name, isoDates[colIdx]))) leaveCells += 1;
-            });
-          });
-
-          const underMinimumEmployees = this.allEmployeeNames().filter(name => (insights.allShifts[name] || 0) < this.C.MIN_REQUIRED).length;
-          const nightViolations = this.allEmployeeNames().filter(name => (insights.night2to6Count[name] || 0) > this.C.MAX_NIGHT_2_6).length;
-
-          return {
-            emptyCells,
-            exceptions: insights.exceptions.length,
-            underMinimumEmployees,
-            nightViolations,
-            underfilled,
-            overfilled,
-            leaveCells
-          };
-        },
-
-        renderSummaryBar(summary) {
-          return `
-            <div class="summary-bar">
-              <div class="summary-card is-empty">
-                <span class="label">תאים ריקים / חסרים</span>
-                <span class="value">${summary.emptyCells + summary.underfilled}</span>
-              </div>
-              <div class="summary-card is-exceptions">
-                <span class="label">סה״כ חריגות</span>
-                <span class="value">${summary.exceptions}</span>
-              </div>
-              <div class="summary-card is-under">
-                <span class="label">עובדים מתחת למינימום</span>
-                <span class="value">${summary.underMinimumEmployees}</span>
-              </div>
-              <div class="summary-card is-nights">
-                <span class="label">חריגות לילה 02–06</span>
-                <span class="value">${summary.nightViolations}</span>
-              </div>
-            </div>
-          `;
-        },
-
-        renderCellBadges(day, slot, names, required, dayIso, cellFlags) {
-          const badges = [];
-          if (!names.length) badges.push(`<span class="badge empty">ריק</span>`);
-          else if (names.length < required) badges.push(`<span class="badge short">חסר</span>`);
-          else if (names.length > required) badges.push(`<span class="badge extra">עודף</span>`);
-
-          if (names.some(name => this.isOnVacation(name, dayIso))) {
-            badges.push(`<span class="badge leave">חופשה</span>`);
-          }
-
-          const key = `${day}__${slot}`;
-          if (cellFlags[key]?.has("rest")) {
-            badges.push(`<span class="badge rest">מנוחה</span>`);
-          }
-
-          return badges.length ? `<div class="cell-badges">${badges.join("")}</div>` : "";
-        },
-
-        renderTimeSlotCell(rowIdx, timeDisplay) {
-          const icon = this.C.SLOT_ICONS[rowIdx] || "😂";
-          return `
-            <th scope="row" class="time-slot">
-              <div class="time-slot-wrap">
-                <span class="time-slot-icon">${icon}</span>
-                <span>${timeDisplay}</span>
-              </div>
-            </th>
-          `;
-        },
-
-        renderScheduleHeader(days, datesForWeek) {
-          let html = `<colgroup><col class="time-col">${days.map(() => `<col>`).join("")}</colgroup>`;
-          html += `<thead><tr><th scope="col" rowspan="2">שעות / יום</th>`;
-
-          days.forEach((day, idx) => {
-            const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
-            html += `<th scope="col" class="${weekendClass}"><span class="date-text">${datesForWeek[idx]}</span></th>`;
-          });
-
-          html += `</tr><tr>`;
-
-          days.forEach(day => {
-            const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
-            const dayDisplay = this.getWeekStartSetting() === "mon" && day === "יום ראשון"
-              ? "יום ראשון"
-              : day.replace("יום ", "");
-            html += `<th scope="col" class="${weekendClass}"><span class="day-header-name">${this.escapeHtml(dayDisplay)}</span></th>`;
-          });
-
-          html += `</tr></thead>`;
-          return html;
-        },
-
-        renderScheduleRow(row, rowIdx, days, isoDates, cellFlags) {
-          const timeFull = this.C.TIME_SLOTS[rowIdx];
-          const slot = timeFull.replace(" (Night)", "");
-          const timeDisplay = slot.replace(" - ", "<br>");
-          const required = this.getRequiredPerShift(rowIdx);
-          let html = `<tr>${this.renderTimeSlotCell(rowIdx, timeDisplay)}`;
-
-          row.forEach((cell, colIdx) => {
-            const day = days[colIdx];
-            const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
-            const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
-            const bubbles = this.renderPersonBubbles(names, day, slot, isoDates[colIdx]);
-            const badges = this.renderCellBadges(day, slot, names, required, isoDates[colIdx], cellFlags);
-            const reasons = this.getCellReasonParts(day, slot, names, required, isoDates[colIdx], cellFlags);
-            const tdClass = this.cx(weekendClass);
-            const title = reasons.length ? this.escapeHtml(reasons.join(" | ")) : "";
-            html += `<td class="${tdClass}" data-day="${this.escapeHtml(day)}" data-time="${this.escapeHtml(slot)}" title="${title}" contenteditable="true">${bubbles}${badges}</td>`;
-          });
-
-          html += `</tr>`;
-          return html;
-        },
-
-        renderExceptionsTable(exceptions) {
-          let html = `<h3>⚠️ ריכוז חריגות ואזהרות</h3>`;
-          html += `<table class="exceptions-table"><thead><tr><th>יום</th><th>משמרת</th><th>עובד</th><th>פירוט החריגה</th></tr></thead><tbody>`;
-          if (!exceptions.length) {
-            html += `<tr><td colspan="4">אין חריגות בסידור! ✅</td></tr>`;
-          } else {
-            exceptions.forEach(ex => {
-              html += `<tr><td>${this.escapeHtml(ex.day)}</td><td>${this.escapeHtml(ex.slot)}</td><td><b>${this.escapeHtml(ex.name)}</b></td><td>${this.escapeHtml(ex.msg)}</td></tr>`;
-            });
-          }
-          html += `</tbody></table>`;
-          return html;
-        },
-
-        renderSummaryTable(allShifts, night2to6Count) {
-          let html = `<h3>סיכום הופעות (ללא ליווי)</h3>`;
-          html += `<table class="summary-table"><thead><tr><th>מס'</th><th>שם העובד</th><th>סה"כ הופעות</th><th>משמרות 02–06</th><th>סטטוס</th></tr></thead><tbody>`;
-
-          const sortedNames = this.allEmployeeNames().sort((a, b) => {
-            const aCount = allShifts[a] || 0;
-            const bCount = allShifts[b] || 0;
-            if (bCount !== aCount) return bCount - aCount;
-            return a.localeCompare(b, "he");
-          });
-
-          let serial = 1;
-          sortedNames.forEach(name => {
-            const count = allShifts[name] || 0;
-            const nights = night2to6Count[name] || 0;
-            let rowClass = "";
-            let status = "";
-
-            if (count >= this.C.MAX_ALLOWED) {
-              rowClass = "shifts-5-count";
-              status = `✅ עמד (${count})`;
-            } else if (count === 4) {
-              rowClass = "shifts-4-count";
-              status = "✅ עמד (4)";
-            } else if (count === 3) {
-              rowClass = "shifts-3-count";
-              status = "🆗 עמד (3)";
-            } else {
-              rowClass = "low-shifts";
-              status = count === 0 ? "❌ לא שובץ" : `❌ פחות מ־3 (${count})`;
-            }
-
-            if (nights > this.C.MAX_NIGHT_2_6) rowClass += " night-limit-fail-row";
-
-            html += `
-              <tr class="${rowClass}">
-                <td>${serial++}</td>
-                <td>${this.escapeHtml(name)}</td>
-                <td>${count}</td>
-                <td>${nights > this.C.MAX_NIGHT_2_6
-                  ? `<span class="night-limit-fail">❌ ${nights}</span>`
-                  : `<span class="night-limit-ok">✅ ${nights}</span>`}
-                </td>
-                <td>${status}</td>
-              </tr>
-            `;
-          });
-
-          html += `</tbody></table>`;
-          return html;
         },
 
         renderMainScheduleTable(parsed, datesForWeek, isoDates, cellFlags) {
@@ -2603,6 +2471,7 @@
           const fairnessHtml = this.el.fairnessContent.innerHTML;
           const fairnessVisible = this.el.fairnessPanel.style.display === "block";
           const startDate = this.el.startDate.value;
+
           if (!startDate || !resultsHtml || resultsHtml.includes("הדבק נתונים")) {
             alert("בחר תאריך ובצע ניתוח לפני ההורדה.");
             return;
@@ -2687,9 +2556,7 @@
             const table = app.el["excel-grid"];
             const dayShort = app.state.expectedDays.map(day => day.replace("יום ", ""));
             let html = "<thead><tr><th>שעות / יום</th>";
-            dayShort.forEach(day => {
-              html += `<th>${app.escapeHtml(day)}</th>`;
-            });
+            dayShort.forEach(day => { html += `<th>${app.escapeHtml(day)}</th>`; });
             html += "</tr></thead><tbody>";
 
             app.C.TIME_SLOTS.forEach((slot, r) => {
