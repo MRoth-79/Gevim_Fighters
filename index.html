@@ -1,4 +1,3 @@
-<![CDATA[
 <!DOCTYPE html>
 <html lang="he" dir="rtl" data-theme="light">
 <head>
@@ -11,10 +10,11 @@
       --artifact-background-light: var(--theme-background-light, #f6f6f6);
       --artifact-background-mid: var(--theme-background-mid, #f0f0f0);
       --artifact-border-light: var(--theme-border-light, #e5e5e5);
-      --artifact-border-dark: var(--theme-border-dark, #cfcfcf);
+      --artifact-border-dark: var(--theme-border-dark, #cccccc);
       --artifact-text-primary: var(--theme-text-primary, #1b1b1b);
       --artifact-text-secondary: var(--theme-text-secondary, #727272);
       --artifact-primary-highlight: var(--theme-primary-highlight, #1b1b1b);
+      --artifact-selected: var(--theme-selected, #e8e8e8);
 
       --artifact-page: var(--artifact-background-light);
       --artifact-surface: var(--artifact-background);
@@ -44,6 +44,7 @@
 
       --artifact-weekend-bg: #ffd6bf;
       --artifact-weekend-text: #7a3e1d;
+      --artifact-weekend-hover-bg: #ffc8aa;
 
       --artifact-unknown-bg: #fff8e1;
       --artifact-unknown-text: #5d4037;
@@ -484,6 +485,12 @@
       color: var(--artifact-accent-text);
     }
 
+    .schedule-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
     .schedule-table col.time-col {
       width: var(--artifact-time-col-width);
     }
@@ -526,6 +533,16 @@
       color: #5d4037 !important;
       outline: 2px dashed var(--artifact-warning);
       outline-offset: -2px;
+    }
+
+    .schedule-table tbody tr:hover td:not(.friday-col):not(.saturday-col):not(.time-slot) {
+      background: var(--artifact-selected);
+    }
+
+    .schedule-table tbody tr:hover td.friday-col,
+    .schedule-table tbody tr:hover td.saturday-col {
+      background: var(--artifact-weekend-hover-bg) !important;
+      color: var(--artifact-weekend-text) !important;
     }
 
     .time-slot {
@@ -817,11 +834,6 @@
 
       table, thead, .list {
         break-inside: avoid;
-      }
-
-      [style*="max-height"], [style*="overflow"] {
-        max-height: none !important;
-        overflow: visible !important;
       }
 
       *, *::before, *::after {
@@ -1121,14 +1133,6 @@
           return classes.filter(Boolean).join(" ");
         },
 
-        debounce(fn, delay) {
-          let timer = null;
-          return (...args) => {
-            clearTimeout(timer);
-            timer = setTimeout(() => fn(...args), delay);
-          };
-        },
-
         getWeekStartSetting() {
           try {
             return localStorage.getItem(this.C.STORAGE.WEEK_START) === "sun" ? "sun" : "mon";
@@ -1150,8 +1154,10 @@
           const daysToNext = weekStart === "mon" ? ((8 - dow) % 7 || 7) : ((7 - dow) % 7 || 7);
           today.setDate(today.getDate() + daysToNext);
           this.el.startDate.value = today.toISOString().slice(0, 10);
-          const savedUrl = localStorage.getItem(this.C.STORAGE.SHEET_URL);
-          if (savedUrl) this.el.googleSheetUrl.value = savedUrl;
+          try {
+            const savedUrl = localStorage.getItem(this.C.STORAGE.SHEET_URL);
+            if (savedUrl) this.el.googleSheetUrl.value = savedUrl;
+          } catch {}
         },
 
         getHebDayNameFromIso(isoDate) {
@@ -1221,9 +1227,7 @@
             const isTime = this.C.TIME_SLOTS.some(slot => timePart.startsWith(slot.split("(")[0].trim()));
             if (isAssist) return;
 
-            if (isTime) {
-              rawDayData[currentDay].push(parts.slice(1).join(","));
-            }
+            if (isTime) rawDayData[currentDay].push(parts.slice(1).join(","));
           });
 
           if (!Object.keys(rawDayData).length) {
@@ -1244,7 +1248,6 @@
             }
             matrix.push(rowData);
           }
-
           return { days: this.state.expectedDays, data: matrix };
         },
 
@@ -1502,34 +1505,8 @@
           return { allShifts, night2to6Count, exceptions };
         },
 
-        renderScheduleView(parsed) {
-          if (parsed.error) {
-            this.el.resultsContainer.innerHTML = `<p class="warning-text">❌ ${this.escapeHtml(parsed.error)}</p>`;
-            return;
-          }
-
-          if (!this.el.startDate.value) {
-            this.el.resultsContainer.innerHTML = `<p class="warning-text">❌ אנא בחר תאריך תחילת שבוע.</p>`;
-            return;
-          }
-
-          const days = parsed.days;
-          const scheduleData = parsed.data;
-          const datesForWeek = this.getDatesForWeek(this.el.startDate.value);
-          const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
-          const assistValues = this.loadAssistArray();
-          const { allShifts, night2to6Count, exceptions } = this.calculateScheduleInsights(scheduleData, days);
-
-          const doubleShifts = this.C.TIME_SLOTS
-            .map((slot, idx) => ({ idx, label: slot.replace(" (Night)", "") }))
-            .filter(entry => this.getRequiredPerShift(entry.idx) === 2)
-            .map(entry => entry.label.replace(" - ", "–"))
-            .join(", ");
-
-          let html = `<h3>טבלת משמרות</h3>`;
-          html += `<div class="results-info">${doubleShifts ? `משמרות עם 2 שומרים: ${doubleShifts}.` : "כל המשמרות = 1 שומר."} מינימום ${this.C.MIN_REQUIRED} לעובד.</div>`;
-          html += `<table id="scheduleTable" class="schedule-table" role="table">`;
-          html += `<colgroup><col class="time-col">${days.map(() => `<col style="width:${(100 - 100 * (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--artifact-time-col-width')) || 88) / 1040) / days.length}%">`).join("")}</colgroup>`;
+        renderScheduleHeader(days, datesForWeek, assistValues, isoDates) {
+          let html = `<colgroup><col class="time-col">${days.map(() => `<col>`).join("")}</colgroup>`;
           html += `<thead><tr><th scope="col" rowspan="2">שעות / יום</th>`;
 
           days.forEach((day, idx) => {
@@ -1551,13 +1528,17 @@
             `;
           });
 
-          html += `</tr></thead><tbody>`;
+          html += `</tr></thead>`;
+          return html;
+        },
 
+        renderScheduleBody(scheduleData, days, isoDates) {
+          let html = `<tbody>`;
           scheduleData.forEach((row, rowIdx) => {
             const timeFull = this.C.TIME_SLOTS[rowIdx];
             const timeDisplay = timeFull.replace(" (Night)", "").replace(" - ", "<br>");
             const required = this.getRequiredPerShift(rowIdx);
-            html += `<tr><td class="time-slot" data-time-index="${rowIdx}">${timeDisplay}</td>`;
+            html += `<tr><th scope="row" class="time-slot" data-time-index="${rowIdx}">${timeDisplay}</th>`;
 
             row.forEach((cell, colIdx) => {
               const day = days[colIdx];
@@ -1586,10 +1567,12 @@
 
             html += `</tr>`;
           });
+          html += `</tbody>`;
+          return html;
+        },
 
-          html += `</tbody></table>`;
-
-          html += `<h3>⚠️ ריכוז חריגות ואזהרות</h3>`;
+        renderExceptionsTable(exceptions) {
+          let html = `<h3>⚠️ ריכוז חריגות ואזהרות</h3>`;
           html += `<table class="exceptions-table"><thead><tr><th>יום</th><th>משמרת</th><th>עובד</th><th>פירוט החריגה</th></tr></thead><tbody>`;
           if (!exceptions.length) {
             html += `<tr><td colspan="4">אין חריגות בסידור! ✅</td></tr>`;
@@ -1599,8 +1582,11 @@
             });
           }
           html += `</tbody></table>`;
+          return html;
+        },
 
-          html += `<h3>סיכום הופעות (ללא ליווי)</h3>`;
+        renderSummaryTable(allShifts, night2to6Count) {
+          let html = `<h3>סיכום הופעות (ללא ליווי)</h3>`;
           html += `<table class="summary-table"><thead><tr><th>מס'</th><th>שם העובד</th><th>סה"כ הופעות</th><th>משמרות 02–06</th><th>סטטוס</th></tr></thead><tbody>`;
 
           const sortedNames = Object.keys(allShifts).sort((a, b) => {
@@ -1646,6 +1632,41 @@
           });
 
           html += `</tbody></table>`;
+          return html;
+        },
+
+        renderScheduleView(parsed) {
+          if (parsed.error) {
+            this.el.resultsContainer.innerHTML = `<p class="warning-text">❌ ${this.escapeHtml(parsed.error)}</p>`;
+            return;
+          }
+
+          if (!this.el.startDate.value) {
+            this.el.resultsContainer.innerHTML = `<p class="warning-text">❌ אנא בחר תאריך תחילת שבוע.</p>`;
+            return;
+          }
+
+          const days = parsed.days;
+          const scheduleData = parsed.data;
+          const datesForWeek = this.getDatesForWeek(this.el.startDate.value);
+          const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
+          const assistValues = this.loadAssistArray();
+          const { allShifts, night2to6Count, exceptions } = this.calculateScheduleInsights(scheduleData, days);
+
+          const doubleShifts = this.C.TIME_SLOTS
+            .map((slot, idx) => ({ idx, label: slot.replace(" (Night)", "") }))
+            .filter(entry => this.getRequiredPerShift(entry.idx) === 2)
+            .map(entry => entry.label.replace(" - ", "–"))
+            .join(", ");
+
+          let html = `<h3>טבלת משמרות</h3>`;
+          html += `<div class="results-info">${doubleShifts ? `משמרות עם 2 שומרים: ${doubleShifts}.` : "כל המשמרות = 1 שומר."} מינימום ${this.C.MIN_REQUIRED} לעובד.</div>`;
+          html += `<table id="scheduleTable" class="schedule-table" role="table">`;
+          html += this.renderScheduleHeader(days, datesForWeek, assistValues, isoDates);
+          html += this.renderScheduleBody(scheduleData, days, isoDates);
+          html += `</table>`;
+          html += this.renderExceptionsTable(exceptions);
+          html += this.renderSummaryTable(allShifts, night2to6Count);
 
           this.el.resultsContainer.innerHTML = html;
           this.setupAssistEditors();
@@ -1661,10 +1682,7 @@
               const dayIndex = Number(cell.dataset.dayIndex || 0);
               const dayName = cell.dataset.dayName || "";
               const dayIso = this.getIsoDatesForWeek(this.el.startDate.value)[dayIndex];
-              const names = String(cell.innerText || "")
-                .split(/[,\n]/)
-                .map(name => this.normalizeKey(name))
-                .filter(Boolean);
+              const names = String(cell.innerText || "").split(/[,\n]/).map(name => this.normalizeKey(name)).filter(Boolean);
 
               cell.innerHTML = this.renderPersonBubbles(names, dayName, "ליווי 07:40", dayIso);
 
@@ -1807,9 +1825,7 @@
           });
 
           this.el.shiftReqScopeWeek.addEventListener("change", () => {
-            try {
-              localStorage.setItem(this.C.STORAGE.SHIFT_REQ_SCOPE_WEEK, this.el.shiftReqScopeWeek.checked ? "1" : "0");
-            } catch {}
+            try { localStorage.setItem(this.C.STORAGE.SHIFT_REQ_SCOPE_WEEK, this.el.shiftReqScopeWeek.checked ? "1" : "0"); } catch {}
             renderRows();
             this.refreshAfterDataChange();
           });
@@ -1949,6 +1965,9 @@
             if (!resp.ok) throw new Error(`שגיאת רשת (${resp.status})`);
             const text = await resp.text();
             if (!text.trim()) throw new Error("השרת החזיר טקסט ריק");
+            if (!/[יום\s]+(?:ראשון|שני|שלישי|רביעי|חמישי|שישי|שבת)/.test(text) && !/\t|,/.test(text)) {
+              throw new Error("הפורמט שחזר לא נראה כמו טבלת משמרות");
+            }
 
             this.ExcelGrid.loadFromText(text);
             statusEl.textContent = "✅ הנתונים נטענו בהצלחה";
@@ -2273,9 +2292,7 @@
             const table = app.el["excel-grid"];
             const dayShort = app.state.expectedDays.map(day => day.replace("יום ", ""));
             let html = "<thead><tr><th>שעות / יום</th>";
-            dayShort.forEach(day => {
-              html += `<th>${app.escapeHtml(day)}</th>`;
-            });
+            dayShort.forEach(day => { html += `<th>${app.escapeHtml(day)}</th>`; });
             html += "</tr></thead><tbody>";
 
             app.C.TIME_SLOTS.forEach((slot, r) => {
@@ -2445,4 +2462,3 @@
   </script>
 </body>
 </html>
-]]>
