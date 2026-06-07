@@ -5,7 +5,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>מנתח טבלת משמרות 📅</title>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root {
       --artifact-background: var(--theme-background, #ffffff);
@@ -53,8 +52,6 @@
       --artifact-toolbar-analyze: linear-gradient(135deg, #00b09b, #96c93d);
       --artifact-toolbar-download: linear-gradient(135deg, #0ea5e9, #0284c7);
       --artifact-toolbar-sheet: linear-gradient(135deg, #22c55e, #16a34a);
-      --artifact-toolbar-csv: linear-gradient(135deg, #7c3aed, #5b21b6);
-      --artifact-toolbar-xlsx: linear-gradient(135deg, #15803d, #166534);
 
       --artifact-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
       --artifact-shadow-soft: 0 4px 12px rgba(15, 23, 42, 0.06);
@@ -223,7 +220,7 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: repeat(7, minmax(120px, 1fr));
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
       gap: 12px;
       margin-top: 10px;
     }
@@ -253,8 +250,6 @@
     .tool-analyze { background: var(--artifact-toolbar-analyze); }
     .tool-download { background: var(--artifact-toolbar-download); }
     .tool-sheet { background: var(--artifact-toolbar-sheet); }
-    .tool-csv { background: var(--artifact-toolbar-csv); }
-    .tool-xlsx { background: var(--artifact-toolbar-xlsx); }
 
     .grid-wrap {
       overflow: auto;
@@ -907,8 +902,6 @@
         <button id="analyzeButton" class="tool-btn tool-analyze"><span class="icon">🔍</span><span>נתח נתונים</span></button>
         <button id="downloadHtmlButton" class="tool-btn tool-download"><span class="icon">💾</span><span>הורד HTML</span></button>
         <button id="openSheetButton" class="tool-btn tool-sheet"><span class="icon">📄</span><span>פתח גיליון נתונים</span></button>
-        <button id="exportCsvButton" class="tool-btn tool-csv"><span class="icon">🧾</span><span>Export CSV</span></button>
-        <button id="exportXlsxButton" class="tool-btn tool-xlsx"><span class="icon">📗</span><span>Export XLSX</span></button>
       </div>
 
       <div class="row center" style="margin-top:14px;">
@@ -1041,7 +1034,7 @@
             "weekStartSelect","shiftReqGrid","openVacationsBtn","vacationsPanel",
             "leaveScopeWeek","leaveNameInput","leaveFromInput","leaveToInput",
             "leaveAddBtn","leaveClearBtn","vacationsList","statusBanner","resultsContainer",
-            "excel-grid","exportCsvButton","exportXlsxButton"
+            "excel-grid"
           ].forEach(id => {
             this.el[id] = document.getElementById(id);
           });
@@ -1056,8 +1049,6 @@
           this.el.quickFetchButton.addEventListener("click", () => this.fetchFromGoogleSheet());
           this.el.downloadHtmlButton.addEventListener("click", () => this.downloadHtmlTable());
           this.el.openSheetButton.addEventListener("click", () => window.open(this.C.SHEET_URL, "_blank", "noopener,noreferrer"));
-          this.el.exportCsvButton.addEventListener("click", () => this.exportCsv());
-          this.el.exportXlsxButton.addEventListener("click", () => this.exportXlsx());
           this.el.startDate.addEventListener("change", () => {
             this.updateStartDateLabelBySetting();
             this.refreshAfterDataChange();
@@ -1552,7 +1543,7 @@
                 <span class="label">תאים ריקים / חסרים</span>
                 <span class="value">${summary.emptyCells + summary.underfilled}</span>
               </div>
-              <div class="summary-card is-exceptions">
+              <div class="summary-card.is-exceptions">
                 <span class="label">סה״כ חריגות</span>
                 <span class="value">${summary.exceptions}</span>
               </div>
@@ -2244,62 +2235,6 @@
           } else {
             this.showStatus(`⚠️ ${below.length} עובדים עדיין מתחת למינימום: ${below.map(x => `${x.name} (${x.count})`).join(", ")}`, "warning");
           }
-        },
-
-        exportCsv() {
-          if (!this.el.startDate.value) {
-            this.showStatus("בחר תאריך ונתח טבלה לפני הייצוא.", "warning");
-            return;
-          }
-
-          const dates = this.getDatesForWeek(this.el.startDate.value);
-          const header = ["שעות / יום", ...this.state.expectedDays.map((day, idx) => `${day} ${dates[idx]}`)];
-          const rows = this.C.TIME_SLOTS.map((slot, rowIdx) => [
-            slot.replace(" (Night)", ""),
-            ...this.state.expectedDays.map((_, dayIdx) => this.state.excelMatrix[rowIdx][dayIdx] || "")
-          ]);
-
-          const csv = [header, ...rows]
-            .map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(","))
-            .join("\n");
-
-          const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `sidur_${this.el.startDate.value}.csv`;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
-          this.showStatus("קובץ CSV נוצר.", "success");
-        },
-
-        exportXlsx() {
-          if (typeof XLSX === "undefined") {
-            this.showStatus("ספריית XLSX לא נטענה.", "error");
-            return;
-          }
-
-          if (!this.el.startDate.value) {
-            this.showStatus("בחר תאריך ונתח טבלה לפני הייצוא.", "warning");
-            return;
-          }
-
-          const dates = this.getDatesForWeek(this.el.startDate.value);
-          const data = [
-            ["שעות / יום", ...this.state.expectedDays.map((day, idx) => `${day} ${dates[idx]}`)],
-            ...this.C.TIME_SLOTS.map((slot, rowIdx) => [
-              slot.replace(" (Night)", ""),
-              ...this.state.expectedDays.map((_, dayIdx) => this.state.excelMatrix[rowIdx][dayIdx] || "")
-            ])
-          ];
-
-          const ws = XLSX.utils.aoa_to_sheet(data);
-          const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, "Shifts");
-          XLSX.writeFile(wb, `sidur_${this.el.startDate.value}.xlsx`);
-          this.showStatus("קובץ XLSX נוצר.", "success");
         },
 
         downloadHtmlTable() {
