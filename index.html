@@ -872,6 +872,27 @@
     (() => {
       "use strict";
 
+      const Store = {
+        state: {
+          excelMatrix: [],
+          lockedName: null,
+          searchQuery: "",
+          parsedData: null,
+          startDate: ""
+        },
+        listeners: [],
+        setState(update) {
+          this.state = { ...this.state, ...update };
+          this.listeners.forEach(fn => fn(this.state));
+        },
+        subscribe(fn) {
+          this.listeners.push(fn);
+        },
+        getState() {
+          return this.state;
+        }
+      };
+
       const App = {
         C: {
           MIN_REQUIRED: 3,
@@ -883,7 +904,7 @@
             SHEET_URL: "googleSheetUrl",
             SHIFT_REQ_SCOPE_WEEK: "shiftReqScopeWeek",
             LEAVE_SCOPE_WEEK: "leaveScopeWeek",
-            FULL_STATE: "shift_scheduler_full_state_v2"
+            FULL_STATE: "shift_scheduler_full_state_v3"
           },
           SHIFT_INDEX: Object.freeze({
             NIGHT_2_6: 0,
@@ -919,6 +940,7 @@
           lockedName: null,
           statusTimer: null,
           isRestoring: false,
+          isRenderingFromStore: false,
           undoStack: [],
           redoStack: [],
           searchMatches: [],
@@ -938,8 +960,17 @@
           this.buildVacationsPanel();
           this.bindEvents();
           this.updateStartDateLabelBySetting();
+
+          Store.setState({
+            excelMatrix: this.state.excelMatrix,
+            startDate: this.el.startDate.value,
+            lockedName: this.state.lockedName,
+            searchQuery: this.el.guardSearchInput.value
+          });
+
           this.updateUndoRedoButtons();
           this.updateSearchHighlights();
+
           if (this.serializeMatrixToVerticalText().trim()) {
             this.handleAnalyze();
           }
@@ -969,8 +1000,13 @@
           this.el.btnExcelClear.addEventListener("click", () => {
             this.pushUndoSnapshot("clear");
             this.ExcelGrid.clear();
+            Store.setState({
+              excelMatrix: this.state.excelMatrix,
+              parsedData: null
+            });
             this.persistFullState();
           });
+
           this.el.fetchFromSheetButton.addEventListener("click", () => this.fetchFromGoogleSheet());
           this.el.quickFetchButton.addEventListener("click", () => this.fetchFromGoogleSheet());
           this.el.downloadHtmlButton.addEventListener("click", () => this.downloadHtmlTable());
@@ -989,15 +1025,21 @@
             this.pushUndoSnapshot("date");
             this.updateStartDateLabelBySetting();
             this.refreshAfterDataChange();
+            Store.setState({ startDate: this.el.startDate.value });
             this.persistFullState();
           });
 
-          this.el.guardSearchInput.addEventListener("input", () => this.updateSearchHighlights());
+          this.el.guardSearchInput.addEventListener("input", () => {
+            Store.setState({
+              searchQuery: this.el.guardSearchInput.value
+            });
+          });
+
           this.el.searchPrevBtn.addEventListener("click", () => this.navigateSearch(-1));
           this.el.searchNextBtn.addEventListener("click", () => this.navigateSearch(1));
           this.el.clearSearchBtn.addEventListener("click", () => {
             this.el.guardSearchInput.value = "";
-            this.updateSearchHighlights();
+            Store.setState({ searchQuery: "" });
           });
 
           this.el.undoBtn.addEventListener("click", () => this.undo());
@@ -1016,15 +1058,17 @@
             const bubble = e.target.closest(".person");
             if (bubble) {
               const name = bubble.textContent.trim();
-              this.state.lockedName = this.state.lockedName === name ? null : name;
-              this.updateHighlights(this.state.lockedName);
+              const newName = this.state.lockedName === name ? null : name;
+              this.state.lockedName = newName;
+              Store.setState({ lockedName: newName });
               this.persistFullState();
               return;
             }
+
             const isUi = !!(e.target.closest("button") || e.target.closest("input") || e.target.closest("select") || e.target.closest("a"));
             if (!isUi) {
               this.state.lockedName = null;
-              this.updateHighlights(null);
+              Store.setState({ lockedName: null });
               this.persistFullState();
             }
           }, { passive: true });
@@ -1033,7 +1077,7 @@
             const mod = e.ctrlKey || e.metaKey;
             if (e.key === "Escape") {
               this.state.lockedName = null;
-              this.updateHighlights(null);
+              Store.setState({ lockedName: null });
               this.persistFullState();
               return;
             }
@@ -1120,37 +1164,52 @@
             priorityGuards: Array.from(this.getPriorityGuardSet()),
             shiftReqScopeWeek: !!this.el.shiftReqScopeWeek.checked,
             leaveScopeWeek: !!this.el.leaveScopeWeek.checked,
-            searchQuery: this.el.guardSearchInput.value
+            searchQuery: Store.getState().searchQuery || ""
           };
         },
 
         applySnapshot(snapshot) {
           if (!snapshot) return;
           this.state.isRestoring = true;
+
           this.state.expectedDays = Array.isArray(snapshot.expectedDays) && snapshot.expectedDays.length === 7
             ? [...snapshot.expectedDays]
             : this.computeExpectedDays(snapshot.weekStart || this.getWeekStartSetting());
+
           this.state.excelMatrix = Array.isArray(snapshot.excelMatrix) && snapshot.excelMatrix.length === this.C.TIME_SLOTS.length
             ? snapshot.excelMatrix.map(row => Array.isArray(row) ? [...row] : this.state.expectedDays.map(() => ""))
             : this.C.TIME_SLOTS.map(() => this.state.expectedDays.map(() => ""));
+
           this.el.startDate.value = snapshot.startDate || this.el.startDate.value;
           this.el.googleSheetUrl.value = snapshot.googleSheetUrl || this.el.googleSheetUrl.value;
           this.state.lockedName = snapshot.lockedName || null;
           this.el.fairnessPanel.style.display = snapshot.fairnessOpen ? "block" : "none";
           this.el.guardSearchInput.value = snapshot.searchQuery || "";
+
           this.ExcelGrid.render();
           this.renderGuardButtons();
+
           const selected = new Set((snapshot.priorityGuards || []).map(x => this.normalizeKey(x)));
           this.el.guardButtonsContainer.querySelectorAll(".guard-btn").forEach(btn => {
             btn.classList.toggle("active", selected.has(this.normalizeKey(btn.textContent)));
           });
+
           this.updateStartDateLabelBySetting();
-          this.refreshAfterDataChange();
-          this.updateSearchHighlights();
+
+          const parsed = this.parseScheduleText(this.serializeMatrixToVerticalText());
+
+          Store.setState({
+            excelMatrix: this.state.excelMatrix,
+            startDate: this.el.startDate.value,
+            lockedName: this.state.lockedName,
+            searchQuery: snapshot.searchQuery || "",
+            parsedData: parsed
+          });
+
           this.state.isRestoring = false;
         },
 
-        pushUndoSnapshot(reason = "") {
+        pushUndoSnapshot() {
           if (this.state.isRestoring) return;
           const snapshot = this.makeSnapshot();
           this.state.undoStack.push(snapshot);
@@ -1203,7 +1262,7 @@
         },
 
         updateSearchHighlights() {
-          const query = this.normalizeKey(this.el.guardSearchInput.value).toLowerCase();
+          const query = this.normalizeKey(Store.getState().searchQuery || "").toLowerCase();
           const root = this.el.resultsContainer;
           this.state.searchMatches = [];
           this.state.currentSearchIndex = -1;
@@ -1225,7 +1284,6 @@
           } else {
             this.el.searchStatus.textContent = query ? "לא נמצאו תוצאות" : "אין חיפוש פעיל";
           }
-          this.persistFullState();
         },
 
         focusSearchMatch() {
@@ -1321,16 +1379,19 @@
           lines.forEach(line => {
             const cleaned = this.aggressiveClean(line);
             if (!cleaned) return;
+
             const dayMatch = this.state.expectedDays.find(day => cleaned === day || cleaned.startsWith(day));
             if (dayMatch) {
               currentDay = dayMatch;
               rawDayData[currentDay] = [];
               return;
             }
+
             if (!currentDay) return;
 
             const parts = cleaned.split(/\s{2,}|\t/).map(x => x.trim()).filter(Boolean);
             if (!parts.length) return;
+
             const timePart = parts[0];
             const isTime = this.C.TIME_SLOTS.some(slot => timePart.startsWith(slot.split("(")[0].trim()));
             if (isTime) rawDayData[currentDay].push(parts.slice(1).join(","));
@@ -1480,10 +1541,19 @@
         refreshAfterDataChange() {
           this.ExcelGrid.validateAllGridCells();
           const text = this.serializeMatrixToVerticalText();
-          if (text.trim()) this.renderScheduleView(this.parseScheduleText(text));
-          else {
-            this.el.resultsContainer.innerHTML = `<p id="initialMessage">הדבק נתונים או משוך אותם מה‑Web App, ואז לחץ על ניתוח או סידור אוטומטי.</p>`;
-            this.el.fairnessContent.innerHTML = `בצע ניתוח כדי לראות הסבר למה כל תא/עובד מסומן.`;
+          if (text.trim()) {
+            const parsed = this.parseScheduleText(text);
+            Store.setState({
+              excelMatrix: this.state.excelMatrix,
+              parsedData: parsed,
+              startDate: this.el.startDate.value
+            });
+          } else {
+            Store.setState({
+              excelMatrix: this.state.excelMatrix,
+              parsedData: null,
+              startDate: this.el.startDate.value
+            });
           }
         },
 
@@ -1614,11 +1684,11 @@
         },
 
         buildDashboardSummary(parsed, insights) {
-          const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
           let emptyCells = 0;
           let underfilled = 0;
+
           parsed.data.forEach((row, rowIdx) => {
-            row.forEach((cell, colIdx) => {
+            row.forEach(cell => {
               const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
               const required = this.getRequiredPerShift(rowIdx);
               if (names.length === 0) emptyCells += 1;
@@ -1793,6 +1863,7 @@
           const timeDisplay = slot.replace(" - ", "<br>");
           const required = this.getRequiredPerShift(rowIdx);
           let html = `<tr>${this.renderTimeSlotCell(rowIdx, timeDisplay)}`;
+
           row.forEach((cell, colIdx) => {
             const day = days[colIdx];
             const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
@@ -1803,6 +1874,7 @@
             const title = reasons.length ? this.escapeHtml(reasons.join(" | ")) : "";
             html += `<td class="${this.cx(weekendClass)}" data-day="${this.escapeHtml(day)}" data-time="${this.escapeHtml(slot)}" title="${title}" contenteditable="true">${bubbles}${badges}</td>`;
           });
+
           html += `</tr>`;
           return html;
         },
@@ -1950,6 +2022,12 @@
         },
 
         renderScheduleView(parsed) {
+          if (!parsed) {
+            this.el.resultsContainer.innerHTML = `<p id="initialMessage">הדבק נתונים או משוך אותם מה‑Web App, ואז לחץ על ניתוח או סידור אוטומטי.</p>`;
+            this.el.fairnessContent.innerHTML = `בצע ניתוח כדי לראות הסבר למה כל תא/עובד מסומן.`;
+            return;
+          }
+
           if (parsed.error) {
             this.el.resultsContainer.innerHTML = `<p class="warning-text">❌ ${this.escapeHtml(parsed.error)}</p>`;
             this.el.fairnessContent.innerHTML = `<div class="empty-state">אין נתונים תקינים להצגת פאנל הוגנות.</div>`;
@@ -1984,7 +2062,33 @@
           this.renderFairnessPanel(parsed, insights);
           this.setupScheduleEditors();
           this.updateHighlights(this.state.lockedName);
-          this.updateSearchHighlights();
+        },
+
+        syncRenderedTableBackToMatrix() {
+          const table = document.getElementById("scheduleTable");
+          if (!table || !table.tBodies[0]) return;
+          const rows = Array.from(table.tBodies[0].rows);
+          if (rows.length !== this.C.TIME_SLOTS.length) return;
+
+          rows.forEach((tr, rowIndex) => {
+            for (let dayIndex = 0; dayIndex < this.state.expectedDays.length; dayIndex++) {
+              const cell = tr.cells[dayIndex + 1];
+              const names = cell
+                ? Array.from(cell.querySelectorAll(".person")).map(el => this.normalizeKey(el.textContent)).filter(Boolean)
+                : [];
+              this.state.excelMatrix[rowIndex][dayIndex] = names.join(", ");
+            }
+          });
+
+          this.ExcelGrid.render();
+          this.ExcelGrid.validateAllGridCells();
+
+          const parsed = this.parseScheduleText(this.serializeMatrixToVerticalText());
+          Store.setState({
+            excelMatrix: this.state.excelMatrix,
+            parsedData: parsed,
+            startDate: this.el.startDate.value
+          });
         },
 
         setupScheduleEditors() {
@@ -1994,7 +2098,7 @@
 
             const enterEditMode = () => {
               if (td.dataset.editing === "1") return;
-              this.pushUndoSnapshot("edit-start");
+              this.pushUndoSnapshot();
               const names = Array.from(td.querySelectorAll(".person")).map(el => this.normalizeKey(el.textContent)).filter(Boolean);
               td.dataset.editing = "1";
               td.classList.add("editing-cell");
@@ -2023,27 +2127,6 @@
           });
         },
 
-        syncRenderedTableBackToMatrix() {
-          const table = document.getElementById("scheduleTable");
-          if (!table || !table.tBodies[0]) return;
-          const rows = Array.from(table.tBodies[0].rows);
-          if (rows.length !== this.C.TIME_SLOTS.length) return;
-
-          rows.forEach((tr, rowIndex) => {
-            for (let dayIndex = 0; dayIndex < this.state.expectedDays.length; dayIndex++) {
-              const cell = tr.cells[dayIndex + 1];
-              const names = cell
-                ? Array.from(cell.querySelectorAll(".person")).map(el => this.normalizeKey(el.textContent)).filter(Boolean)
-                : [];
-              this.state.excelMatrix[rowIndex][dayIndex] = names.join(", ");
-            }
-          });
-
-          this.ExcelGrid.render();
-          this.ExcelGrid.validateAllGridCells();
-          this.renderScheduleView(this.parseScheduleText(this.serializeMatrixToVerticalText()));
-        },
-
         renderGuardButtons() {
           const names = this.allEmployeeNames();
           this.el.guardButtonsContainer.innerHTML = "";
@@ -2053,7 +2136,7 @@
             btn.className = "guard-btn";
             btn.textContent = name;
             btn.addEventListener("click", () => {
-              this.pushUndoSnapshot("priority");
+              this.pushUndoSnapshot();
               btn.classList.toggle("active");
               this.persistFullState();
             });
@@ -2092,7 +2175,7 @@
                 opt.className = this.cx("req-opt", Number(map[idx] ?? 1) === value && "active");
                 opt.textContent = String(value);
                 opt.addEventListener("click", () => {
-                  this.pushUndoSnapshot("shift-req");
+                  this.pushUndoSnapshot();
                   map[idx] = value;
                   this.saveShiftRequirements(map);
                   renderRows();
@@ -2123,7 +2206,7 @@
           });
 
           this.el.weekStartSelect.addEventListener("change", () => {
-            this.pushUndoSnapshot("week-start");
+            this.pushUndoSnapshot();
             const val = this.el.weekStartSelect.value === "sun" ? "sun" : "mon";
             try { localStorage.setItem(this.C.STORAGE.WEEK_START, val); } catch {}
             this.state.expectedDays = this.computeExpectedDays(val);
@@ -2179,7 +2262,7 @@
 
             this.el.vacationsList.querySelectorAll(".delete-leave-btn").forEach(btn => {
               btn.addEventListener("click", () => {
-                this.pushUndoSnapshot("leave-delete");
+                this.pushUndoSnapshot();
                 const name = btn.dataset.name;
                 const map = this.loadVacationsMap();
                 delete map[name];
@@ -2210,7 +2293,7 @@
               alert("נא למלא שם וטווח תאריכים מלא.");
               return;
             }
-            this.pushUndoSnapshot("leave-add");
+            this.pushUndoSnapshot();
             const map = this.loadVacationsMap();
             map[name] = { from, to };
             this.saveVacationsMap(map);
@@ -2224,7 +2307,7 @@
               alert("נא למלא שם למחיקה.");
               return;
             }
-            this.pushUndoSnapshot("leave-clear");
+            this.pushUndoSnapshot();
             const map = this.loadVacationsMap();
             delete map[name];
             this.saveVacationsMap(map);
@@ -2237,7 +2320,12 @@
 
         handleAnalyze() {
           const text = this.serializeMatrixToVerticalText();
-          this.renderScheduleView(this.parseScheduleText(text));
+          const parsed = this.parseScheduleText(text);
+          Store.setState({
+            excelMatrix: this.state.excelMatrix,
+            parsedData: parsed,
+            startDate: this.el.startDate.value
+          });
           this.persistFullState();
         },
 
@@ -2252,7 +2340,7 @@
             return;
           }
 
-          this.pushUndoSnapshot("fetch");
+          this.pushUndoSnapshot();
 
           try { localStorage.setItem(this.C.STORAGE.SHEET_URL, url); } catch {}
           statusEl.textContent = "טוען נתונים... 🔄";
@@ -2267,6 +2355,12 @@
             if (!text.trim()) throw new Error("השרת החזיר טקסט ריק");
 
             this.ExcelGrid.loadFromText(text);
+            Store.setState({
+              excelMatrix: this.state.excelMatrix,
+              parsedData: this.parseScheduleText(this.serializeMatrixToVerticalText()),
+              startDate: this.el.startDate.value
+            });
+
             statusEl.textContent = "✅ הנתונים נטענו בהצלחה";
             statusEl.style.color = "var(--artifact-success)";
             this.showStatus("הנתונים נטענו לטבלת הקלט.", "success");
@@ -2282,10 +2376,10 @@
         },
 
         autoSchedule() {
-          this.pushUndoSnapshot("auto-schedule");
+          this.pushUndoSnapshot();
           const parsed = this.parseScheduleText(this.serializeMatrixToVerticalText());
           if (parsed.error) {
-            this.renderScheduleView(parsed);
+            Store.setState({ parsedData: parsed });
             return;
           }
 
@@ -2328,14 +2422,12 @@
             });
           });
 
-          const isLegalAssignment = (name, dayIdx, shiftIdx, relaxed = false) => {
+          const isLegalAssignment = (name, dayIdx, shiftIdx) => {
             if (isOnLeaveThisWeek(name)) return false;
             if (newSchedule[shiftIdx][dayIdx].includes(name)) return false;
 
-            if (!relaxed) {
-              for (let s = 0; s < this.C.TIME_SLOTS.length; s++) {
-                if (newSchedule[s][dayIdx].includes(name)) return false;
-              }
+            for (let s = 0; s < this.C.TIME_SLOTS.length; s++) {
+              if (newSchedule[s][dayIdx].includes(name)) return false;
             }
 
             if ((employeeShiftCount[name] || 0) >= this.C.MAX_ALLOWED) return false;
@@ -2406,7 +2498,7 @@
                   const cb = employeeShiftCount[b] || 0;
                   if (ca !== cb) return ca - cb;
                   if (shiftIndex === I.NIGHT_2_6) {
-const na = night2to6Count[a] || 0;
+                    const na = night2to6Count[a] || 0;
                     const nb = night2to6Count[b] || 0;
                     if (na !== nb) return na - nb;
                   }
@@ -2422,56 +2514,6 @@ const na = night2to6Count[a] || 0;
             });
           });
 
-          const underAssigned = allEmployees.filter(name => (employeeShiftCount[name] || 0) < this.C.MIN_REQUIRED);
-
-          underAssigned.forEach(name => {
-            shiftsOrder.forEach(({ dayIndex, shiftIndex }) => {
-              if ((employeeShiftCount[name] || 0) >= this.C.MIN_REQUIRED) return;
-              if (!availabilityMap[dayIndex]?.[shiftIndex]?.has(name)) return;
-
-              const required = this.getRequiredPerShift(shiftIndex);
-              const row = newSchedule[shiftIndex][dayIndex];
-
-              if (row.length < required && isLegalAssignment(name, dayIndex, shiftIndex)) {
-                assign(name, dayIndex, shiftIndex);
-                return;
-              }
-
-              const replaceIndex = row.findIndex(other => (employeeShiftCount[other] || 0) > this.C.MIN_REQUIRED);
-              if (replaceIndex === -1 || !isLegalAssignment(name, dayIndex, shiftIndex)) return;
-
-              const other = row[replaceIndex];
-              row.splice(replaceIndex, 1);
-              employeeShiftCount[other]--;
-              if (shiftIndex === I.NIGHT_2_6) {
-                night2to6Count[other] = Math.max(0, (night2to6Count[other] || 0) - 1);
-              }
-              assign(name, dayIndex, shiftIndex);
-            });
-          });
-
-          shiftsOrder.forEach(({ dayIndex, shiftIndex }) => {
-            const required = this.getRequiredPerShift(shiftIndex);
-            if (required !== 2) return;
-            const row = newSchedule[shiftIndex][dayIndex];
-            while (row.length < required) {
-              const availSet = availabilityMap[dayIndex]?.[shiftIndex];
-              if (!availSet?.size) break;
-
-              const pool = Array.from(availSet)
-                .filter(name => !row.includes(name) && isLegalAssignment(name, dayIndex, shiftIndex))
-                .sort((a, b) => {
-                  const ca = employeeShiftCount[a] || 0;
-                  const cb = employeeShiftCount[b] || 0;
-                  if (ca !== cb) return ca - cb;
-                  return a.localeCompare(b, "he");
-                });
-
-              if (!pool.length) break;
-              assign(pool[0], dayIndex, shiftIndex);
-            }
-          });
-
           newSchedule.forEach((row, rowIndex) => {
             row.forEach((names, dayIndex) => {
               this.state.excelMatrix[rowIndex][dayIndex] = names.join(", ");
@@ -2480,7 +2522,14 @@ const na = night2to6Count[a] || 0;
 
           this.ExcelGrid.render();
           this.ExcelGrid.validateAllGridCells();
-          this.renderScheduleView(this.parseScheduleText(this.serializeMatrixToVerticalText()));
+
+          const parsedAfter = this.parseScheduleText(this.serializeMatrixToVerticalText());
+          Store.setState({
+            excelMatrix: this.state.excelMatrix,
+            parsedData: parsedAfter,
+            startDate: this.el.startDate.value
+          });
+
           this.persistFullState();
 
           const below = allEmployees
@@ -2570,8 +2619,9 @@ const na = night2to6Count[a] || 0;
 
               wrapper.addEventListener("paste", e => {
                 const cell = e.target.closest("td.cell");
-                if (cell) app.pushUndoSnapshot("paste-grid");
+                if (cell) app.pushUndoSnapshot();
                 this.handlePaste(e);
+                Store.setState({ excelMatrix: app.state.excelMatrix });
                 app.persistFullState();
               });
 
@@ -2582,6 +2632,7 @@ const na = night2to6Count[a] || 0;
                 const c = Number(cell.dataset.c);
                 app.state.excelMatrix[r][c] = this.normalizeCellValue(cell.innerText);
                 this.validateCellElement(cell);
+                Store.setState({ excelMatrix: app.state.excelMatrix });
                 app.persistFullState();
               });
             }
@@ -2635,7 +2686,6 @@ const na = night2to6Count[a] || 0;
             if (!parsed.error) {
               app.state.excelMatrix = parsed.data.map(row => row.map(cell => this.normalizeCellValue(cell)));
               this.render();
-              app.refreshAfterDataChange();
               return;
             }
 
@@ -2663,7 +2713,6 @@ const na = night2to6Count[a] || 0;
             }
 
             this.render();
-            app.refreshAfterDataChange();
           },
 
           handlePaste(e) {
@@ -2689,7 +2738,6 @@ const na = night2to6Count[a] || 0;
             });
 
             this.render();
-            app.refreshAfterDataChange();
           },
 
           isKnownName(name) {
@@ -2743,7 +2791,40 @@ const na = night2to6Count[a] || 0;
         }
       };
 
+      function renderApp(state) {
+        if (App.state.isRenderingFromStore) return;
+        App.state.isRenderingFromStore = true;
+
+        try {
+          if (Array.isArray(state.excelMatrix) && state.excelMatrix.length) {
+            App.state.excelMatrix = state.excelMatrix.map(row => [...row]);
+          }
+          if (typeof state.lockedName !== "undefined") {
+            App.state.lockedName = state.lockedName;
+          }
+          if (typeof state.startDate === "string" && App.el.startDate && App.el.startDate.value !== state.startDate) {
+            App.el.startDate.value = state.startDate;
+            App.updateStartDateLabelBySetting();
+          }
+          if (typeof state.searchQuery === "string" && App.el.guardSearchInput && App.el.guardSearchInput.value !== state.searchQuery) {
+            App.el.guardSearchInput.value = state.searchQuery;
+          }
+
+          if (state.parsedData) {
+            App.renderScheduleView(state.parsedData);
+          } else if (App.el.resultsContainer) {
+            App.el.resultsContainer.innerHTML = `<p id="initialMessage">הדבק נתונים או משוך אותם מה‑Web App, ואז לחץ על ניתוח או סידור אוטומטי.</p>`;
+          }
+
+          App.updateHighlights(state.lockedName);
+          App.updateSearchHighlights();
+        } finally {
+          App.state.isRenderingFromStore = false;
+        }
+      }
+
       window.ShiftSchedulerApp = App;
+      Store.subscribe(renderApp);
       document.addEventListener("DOMContentLoaded", () => App.init());
 
       window.GleanBridge = window.GleanBridge || { postMessage() {}, onMessage() {} };
