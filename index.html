@@ -1,3 +1,4 @@
+<![CDATA[
 <!DOCTYPE html>
 <html lang="he" dir="rtl" data-theme="light">
 <head>
@@ -10,11 +11,11 @@
       --artifact-background-light: var(--theme-background-light, #f6f6f6);
       --artifact-background-mid: var(--theme-background-mid, #f0f0f0);
       --artifact-border-light: var(--theme-border-light, #e5e5e5);
-      --artifact-border-dark: var(--theme-border-dark, #cccccc);
+      --artifact-border-dark: var(--theme-border-dark, #cfcfcf);
       --artifact-text-primary: var(--theme-text-primary, #1b1b1b);
       --artifact-text-secondary: var(--theme-text-secondary, #727272);
       --artifact-primary-highlight: var(--theme-primary-highlight, #1b1b1b);
-      --artifact-selected: var(--theme-selected, #e8e8e8);
+      --artifact-selected: var(--theme-selected, #ececec);
 
       --artifact-page: var(--artifact-background-light);
       --artifact-surface: var(--artifact-background);
@@ -44,7 +45,7 @@
 
       --artifact-weekend-bg: #ffd6bf;
       --artifact-weekend-text: #7a3e1d;
-      --artifact-weekend-hover-bg: #ffc8aa;
+      --artifact-weekend-hover-bg: #ffc5a2;
 
       --artifact-unknown-bg: #fff8e1;
       --artifact-unknown-text: #5d4037;
@@ -67,29 +68,30 @@
 
       --artifact-person-dim: 0.22;
       --artifact-radius: 18px;
-      --artifact-max-width: 1480px;
+      --artifact-max-width: 1500px;
       --artifact-time-col-width: 88px;
 
-      --artifact-person-אמיר-bg: #7bb5e4; --artifact-person-אמיר-text: #0d47a1;
-      --artifact-person-נמרוד-bg: #e1f5fe; --artifact-person-נמרוד-text: #0277bd;
-      --artifact-person-יובי-bg: #fff8e1; --artifact-person-יובי-text: #ff8f00;
-      --artifact-person-טגניה-bg: #43a047; --artifact-person-טגניה-text: #ffffff;
-      --artifact-person-ישי-bg: #f3e5f5; --artifact-person-ישי-text: #6a1b9a;
-      --artifact-person-חסון-bg: #0d47a1; --artifact-person-חסון-text: #ffffff;
-      --artifact-person-לישע-bg: #4a704c; --artifact-person-לישע-text: #ffffff;
-      --artifact-person-עידן-bg: #eceff1; --artifact-person-עידן-text: #d81b60;
-      --artifact-person-חגי-bg: #ffb991; --artifact-person-חגי-text: #5d4037;
-      --artifact-person-סתיו-bg: #fff200; --artifact-person-סתיו-text: #0033cc;
-      --artifact-person-אסף-bg: #ffecb3; --artifact-person-אסף-text: #c62828;
-      --artifact-person-ליאני-bg: #7e57c2; --artifact-person-ליאני-text: #ffffff;
-      --artifact-person-ערן-bg: #e8eaf6; --artifact-person-ערן-text: #3949ab;
-      --artifact-person-מאור-bg: #fff9c4; --artifact-person-מאור-text: #212121;
-      --artifact-person-ניר-bg: #ff0000; --artifact-person-ניר-text: #ffffff;
-      --artifact-person-חורחה-bg: #fce4ec; --artifact-person-חורחה-text: #d81b60;
-      --artifact-person-שלומי-bg: #a1887f; --artifact-person-שלומי-text: #ffffff;
-      --artifact-person-יפתח-bg: #f0f4c3; --artifact-person-יפתח-text: #827717;
-      --artifact-person-חברוני-bg: #c8e6c9; --artifact-person-חברוני-text: #33691e;
-      --artifact-person-ויקטור-bg: #ffb300; --artifact-person-ויקטור-text: #ffffff;
+      --name-אמיר-bg: #3b82f6; --name-אמיר-text: #ffffff;
+      --name-נמרוד-bg: #06b6d4; --name-נמרוד-text: #0f172a;
+      --name-יובי-bg: #f59e0b; --name-יובי-text: #1b1b1b;
+      --name-טגניה-bg: #22c55e; --name-טגניה-text: #052e16;
+      --name-ישי-bg: #a855f7; --name-ישי-text: #ffffff;
+      --name-חסון-bg: #0f172a; --name-חסון-text: #ffffff;
+      --name-לישע-bg: #84cc16; --name-לישע-text: #1a2e05;
+      --name-עידן-bg: #ec4899; --name-עידן-text: #ffffff;
+      --name-חגי-bg: #fb7185; --name-חגי-text: #431407;
+      --name-סתיו-bg: #fde047; --name-סתיו-text: #3f3000;
+      --name-אסף-bg: #b91c1c; --name-אסף-text: #ffffff;
+      --name-ליאני-bg: #4c1d95; --name-ליאני-text: #ffffff;
+      --name-ערן-bg: #64748b; --name-ערן-text: #ffffff;
+      --name-מאור-bg: #fef3c7; --name-מאור-text: #1f2937;
+      --name-ניר-bg: #ef4444; --name-ניר-text: #ffffff;
+      --name-חורחה-bg: #f472b6; --name-חורחה-text: #4a044e;
+      --name-שלומי-bg: #8b5e3c; --name-שלומי-text: #ffffff;
+      --name-יפתח-bg: #bef264; --name-יפתח-text: #365314;
+      --name-חברוני-bg: #86efac; --name-חברוני-text: #14532d;
+      --name-ויקטור-bg: #fb923c; --name-ויקטור-text: #4a1d00;
+      --name-גולן-text: #111827;
     }
 
     * {
@@ -168,6 +170,7 @@
 
     .row.center { justify-content: center; }
     .row.between { justify-content: space-between; }
+    .row.end { justify-content: flex-end; }
 
     .label-strong {
       font-weight: 800;
@@ -257,6 +260,14 @@
     .tool-analyze { background: var(--artifact-toolbar-analyze); }
     .tool-download { background: var(--artifact-toolbar-download); }
     .tool-sheet { background: var(--artifact-toolbar-sheet); }
+
+    .inline-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 12px;
+    }
 
     .grid-wrap {
       overflow: auto;
@@ -448,6 +459,17 @@
     .status-banner.success { background: var(--artifact-success); color: var(--artifact-success-text); }
     .status-banner.warning { background: var(--artifact-warning); color: var(--artifact-warning-text); }
     .status-banner.error { background: var(--artifact-danger); color: var(--artifact-danger-text); }
+
+    .validation-panel {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--artifact-info-soft);
+      color: var(--artifact-info-soft-text);
+      font-size: 0.94rem;
+      text-align: center;
+      line-height: 1.5;
+    }
 
     .results-shell {
       overflow-x: auto;
@@ -648,26 +670,26 @@
       font-size: .9em;
     }
 
-    .person.color-אמיר { background: var(--artifact-person-אמיר-bg); color: var(--artifact-person-אמיר-text); }
-    .person.color-נמרוד { background: var(--artifact-person-נמרוד-bg); color: var(--artifact-person-נמרוד-text); }
-    .person.color-יובי { background: var(--artifact-person-יובי-bg); color: var(--artifact-person-יובי-text); }
-    .person.color-טגניה { background: var(--artifact-person-טגניה-bg); color: var(--artifact-person-טגניה-text); }
-    .person.color-ישי { background: var(--artifact-person-ישי-bg); color: var(--artifact-person-ישי-text); }
-    .person.color-חסון { background: var(--artifact-person-חסון-bg); color: var(--artifact-person-חסון-text); }
-    .person.color-לישע { background: var(--artifact-person-לישע-bg); color: var(--artifact-person-לישע-text); }
-    .person.color-עידן { background: var(--artifact-person-עידן-bg); color: var(--artifact-person-עידן-text); }
-    .person.color-חגי { background: var(--artifact-person-חגי-bg); color: var(--artifact-person-חגי-text); }
-    .person.color-סתיו { background: var(--artifact-person-סתיו-bg); color: var(--artifact-person-סתיו-text); }
-    .person.color-אסף { background: var(--artifact-person-אסף-bg); color: var(--artifact-person-אסף-text); }
-    .person.color-ליאני { background: var(--artifact-person-ליאני-bg); color: var(--artifact-person-ליאני-text); }
-    .person.color-ערן { background: var(--artifact-person-ערן-bg); color: var(--artifact-person-ערן-text); }
-    .person.color-מאור { background: var(--artifact-person-מאור-bg); color: var(--artifact-person-מאור-text); }
-    .person.color-ניר { background: var(--artifact-person-ניר-bg); color: var(--artifact-person-ניר-text); }
-    .person.color-חורחה { background: var(--artifact-person-חורחה-bg); color: var(--artifact-person-חורחה-text); }
-    .person.color-שלומי { background: var(--artifact-person-שלומי-bg); color: var(--artifact-person-שלומי-text); }
-    .person.color-יפתח { background: var(--artifact-person-יפתח-bg); color: var(--artifact-person-יפתח-text); }
-    .person.color-חברוני { background: var(--artifact-person-חברוני-bg); color: var(--artifact-person-חברוני-text); }
-    .person.color-ויקטור { background: var(--artifact-person-ויקטור-bg); color: var(--artifact-person-ויקטור-text); }
+    .person.color-אמיר { background: var(--name-אמיר-bg); color: var(--name-אמיר-text); }
+    .person.color-נמרוד { background: var(--name-נמרוד-bg); color: var(--name-נמרוד-text); }
+    .person.color-יובי { background: var(--name-יובי-bg); color: var(--name-יובי-text); }
+    .person.color-טגניה { background: var(--name-טגניה-bg); color: var(--name-טגניה-text); }
+    .person.color-ישי { background: var(--name-ישי-bg); color: var(--name-ישי-text); }
+    .person.color-חסון { background: var(--name-חסון-bg); color: var(--name-חסון-text); }
+    .person.color-לישע { background: var(--name-לישע-bg); color: var(--name-לישע-text); }
+    .person.color-עידן { background: var(--name-עידן-bg); color: var(--name-עידן-text); }
+    .person.color-חגי { background: var(--name-חגי-bg); color: var(--name-חגי-text); }
+    .person.color-סתיו { background: var(--name-סתיו-bg); color: var(--name-סתיו-text); }
+    .person.color-אסף { background: var(--name-אסף-bg); color: var(--name-אסף-text); }
+    .person.color-ליאני { background: var(--name-ליאני-bg); color: var(--name-ליאני-text); }
+    .person.color-ערן { background: var(--name-ערן-bg); color: var(--name-ערן-text); }
+    .person.color-מאור { background: var(--name-מאור-bg); color: var(--name-מאור-text); }
+    .person.color-ניר { background: var(--name-ניר-bg); color: var(--name-ניר-text); }
+    .person.color-חורחה { background: var(--name-חורחה-bg); color: var(--name-חורחה-text); }
+    .person.color-שלומי { background: var(--name-שלומי-bg); color: var(--name-שלומי-text); }
+    .person.color-יפתח { background: var(--name-יפתח-bg); color: var(--name-יפתח-text); }
+    .person.color-חברוני { background: var(--name-חברוני-bg); color: var(--name-חברוני-text); }
+    .person.color-ויקטור { background: var(--name-ויקטור-bg); color: var(--name-ויקטור-text); }
 
     .person.color-נתי {
       background: transparent !important;
@@ -684,7 +706,7 @@
 
     .person.color-גולן {
       background-color: var(--artifact-surface);
-      color: var(--artifact-text-primary);
+      color: var(--name-גולן-text);
       background-image:
         linear-gradient(45deg, #d32f2f 25%, transparent 25%),
         linear-gradient(-45deg, #d32f2f 25%, transparent 25%),
@@ -827,7 +849,7 @@
         border: 1px solid rgba(0,0,0,0.08);
       }
 
-      .toolbar, .row {
+      .toolbar, .row, .inline-actions {
         gap: 10px !important;
         margin-bottom: 20px !important;
       }
@@ -869,9 +891,17 @@
           </div>
         </div>
 
+        <div class="inline-actions">
+          <button id="undoButton" type="button" class="btn btn-neutral">↶ Undo</button>
+          <button id="redoButton" type="button" class="btn btn-neutral">↷ Redo</button>
+          <button id="resetDraftButton" type="button" class="btn btn-neutral">מחק טיוטה שמורה</button>
+        </div>
+
         <div class="grid-wrap" style="margin-top:12px;">
           <table id="excel-grid" class="excel-grid" dir="rtl"></table>
         </div>
+
+        <div id="validationPanel" class="validation-panel" style="display:none;"></div>
         <div class="subtle">טיפ: אפשר להדביק טבלה מלאה מאקסל/גוגל שיטס, ופסיק או Enter מפרידים בין שמות בתוך תא.</div>
       </div>
 
@@ -969,7 +999,8 @@
             WEEK_START: "weekStart",
             SHEET_URL: "googleSheetUrl",
             SHIFT_REQ_SCOPE_WEEK: "shiftReqScopeWeek",
-            LEAVE_SCOPE_WEEK: "leaveScopeWeek"
+            LEAVE_SCOPE_WEEK: "leaveScopeWeek",
+            DRAFT: "shiftSchedulerDraftV4"
           },
           SHIFT_INDEX: Object.freeze({
             NIGHT_2_6: 0,
@@ -1002,7 +1033,11 @@
           expectedDays: [],
           excelMatrix: [],
           lockedName: null,
-          statusTimer: null
+          statusTimer: null,
+          history: [],
+          future: [],
+          suspendHistory: false,
+          suspendAutosave: false
         },
 
         el: {},
@@ -1015,8 +1050,11 @@
           this.renderGuardButtons();
           this.buildShiftReqPanel();
           this.buildVacationsPanel();
+          this.restoreDraft();
           this.bindEvents();
           this.updateStartDateLabelBySetting();
+          this.updateValidationPanel();
+          this.updateUndoRedoButtons();
         },
 
         cacheDom() {
@@ -1028,7 +1066,7 @@
             "weekStartSelect","shiftReqGrid","openVacationsBtn","vacationsPanel",
             "leaveScopeWeek","leaveNameInput","leaveFromInput","leaveToInput",
             "leaveAddBtn","leaveClearBtn","vacationsList","statusBanner","resultsContainer",
-            "excel-grid"
+            "excel-grid","validationPanel","undoButton","redoButton","resetDraftButton"
           ].forEach(id => {
             this.el[id] = document.getElementById(id);
           });
@@ -1045,8 +1083,12 @@
           this.el.openSheetButton.addEventListener("click", () => window.open(this.C.SHEET_URL, "_blank", "noopener,noreferrer"));
           this.el.startDate.addEventListener("change", () => {
             this.updateStartDateLabelBySetting();
+            this.saveDraft();
             this.refreshAfterDataChange();
           });
+          this.el.undoButton.addEventListener("click", () => this.undo());
+          this.el.redoButton.addEventListener("click", () => this.redo());
+          this.el.resetDraftButton.addEventListener("click", () => this.resetDraft());
 
           document.addEventListener("mouseover", e => {
             const bubble = e.target.closest(".person");
@@ -1085,6 +1127,14 @@
             if (e.key === "Escape") {
               this.state.lockedName = null;
               this.updateHighlights(null);
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !e.shiftKey) {
+              e.preventDefault();
+              this.undo();
+            }
+            if (((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") || ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "z")) {
+              e.preventDefault();
+              this.redo();
             }
           }, { passive: false });
 
@@ -1133,12 +1183,24 @@
           return classes.filter(Boolean).join(" ");
         },
 
+        deepClone(value) {
+          return JSON.parse(JSON.stringify(value));
+        },
+
+        safeGet(key) {
+          try { return localStorage.getItem(key); } catch { return null; }
+        },
+
+        safeSet(key, value) {
+          try { localStorage.setItem(key, value); } catch {}
+        },
+
+        safeRemove(key) {
+          try { localStorage.removeItem(key); } catch {}
+        },
+
         getWeekStartSetting() {
-          try {
-            return localStorage.getItem(this.C.STORAGE.WEEK_START) === "sun" ? "sun" : "mon";
-          } catch {
-            return "mon";
-          }
+          return this.safeGet(this.C.STORAGE.WEEK_START) === "sun" ? "sun" : "mon";
         },
 
         computeExpectedDays(weekStart) {
@@ -1154,10 +1216,8 @@
           const daysToNext = weekStart === "mon" ? ((8 - dow) % 7 || 7) : ((7 - dow) % 7 || 7);
           today.setDate(today.getDate() + daysToNext);
           this.el.startDate.value = today.toISOString().slice(0, 10);
-          try {
-            const savedUrl = localStorage.getItem(this.C.STORAGE.SHEET_URL);
-            if (savedUrl) this.el.googleSheetUrl.value = savedUrl;
-          } catch {}
+          const savedUrl = this.safeGet(this.C.STORAGE.SHEET_URL);
+          if (savedUrl) this.el.googleSheetUrl.value = savedUrl;
         },
 
         getHebDayNameFromIso(isoDate) {
@@ -1226,7 +1286,6 @@
             const isAssist = timePart === "ליווי 07:40";
             const isTime = this.C.TIME_SLOTS.some(slot => timePart.startsWith(slot.split("(")[0].trim()));
             if (isAssist) return;
-
             if (isTime) rawDayData[currentDay].push(parts.slice(1).join(","));
           });
 
@@ -1273,7 +1332,7 @@
         loadShiftRequirements() {
           const defaults = { 0:1, 1:1, 2:1, 3:1, 4:1, 5:1 };
           try {
-            const raw = localStorage.getItem(this.getShiftReqStorageKey());
+            const raw = this.safeGet(this.getShiftReqStorageKey());
             const parsed = raw ? JSON.parse(raw) : null;
             return parsed && typeof parsed === "object" ? { ...defaults, ...parsed } : defaults;
           } catch {
@@ -1282,7 +1341,8 @@
         },
 
         saveShiftRequirements(map) {
-          try { localStorage.setItem(this.getShiftReqStorageKey(), JSON.stringify(map)); } catch {}
+          this.safeSet(this.getShiftReqStorageKey(), JSON.stringify(map));
+          this.saveDraft();
         },
 
         getRequiredPerShift(index) {
@@ -1297,7 +1357,7 @@
 
         loadVacationsMap() {
           try {
-            const raw = localStorage.getItem(this.getVacationStorageKey());
+            const raw = this.safeGet(this.getVacationStorageKey());
             const parsed = raw ? JSON.parse(raw) : null;
             return parsed && typeof parsed === "object" ? parsed : {};
           } catch {
@@ -1306,7 +1366,8 @@
         },
 
         saveVacationsMap(map) {
-          try { localStorage.setItem(this.getVacationStorageKey(), JSON.stringify(map)); } catch {}
+          this.safeSet(this.getVacationStorageKey(), JSON.stringify(map));
+          this.saveDraft();
         },
 
         isOnVacation(name, isoDate) {
@@ -1335,7 +1396,7 @@
 
         loadAssistArray() {
           try {
-            const raw = localStorage.getItem(this.getAssistWeekKey());
+            const raw = this.safeGet(this.getAssistWeekKey());
             const arr = raw ? JSON.parse(raw) : null;
             return Array.isArray(arr) && arr.length === 7 ? arr : Array(7).fill("");
           } catch {
@@ -1344,7 +1405,8 @@
         },
 
         saveAssistArray(arr) {
-          try { localStorage.setItem(this.getAssistWeekKey(), JSON.stringify(arr)); } catch {}
+          this.safeSet(this.getAssistWeekKey(), JSON.stringify(arr));
+          this.saveDraft();
         },
 
         nameToColorClass(name) {
@@ -1371,29 +1433,129 @@
           }).join("");
         },
 
-        updateHighlights(name) {
-          const root = this.el.resultsContainer;
-          if (!root) return;
-          if (name) root.classList.add("spotlight-active");
-          else root.classList.remove("spotlight-active");
-          root.querySelectorAll(".person").forEach(el => {
-            el.classList.toggle("highlight-name", el.textContent.trim() === name);
+        getValidationSummary() {
+          const matrix = this.state.excelMatrix;
+          const unknownNames = new Set();
+          const emptyCells = [];
+          const allKnownNames = new Set(Object.keys(this.C.COLOR_MAP).map(name => name.replace(/_/g, " ")));
+
+          matrix.forEach((row, rowIndex) => {
+            row.forEach((cell, colIndex) => {
+              const names = this.toNameArray(cell);
+              if (!names.length) {
+                emptyCells.push({ rowIndex, colIndex });
+              }
+              names.forEach(name => {
+                if (!allKnownNames.has(name)) unknownNames.add(name);
+              });
+            });
           });
+
+          return {
+            unknownNames: Array.from(unknownNames),
+            emptyCellsCount: emptyCells.length
+          };
         },
 
-        showStatus(message, type = "success") {
-          const el = this.el.statusBanner;
-          clearTimeout(this.state.statusTimer);
-          el.className = `status-banner ${type}`;
-          el.textContent = message;
-          el.style.display = "block";
-          this.state.statusTimer = setTimeout(() => { el.style.display = "none"; }, 7000);
+        updateValidationPanel() {
+          const summary = this.getValidationSummary();
+          const messages = [];
+          if (summary.unknownNames.length) messages.push(`שמות לא מזוהים: ${summary.unknownNames.join(", ")}`);
+          if (summary.emptyCellsCount) messages.push(`תאים ריקים בטבלת הקלט: ${summary.emptyCellsCount}`);
+
+          if (!messages.length) {
+            this.el.validationPanel.style.display = "none";
+            this.el.validationPanel.textContent = "";
+          } else {
+            this.el.validationPanel.style.display = "block";
+            this.el.validationPanel.textContent = messages.join(" | ");
+          }
+        },
+
+        pushHistorySnapshot() {
+          if (this.state.suspendHistory) return;
+          this.state.history.push(this.deepClone(this.state.excelMatrix));
+          if (this.state.history.length > 100) this.state.history.shift();
+          this.state.future = [];
+          this.updateUndoRedoButtons();
+        },
+
+        updateUndoRedoButtons() {
+          this.el.undoButton.disabled = this.state.history.length === 0;
+          this.el.redoButton.disabled = this.state.future.length === 0;
+        },
+
+        undo() {
+          if (!this.state.history.length) return;
+          this.state.future.push(this.deepClone(this.state.excelMatrix));
+          this.state.excelMatrix = this.state.history.pop();
+          this.ExcelGrid.render();
+          this.refreshAfterDataChange();
+          this.updateUndoRedoButtons();
+          this.saveDraft();
+        },
+
+        redo() {
+          if (!this.state.future.length) return;
+          this.state.history.push(this.deepClone(this.state.excelMatrix));
+          this.state.excelMatrix = this.state.future.pop();
+          this.ExcelGrid.render();
+          this.refreshAfterDataChange();
+          this.updateUndoRedoButtons();
+          this.saveDraft();
+        },
+
+        saveDraft() {
+          if (this.state.suspendAutosave) return;
+          const activeGuards = Array.from(this.el.guardButtonsContainer.querySelectorAll(".guard-btn.active")).map(btn => this.normalizeKey(btn.textContent));
+          const payload = {
+            startDate: this.el.startDate.value,
+            weekStart: this.getWeekStartSetting(),
+            matrix: this.state.excelMatrix,
+            activeGuards,
+            assist: this.loadAssistArray()
+          };
+          this.safeSet(this.C.STORAGE.DRAFT, JSON.stringify(payload));
+        },
+
+        restoreDraft() {
+          try {
+            const raw = this.safeGet(this.C.STORAGE.DRAFT);
+            if (!raw) return;
+            const draft = JSON.parse(raw);
+            if (draft.weekStart && draft.weekStart !== this.getWeekStartSetting()) {
+              this.safeSet(this.C.STORAGE.WEEK_START, draft.weekStart);
+              this.state.expectedDays = this.computeExpectedDays(draft.weekStart);
+              this.el.weekStartSelect.value = draft.weekStart;
+            }
+            if (draft.startDate) this.el.startDate.value = draft.startDate;
+            if (Array.isArray(draft.matrix) && draft.matrix.length === this.C.TIME_SLOTS.length) {
+              this.state.excelMatrix = draft.matrix;
+              this.ExcelGrid.render();
+            }
+            if (Array.isArray(draft.activeGuards)) {
+              const set = new Set(draft.activeGuards.map(name => this.normalizeKey(name)));
+              this.el.guardButtonsContainer.querySelectorAll(".guard-btn").forEach(btn => {
+                btn.classList.toggle("active", set.has(this.normalizeKey(btn.textContent)));
+              });
+            }
+            if (Array.isArray(draft.assist) && draft.assist.length === 7) {
+              this.saveAssistArray(draft.assist);
+            }
+          } catch {}
+        },
+
+        resetDraft() {
+          this.safeRemove(this.C.STORAGE.DRAFT);
+          this.showStatus("הטיוטה השמורה נמחקה.", "success");
         },
 
         refreshAfterDataChange() {
           this.ExcelGrid.validateAllGridCells();
+          this.updateValidationPanel();
           const text = this.serializeMatrixToVerticalText();
           if (text.trim()) this.renderScheduleView(this.parseScheduleText(text));
+          this.saveDraft();
         },
 
         placeCaretAtEnd(el) {
@@ -1420,6 +1582,25 @@
           const dayIso = dayIndex >= 0 ? this.getIsoDatesForWeek(this.el.startDate.value)[dayIndex] : "";
 
           cell.innerHTML = this.renderPersonBubbles(names, dayName, timeLabel, dayIso);
+        },
+
+        updateHighlights(name) {
+          const root = this.el.resultsContainer;
+          if (!root) return;
+          if (name) root.classList.add("spotlight-active");
+          else root.classList.remove("spotlight-active");
+          root.querySelectorAll(".person").forEach(el => {
+            el.classList.toggle("highlight-name", el.textContent.trim() === name);
+          });
+        },
+
+        showStatus(message, type = "success") {
+          const el = this.el.statusBanner;
+          clearTimeout(this.state.statusTimer);
+          el.className = `status-banner ${type}`;
+          el.textContent = message;
+          el.style.display = "block";
+          this.state.statusTimer = setTimeout(() => { el.style.display = "none"; }, 7000);
         },
 
         nextAllowedSameDayAfter(index) {
@@ -1508,14 +1689,11 @@
         renderScheduleHeader(days, datesForWeek, assistValues, isoDates) {
           let html = `<colgroup><col class="time-col">${days.map(() => `<col>`).join("")}</colgroup>`;
           html += `<thead><tr><th scope="col" rowspan="2">שעות / יום</th>`;
-
           days.forEach((day, idx) => {
             const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
             html += `<th scope="col" class="${weekendClass}"><span class="date-text">${datesForWeek[idx]}</span></th>`;
           });
-
           html += `</tr><tr>`;
-
           days.forEach((day, idx) => {
             const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
             const dayDisplay = this.getWeekStartSetting() === "mon" && day === "יום ראשון" ? "יום ראשון" : day.replace("יום ", "");
@@ -1527,7 +1705,6 @@
               </th>
             `;
           });
-
           html += `</tr></thead>`;
           return html;
         },
@@ -1690,6 +1867,7 @@
               arr[dayIndex] = names.join(", ");
               this.saveAssistArray(arr);
               this.placeCaretAtEnd(cell);
+              this.saveDraft();
             };
 
             cell.addEventListener("keydown", e => {
@@ -1723,6 +1901,7 @@
               this.convertEditableCellToBubbles(td);
               td.dataset.editing = "0";
               td.classList.remove("editing-cell");
+              this.pushHistorySnapshot();
               this.syncRenderedTableBackToMatrix();
             };
 
@@ -1755,7 +1934,8 @@
           });
 
           this.ExcelGrid.render();
-          this.ExcelGrid.validateAllGridCells();
+          this.refreshAfterDataChange();
+          this.updateUndoRedoButtons();
         },
 
         renderGuardButtons() {
@@ -1766,7 +1946,10 @@
             btn.type = "button";
             btn.className = "guard-btn";
             btn.textContent = name;
-            btn.addEventListener("click", () => btn.classList.toggle("active"));
+            btn.addEventListener("click", () => {
+              btn.classList.toggle("active");
+              this.saveDraft();
+            });
             this.el.guardButtonsContainer.appendChild(btn);
           });
         },
@@ -1780,9 +1963,7 @@
         },
 
         buildShiftReqPanel() {
-          try {
-            this.el.shiftReqScopeWeek.checked = localStorage.getItem(this.C.STORAGE.SHIFT_REQ_SCOPE_WEEK) === "1";
-          } catch {}
+          this.el.shiftReqScopeWeek.checked = this.safeGet(this.C.STORAGE.SHIFT_REQ_SCOPE_WEEK) === "1";
           this.el.weekStartSelect.value = this.getWeekStartSetting();
 
           const renderRows = () => {
@@ -1825,28 +2006,27 @@
           });
 
           this.el.shiftReqScopeWeek.addEventListener("change", () => {
-            try { localStorage.setItem(this.C.STORAGE.SHIFT_REQ_SCOPE_WEEK, this.el.shiftReqScopeWeek.checked ? "1" : "0"); } catch {}
+            this.safeSet(this.C.STORAGE.SHIFT_REQ_SCOPE_WEEK, this.el.shiftReqScopeWeek.checked ? "1" : "0");
             renderRows();
             this.refreshAfterDataChange();
           });
 
           this.el.weekStartSelect.addEventListener("change", () => {
             const val = this.el.weekStartSelect.value === "sun" ? "sun" : "mon";
-            try { localStorage.setItem(this.C.STORAGE.WEEK_START, val); } catch {}
+            this.safeSet(this.C.STORAGE.WEEK_START, val);
             this.state.expectedDays = this.computeExpectedDays(val);
             this.ExcelGrid.init();
             this.updateStartDateLabelBySetting();
             renderRows();
             this.refreshAfterDataChange();
+            this.saveDraft();
           });
 
           renderRows();
         },
 
         buildVacationsPanel() {
-          try {
-            this.el.leaveScopeWeek.checked = localStorage.getItem(this.C.STORAGE.LEAVE_SCOPE_WEEK) === "1";
-          } catch {}
+          this.el.leaveScopeWeek.checked = this.safeGet(this.C.STORAGE.LEAVE_SCOPE_WEEK) === "1";
 
           const renderList = () => {
             const map = this.loadVacationsMap();
@@ -1901,7 +2081,7 @@
           });
 
           this.el.leaveScopeWeek.addEventListener("change", () => {
-            try { localStorage.setItem(this.C.STORAGE.LEAVE_SCOPE_WEEK, this.el.leaveScopeWeek.checked ? "1" : "0"); } catch {}
+            this.safeSet(this.C.STORAGE.LEAVE_SCOPE_WEEK, this.el.leaveScopeWeek.checked ? "1" : "0");
             renderList();
             this.refreshAfterDataChange();
           });
@@ -1938,6 +2118,11 @@
         },
 
         handleAnalyze() {
+          const summary = this.getValidationSummary();
+          if (summary.unknownNames.length) {
+            this.showStatus(`יש שמות לא מזוהים שצריך לתקן לפני ניתוח: ${summary.unknownNames.join(", ")}`, "error");
+            return;
+          }
           const text = this.serializeMatrixToVerticalText();
           this.renderScheduleView(this.parseScheduleText(text));
         },
@@ -1953,8 +2138,7 @@
             return;
           }
 
-          try { localStorage.setItem(this.C.STORAGE.SHEET_URL, url); } catch {}
-
+          this.safeSet(this.C.STORAGE.SHEET_URL, url);
           statusEl.textContent = "טוען נתונים... 🔄";
           statusEl.style.display = "block";
           statusEl.style.color = "var(--artifact-accent)";
@@ -1969,6 +2153,7 @@
               throw new Error("הפורמט שחזר לא נראה כמו טבלת משמרות");
             }
 
+            this.pushHistorySnapshot();
             this.ExcelGrid.loadFromText(text);
             statusEl.textContent = "✅ הנתונים נטענו בהצלחה";
             statusEl.style.color = "var(--artifact-success)";
@@ -1984,11 +2169,19 @@
         },
 
         autoSchedule() {
+          const summary = this.getValidationSummary();
+          if (summary.unknownNames.length) {
+            this.showStatus(`אי אפשר לבצע סידור אוטומטי כל עוד יש שמות לא מזוהים: ${summary.unknownNames.join(", ")}`, "error");
+            return;
+          }
+
           const parsed = this.parseScheduleText(this.serializeMatrixToVerticalText());
           if (parsed.error) {
             this.renderScheduleView(parsed);
             return;
           }
+
+          this.pushHistorySnapshot();
 
           const priorityGuards = this.getPriorityGuardSet();
           const weeklyOnLeave = this.buildWeeklyOnLeaveSet(this.el.startDate.value);
@@ -2191,8 +2384,7 @@
           });
 
           this.ExcelGrid.render();
-          this.ExcelGrid.validateAllGridCells();
-          this.renderScheduleView(this.parseScheduleText(this.serializeMatrixToVerticalText()));
+          this.refreshAfterDataChange();
 
           const below = allEmployees
             .map(name => ({ name, count: employeeShiftCount[name] || 0 }))
@@ -2283,6 +2475,8 @@
                 const c = Number(cell.dataset.c);
                 app.state.excelMatrix[r][c] = this.normalizeCellValue(cell.innerText);
                 this.validateCellElement(cell);
+                app.saveDraft();
+                app.updateValidationPanel();
               });
             }
           },
@@ -2307,6 +2501,7 @@
             html += "</tbody>";
             table.innerHTML = html;
             this.validateAllGridCells();
+            app.updateValidationPanel();
           },
 
           normalizeCellValue(value) {
@@ -2374,6 +2569,7 @@
             if (!text) return;
 
             e.preventDefault();
+            app.pushHistorySnapshot();
             const rows = this.parseTableLike(text);
             const r0 = Number(cell.dataset.r);
             const c0 = Number(cell.dataset.c);
@@ -2390,6 +2586,7 @@
 
             this.render();
             app.refreshAfterDataChange();
+            app.updateUndoRedoButtons();
           },
 
           isKnownName(name) {
@@ -2434,9 +2631,12 @@
 
           clear() {
             const app = App;
+            app.pushHistorySnapshot();
             app.state.excelMatrix = app.C.TIME_SLOTS.map(() => app.state.expectedDays.map(() => ""));
             this.render();
             app.el.resultsContainer.innerHTML = `<p id="initialMessage">הדבק נתונים או משוך אותם מה‑Web App, ואז לחץ על ניתוח או סידור אוטומטי.</p>`;
+            app.saveDraft();
+            app.updateUndoRedoButtons();
           }
         }
       };
@@ -2462,3 +2662,4 @@
   </script>
 </body>
 </html>
+]]>
