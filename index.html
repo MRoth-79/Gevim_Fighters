@@ -15,8 +15,7 @@
       --artifact-text-primary: var(--theme-text-primary, #1b1b1b);
       --artifact-text-secondary: var(--theme-text-secondary, #727272);
       --artifact-primary-highlight: var(--theme-primary-highlight, #1b1b1b);
-      --artifact-selected: var(--theme-selected, #e8e8e8);
-      --artifact-primary-brand: var(--theme-primary-brand, #343ced);
+      --artifact-selected: var(--theme-selected, #ececec);
 
       --page-bg: var(--artifact-background-light);
       --surface: var(--artifact-background);
@@ -44,21 +43,21 @@
       --weekend-hover: #ffc7a7;
       --weekend-text: #7a3e1d;
 
-      --guard-bg: #e0f7fa;
-      --guard-text: #006064;
-      --guard-active-bg: #fffbeb;
-      --guard-active-text: #92400e;
-
       --unknown-bg: #fff8e1;
       --unknown-text: #5d4037;
       --leave-bg: #eceff1;
       --leave-text: #607d8b;
 
+      --guard-bg: #e0f7fa;
+      --guard-text: #006064;
+      --guard-active-bg: #fffbeb;
+      --guard-active-text: #92400e;
+
       --shadow: 0 10px 24px rgba(0,0,0,.08);
       --shadow-soft: 0 4px 12px rgba(0,0,0,.06);
       --radius: 18px;
-      --time-col-width: 108px;
-      --table-min-width: 1080px;
+      --time-col-width: 112px;
+      --table-min-width: 1120px;
 
       --toolbar-fetch: linear-gradient(135deg, #00d2ff, #3a7bd5);
       --toolbar-ai: linear-gradient(135deg, #667eea, #764ba2);
@@ -67,8 +66,8 @@
       --toolbar-sheet: linear-gradient(135deg, #22c55e, #16a34a);
 
       --name-אמיר-bg: #2563eb;   --name-אמיר-text: #ffffff;
-      --name-נמרוד-bg: #06b6d4;  --name-נמרוד-text: #082f49;
-      --name-יובי-bg: #f59e0b;   --name-יובי-text: #3b2200;
+      --name-נמרוד-bg: #06b6d4;  --name-נמרוד-text: #062c33;
+      --name-יובי-bg: #f59e0b;   --name-יובי-text: #402100;
       --name-טגניה-bg: #22c55e;  --name-טגניה-text: #052e16;
       --name-ישי-bg: #8b5cf6;    --name-ישי-text: #ffffff;
       --name-חסון-bg: #0f172a;   --name-חסון-text: #ffffff;
@@ -162,7 +161,6 @@
 
     .row.between { justify-content: space-between; }
     .row.center { justify-content: center; }
-    .row.end { justify-content: flex-end; }
 
     .label-strong {
       font-weight: 800;
@@ -408,7 +406,7 @@
 
     .req-opt.active {
       background: var(--success-soft);
-      color: var(--success-soft-text);
+      color: #1b5e20;
     }
 
     .list {
@@ -622,23 +620,6 @@
       color: var(--text);
     }
 
-    .person.highlight-name {
-      position: relative;
-      z-index: 2;
-      opacity: 1 !important;
-      filter: none !important;
-      font-weight: 900;
-      outline: 3px solid var(--artifact-primary-highlight);
-      box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,.66),
-        0 6px 14px rgba(0,0,0,.22);
-    }
-
-    .spotlight-active .person:not(.highlight-name) {
-      opacity: var(--artifact-person-dim);
-      filter: grayscale(70%);
-    }
-
     .person.unknown-name {
       background: var(--unknown-bg);
       color: var(--unknown-text);
@@ -713,7 +694,7 @@
 
     .summary-table thead {
       background: var(--artifact-primary-highlight);
-      color: var(--accent-text);
+      color: #fff;
     }
 
     .exceptions-table thead {
@@ -736,7 +717,7 @@
 
     .shifts-4-count {
       background: var(--success-soft);
-      color: var(--success-soft-text);
+      color: #1b5e20;
       font-weight: 800;
     }
 
@@ -748,13 +729,13 @@
 
     .low-shifts {
       background: var(--danger-soft);
-      color: var(--danger-soft-text);
+      color: #8f1f1f;
       font-weight: 800;
     }
 
     .night-limit-fail-row {
       background: var(--danger-soft);
-      color: var(--danger-soft-text);
+      color: #8f1f1f;
     }
 
     .night-limit-ok { color: var(--success); font-weight: 800; }
@@ -782,10 +763,6 @@
       .person {
         font-size: 1.18em;
         padding: 9px 13px;
-      }
-      .spotlight-active .person:not(.highlight-name) {
-        opacity: .45 !important;
-        filter: none;
       }
     }
 
@@ -874,7 +851,7 @@
         </div>
 
         <div id="validationPanel" class="validation-panel" style="display:none;"></div>
-        <div class="subtle">ליווי הוסר מהמערכת כרגע. המיקוד הוא רק במשמרות עצמן.</div>
+        <div class="subtle">ליווי הוסר מהמערכת כרגע. האייקונים נוספו ליד שעות המשמרות בלבד.</div>
       </div>
 
       <div class="card">
@@ -1005,7 +982,6 @@
         state: {
           expectedDays: [],
           excelMatrix: [],
-          lockedName: null,
           statusTimer: null,
           history: [],
           future: []
@@ -1059,44 +1035,7 @@
           this.el.redoButton.addEventListener("click", () => this.redo());
           this.el.resetDraftButton.addEventListener("click", () => this.resetDraft());
 
-          document.addEventListener("mouseover", e => {
-            const bubble = e.target.closest(".person");
-            if (bubble && !this.state.lockedName && window.matchMedia("(pointer: fine)").matches) {
-              this.updateHighlights(bubble.textContent.trim());
-            }
-          }, { passive: true });
-
-          document.addEventListener("mouseout", () => {
-            if (!this.state.lockedName && window.matchMedia("(pointer: fine)").matches) {
-              this.updateHighlights(null);
-            }
-          }, { passive: true });
-
-          document.addEventListener("click", e => {
-            const bubble = e.target.closest(".person");
-            if (bubble) {
-              const name = bubble.textContent.trim();
-              this.state.lockedName = this.state.lockedName === name ? null : name;
-              this.updateHighlights(this.state.lockedName);
-              return;
-            }
-            const isUi = !!(e.target.closest("button") || e.target.closest("input") || e.target.closest("select") || e.target.closest("a"));
-            if (!isUi) {
-              this.state.lockedName = null;
-              this.updateHighlights(null);
-            }
-          }, { passive: true });
-
           document.addEventListener("keydown", e => {
-            const bubble = e.target.closest?.(".person");
-            if (bubble && (e.key === "Enter" || e.key === " ")) {
-              e.preventDefault();
-              bubble.click();
-            }
-            if (e.key === "Escape") {
-              this.state.lockedName = null;
-              this.updateHighlights(null);
-            }
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !e.shiftKey) {
               e.preventDefault();
               this.undo();
@@ -1407,7 +1346,7 @@
             else classes.push("unknown-name");
             if (dayIso && this.isOnVacation(clean, dayIso)) classes.push("on-leave");
             const title = `${this.escapeHtml(clean)} - ${this.escapeHtml(dayLabel)}, ${this.escapeHtml(timeLabel)}`;
-            return `<span class="${classes.join(" ")}" title="${title}" role="button" tabindex="0" aria-label="${title}">${this.escapeHtml(clean)}</span>`;
+            return `<span class="${classes.join(" ")}" title="${title}" aria-label="${title}">${this.escapeHtml(clean)}</span>`;
           }).join("");
         },
 
@@ -1521,14 +1460,13 @@
           cell.innerHTML = this.renderPersonBubbles(names, dayName, timeLabel, dayIso);
         },
 
-        updateHighlights(name) {
-          const root = this.el.resultsContainer;
-          if (!root) return;
-          if (name) root.classList.add("spotlight-active");
-          else root.classList.remove("spotlight-active");
-          root.querySelectorAll(".person").forEach(el => {
-            el.classList.toggle("highlight-name", el.textContent.trim() === name);
-          });
+        showStatus(message, type = "success") {
+          const el = this.el.statusBanner;
+          clearTimeout(this.state.statusTimer);
+          el.className = `status-banner ${type}`;
+          el.textContent = message;
+          el.style.display = "block";
+          this.state.statusTimer = setTimeout(() => { el.style.display = "none"; }, 7000);
         },
 
         nextAllowedSameDayAfter(index) {
