@@ -15,9 +15,9 @@
       --artifact-text-primary: var(--theme-text-primary, #1b1b1b);
       --artifact-text-secondary: var(--theme-text-secondary, #727272);
 
-      --artifact-page: var(--theme-background-light, #f6f6f6);
-      --artifact-surface: var(--theme-background, #ffffff);
-      --artifact-surface-muted: var(--theme-background-mid, #f0f0f0);
+      --artifact-page: var(--artifact-background-light);
+      --artifact-surface: var(--artifact-background);
+      --artifact-surface-muted: var(--artifact-background-mid);
 
       --artifact-accent: #0f766e;
       --artifact-accent-text: #ffffff;
@@ -33,7 +33,6 @@
       --artifact-danger: #dc2626;
       --artifact-danger-soft: #fdecec;
       --artifact-fair: #7c3aed;
-      --artifact-fair-soft: #f3e8ff;
       --artifact-fair-soft-2: #faf5ff;
 
       --artifact-weekend-bg: #ffd9c5;
@@ -61,7 +60,7 @@
 
       --artifact-person-dim: 0.22;
       --artifact-radius: 18px;
-      --artifact-max-width: 1520px;
+      --artifact-max-width: 1540px;
       --artifact-time-col-width: 120px;
       --artifact-table-min-width: 1100px;
 
@@ -88,7 +87,7 @@
       --person-ויקטור-bg: linear-gradient(135deg, #fdba74, #f97316); --person-ויקטור-text: #4a1d00;
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0.08); }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0,0,0,.08); }
     html, body {
       margin: 0;
       min-height: 100dvh;
@@ -142,14 +141,14 @@
     .subtle {
       margin: 6px 0 0;
       color: var(--artifact-text-secondary);
-      font-size: 0.94rem;
+      font-size: .94rem;
       text-align: center;
     }
 
     .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
     .row.center { justify-content: center; }
     .row.between { justify-content: space-between; }
-    .label-strong { font-weight: 800; color: var(--artifact-text-primary); }
+    .label-strong { font-weight: 800; }
 
     .input, .select, .date-input {
       background: var(--artifact-surface);
@@ -162,12 +161,10 @@
       min-height: 44px;
       transition: border-color .18s ease, box-shadow .18s ease;
     }
-
     .input:focus, .select:focus, .date-input:focus {
       border-color: var(--artifact-info);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.16);
     }
-
     .url-input { direction: ltr; text-align: left; flex: 1 1 420px; }
 
     .btn {
@@ -182,12 +179,11 @@
       transition: transform .18s ease, filter .18s ease, opacity .18s ease;
       box-shadow: var(--artifact-shadow-soft);
     }
-
     .btn:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.03); }
     .btn:disabled { opacity: .56; cursor: not-allowed; }
-    .btn-primary { background: var(--artifact-info); color: #ffffff; }
-    .btn-success { background: var(--artifact-success); color: #ffffff; }
-    .btn-danger { background: var(--artifact-danger); color: #ffffff; }
+    .btn-primary { background: var(--artifact-info); color: #fff; }
+    .btn-success { background: var(--artifact-success); color: #fff; }
+    .btn-danger { background: var(--artifact-danger); color: #fff; }
     .btn-neutral { background: var(--artifact-background-mid); color: var(--artifact-text-primary); }
 
     .toolbar {
@@ -196,17 +192,16 @@
       gap: 12px;
       margin-top: 10px;
     }
-
     .tool-btn {
       min-height: 96px;
       border-radius: 16px;
-      color: #ffffff;
+      color: #fff;
       font-weight: 900;
       font-size: 15px;
       border: none;
       cursor: pointer;
       box-shadow: var(--artifact-shadow);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+      text-shadow: 0 1px 2px rgba(0,0,0,.22);
       transition: transform .18s ease, filter .18s ease;
       display: flex;
       flex-direction: column;
@@ -214,7 +209,6 @@
       justify-content: center;
       gap: 6px;
     }
-
     .tool-btn:hover { transform: translateY(-2px); filter: brightness(1.04); }
     .tool-btn .icon { font-size: 28px; line-height: 1; }
     .tool-fetch { background: var(--artifact-toolbar-fetch); }
@@ -224,68 +218,7 @@
     .tool-sheet { background: var(--artifact-toolbar-sheet); }
     .tool-fair { background: var(--artifact-toolbar-fair); }
 
-    .collapsible { display: none; margin-top: 12px; }
-
-    .fairness-panel {
-      display: none;
-      margin-top: 12px;
-      border: 1px solid var(--artifact-border-light);
-      background: linear-gradient(180deg, var(--artifact-fair-soft-2), var(--artifact-surface));
-    }
-
-    .fairness-summary {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(140px, 1fr));
-      gap: 12px;
-      margin: 12px 0 18px;
-    }
-
-    .fairness-card, .summary-card {
-      background: var(--artifact-surface);
-      border: 1px solid var(--artifact-border-light);
-      border-radius: 14px;
-      padding: 12px;
-      text-align: center;
-      box-shadow: var(--artifact-shadow-soft);
-    }
-
-    .fairness-card .label, .summary-card .label {
-      display: block;
-      font-size: .86rem;
-      color: var(--artifact-text-secondary);
-      margin-bottom: 4px;
-    }
-
-    .fairness-card .value, .summary-card .value {
-      display: block;
-      font-size: 1.45rem;
-      font-weight: 900;
-      color: var(--artifact-text-primary);
-    }
-
-    .fairness-layout {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 16px;
-      align-items: start;
-    }
-
-    .fairness-section {
-      background: var(--artifact-surface);
-      border: 1px solid var(--artifact-border-light);
-      border-radius: 14px;
-      padding: 14px;
-      box-shadow: var(--artifact-shadow-soft);
-    }
-
-    .fairness-section h3 {
-      margin: 0 0 10px;
-      color: var(--artifact-fair);
-      font-size: 1rem;
-      text-align: center;
-    }
-
-    .fairness-table-wrap, .grid-wrap {
+    .grid-wrap, .fairness-table-wrap {
       overflow: auto;
       border-radius: 12px;
       border: 1px solid var(--artifact-border-light);
@@ -294,81 +227,11 @@
 
     table { width: 100%; border-collapse: separate; border-spacing: 0; }
 
-    .fairness-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 760px;
-      background: var(--artifact-surface);
-    }
-
-    .fairness-table th,
-    .fairness-table td {
-      border-bottom: 1px solid var(--artifact-border-light);
-      border-left: 1px solid var(--artifact-border-light);
-      padding: 10px 8px;
-      vertical-align: top;
-      text-align: center;
-      color: var(--artifact-text-primary);
-    }
-
-    .fairness-table th:last-child,
-    .fairness-table td:last-child { border-left: 0; }
-
-    .fairness-table thead th {
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      background: var(--artifact-fair);
-      color: #ffffff;
-    }
-
-    .reason-list {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      display: grid;
-      gap: 6px;
-      text-align: right;
-    }
-
-    .reason-list li {
-      background: var(--artifact-background-light);
-      border: 1px solid var(--artifact-border-light);
-      border-radius: 10px;
-      padding: 6px 8px;
-      font-size: .9rem;
-      color: var(--artifact-text-primary);
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 28px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: .8rem;
-      font-weight: 800;
-      border: 1px solid transparent;
-      white-space: nowrap;
-    }
-
-    .pill.ok { background: var(--artifact-success-soft); color: #166534; border-color: rgba(22,163,74,.18); }
-    .pill.warn { background: var(--artifact-warning-soft); color: #9a3412; border-color: rgba(234,88,12,.18); }
-    .pill.bad { background: var(--artifact-danger-soft); color: #991b1b; border-color: rgba(220,38,38,.18); }
-
-    .empty-state {
-      padding: 18px 12px;
-      text-align: center;
-      color: var(--artifact-text-secondary);
-    }
-
     .excel-grid {
       min-width: 780px;
       table-layout: fixed;
       background: var(--artifact-surface);
     }
-
     .excel-grid thead th {
       position: sticky;
       top: 0;
@@ -379,9 +242,7 @@
       font-size: .94rem;
       border-bottom: 2px solid var(--artifact-border-dark);
     }
-
-    .excel-grid th,
-    .excel-grid td {
+    .excel-grid th, .excel-grid td {
       border-right: 1px solid var(--artifact-border-light);
       border-bottom: 1px solid var(--artifact-border-light);
       padding: 8px;
@@ -389,7 +250,6 @@
       background: var(--artifact-surface);
       color: var(--artifact-text-primary);
     }
-
     .excel-grid tbody td:first-child {
       position: sticky;
       inset-inline-start: 0;
@@ -400,7 +260,6 @@
       min-width: 120px;
       max-width: 120px;
     }
-
     .excel-grid td.cell {
       min-height: 46px;
       outline: none;
@@ -408,29 +267,15 @@
       white-space: normal;
       word-break: break-word;
     }
-
     .excel-grid td.cell:focus {
       background: var(--artifact-info-soft);
       color: #12306b;
-      box-shadow: inset 0 0 0 2px rgba(37, 99, 235, 0.26);
+      box-shadow: inset 0 0 0 2px rgba(37,99,235,.26);
     }
+    .excel-grid td.cell.has-unknown { background: var(--artifact-unknown-bg); color: var(--artifact-unknown-text); }
+    .excel-grid td.cell.on-leave-cell { background: var(--artifact-leave-bg); color: var(--artifact-leave-text); }
 
-    .excel-grid td.cell.has-unknown {
-      background: var(--artifact-unknown-bg);
-      color: var(--artifact-unknown-text);
-    }
-
-    .excel-grid td.cell.on-leave-cell {
-      background: var(--artifact-leave-bg);
-      color: var(--artifact-leave-text);
-    }
-
-    .guard-grid {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(110px, 1fr));
-      gap: 8px;
-    }
-
+    .guard-grid { display: grid; grid-template-columns: repeat(6, minmax(110px, 1fr)); gap: 8px; }
     .guard-btn {
       min-height: 44px;
       border-radius: 10px;
@@ -442,38 +287,24 @@
       cursor: pointer;
       padding: 8px;
     }
-
     .guard-btn.active {
       background: var(--artifact-guard-active-bg);
       color: var(--artifact-guard-active-text);
-      box-shadow: 0 0 0 3px rgba(252, 211, 77, 0.22);
+      box-shadow: 0 0 0 3px rgba(252,211,77,.22);
     }
 
-    .req-grid {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      margin-top: 12px;
-    }
+    .collapsible { display: none; margin-top: 12px; }
 
-    .req-label,
-    .req-control {
+    .req-grid { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 12px; }
+    .req-label, .req-control {
       border-radius: 12px;
       border: 1px solid var(--artifact-border-light);
       background: var(--artifact-surface);
       color: var(--artifact-text-primary);
       padding: 10px;
     }
-
     .req-label { font-weight: 800; background: #eef8f7; }
-
-    .req-control {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: flex-end;
-    }
-
+    .req-control { display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
     .req-opt {
       display: inline-flex;
       align-items: center;
@@ -489,11 +320,9 @@
       font-weight: 800;
       user-select: none;
     }
-
     .req-opt.active { background: var(--artifact-success-soft); color: #1b5e20; }
 
     .list { display: grid; gap: 8px; margin-top: 12px; }
-
     .list-item {
       display: flex;
       justify-content: space-between;
@@ -503,9 +332,7 @@
       border-radius: 12px;
       border: 1px solid var(--artifact-border-light);
       background: var(--artifact-surface);
-      color: var(--artifact-text-primary);
     }
-
     .muted { color: var(--artifact-text-secondary); font-size: .92rem; }
 
     .status-banner {
@@ -517,32 +344,139 @@
       font-weight: 800;
       box-shadow: var(--artifact-shadow-soft);
     }
+    .status-banner.success { background: var(--artifact-success); color: #fff; }
+    .status-banner.warning { background: var(--artifact-warning); color: #fff; }
+    .status-banner.error { background: var(--artifact-danger); color: #fff; }
 
-    .status-banner.success { background: var(--artifact-success); color: #ffffff; }
-    .status-banner.warning { background: var(--artifact-warning); color: #ffffff; }
-    .status-banner.error { background: var(--artifact-danger); color: #ffffff; }
-
-    .results-shell {
-      overflow-x: auto;
-      overflow-y: visible;
-      -webkit-overflow-scrolling: touch;
-      text-align: center;
-    }
-
+    .results-shell { overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch; text-align: center; }
     .results-shell h3 { margin: 18px 0 10px; color: var(--artifact-accent); }
     .results-info { color: var(--artifact-accent); font-weight: 700; margin-bottom: 14px; }
 
-    .summary-bar {
+    .summary-bar, .fairness-summary {
       display: grid;
       grid-template-columns: repeat(4, minmax(160px, 1fr));
       gap: 12px;
       margin: 0 0 16px;
     }
-
+    .summary-card, .fairness-card {
+      background: var(--artifact-surface);
+      border: 1px solid var(--artifact-border-light);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: var(--artifact-shadow-soft);
+    }
+    .summary-card .label, .fairness-card .label {
+      display: block;
+      font-size: .86rem;
+      color: var(--artifact-text-secondary);
+      margin-bottom: 4px;
+    }
+    .summary-card .value, .fairness-card .value {
+      display: block;
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--artifact-text-primary);
+    }
     .summary-card.is-empty { background: var(--artifact-warning-soft); }
     .summary-card.is-exceptions { background: var(--artifact-danger-soft); }
     .summary-card.is-under { background: var(--artifact-info-soft); }
     .summary-card.is-nights { background: var(--artifact-success-soft); }
+
+    .undo-search-bar {
+      display: grid;
+      grid-template-columns: 1.3fr auto auto auto auto auto;
+      gap: 10px;
+      margin-top: 12px;
+      align-items: center;
+    }
+    .search-status {
+      font-size: .9rem;
+      color: var(--artifact-text-secondary);
+      text-align: center;
+      min-width: 80px;
+    }
+
+    .fairness-panel {
+      display: none;
+      margin-top: 12px;
+      border: 1px solid var(--artifact-border-light);
+      background: linear-gradient(180deg, var(--artifact-fair-soft-2), var(--artifact-surface));
+    }
+    .fairness-layout {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .fairness-section {
+      background: var(--artifact-surface);
+      border: 1px solid var(--artifact-border-light);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: var(--artifact-shadow-soft);
+    }
+    .fairness-section h3 {
+      margin: 0 0 10px;
+      color: var(--artifact-fair);
+      font-size: 1rem;
+      text-align: center;
+    }
+    .fairness-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      background: var(--artifact-surface);
+    }
+    .fairness-table th, .fairness-table td {
+      border-bottom: 1px solid var(--artifact-border-light);
+      border-left: 1px solid var(--artifact-border-light);
+      padding: 10px 8px;
+      vertical-align: top;
+      text-align: center;
+    }
+    .fairness-table th:last-child, .fairness-table td:last-child { border-left: 0; }
+    .fairness-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--artifact-fair);
+      color: #fff;
+    }
+
+    .reason-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 6px;
+      text-align: right;
+    }
+    .reason-list li {
+      background: var(--artifact-background-light);
+      border: 1px solid var(--artifact-border-light);
+      border-radius: 10px;
+      padding: 6px 8px;
+      font-size: .9rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: .8rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .pill.ok { background: var(--artifact-success-soft); color: #166534; }
+    .pill.warn { background: var(--artifact-warning-soft); color: #9a3412; }
+    .pill.bad { background: var(--artifact-danger-soft); color: #991b1b; }
+
+    .empty-state { padding: 18px 12px; text-align: center; color: var(--artifact-text-secondary); }
 
     .schedule-table {
       width: 100%;
@@ -556,23 +490,18 @@
       overflow: hidden;
       box-shadow: var(--artifact-shadow-soft);
     }
-
     .schedule-table col.time-col { width: var(--artifact-time-col-width); }
-
-    .schedule-table th,
-    .schedule-table td {
+    .schedule-table th, .schedule-table td {
       border: 1px solid var(--artifact-border-dark);
       padding: 8px 6px;
       min-height: 52px;
       vertical-align: top;
       overflow: hidden;
     }
-
     .schedule-table thead {
       background: var(--artifact-accent);
       color: var(--artifact-accent-text);
     }
-
     .schedule-table thead th {
       position: sticky;
       top: 0;
@@ -580,7 +509,6 @@
       padding: 6px 6px;
       text-align: center;
     }
-
     .schedule-table thead th[rowspan="2"] {
       font-size: .96rem;
       line-height: 1.1;
@@ -588,13 +516,7 @@
       vertical-align: middle;
       width: var(--artifact-time-col-width);
     }
-
-    .schedule-table td {
-      background: var(--artifact-surface);
-      color: var(--artifact-text-primary);
-      white-space: normal;
-    }
-
+    .schedule-table td { background: var(--artifact-surface); white-space: normal; }
     .schedule-table td.editing-cell {
       background: #fff8e1 !important;
       color: #5d4037 !important;
@@ -616,22 +538,18 @@
       max-width: var(--artifact-time-col-width);
       padding: 10px 4px !important;
     }
-
     .time-slot-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 5px;
     }
-
     .time-slot-icon { font-size: 1.15rem; line-height: 1; }
 
-    .friday-col,
-    .saturday-col {
+    .friday-col, .saturday-col {
       background: var(--artifact-weekend-bg) !important;
       color: var(--artifact-weekend-text) !important;
     }
-
     .day-header-name {
       display: block;
       font-size: 1.02rem;
@@ -639,12 +557,11 @@
       margin: 2px 0;
       line-height: 1.1;
     }
-
     .date-text {
       display: block;
-      font-size: 0.9rem;
+      font-size: .9rem;
       font-weight: 700;
-      opacity: 0.96;
+      opacity: .96;
       line-height: 1.05;
     }
 
@@ -655,7 +572,6 @@
       justify-content: center;
       margin-top: 6px;
     }
-
     .badge {
       display: inline-flex;
       align-items: center;
@@ -668,12 +584,10 @@
       border: 1px solid transparent;
       white-space: nowrap;
     }
-
-    .badge.empty { background: var(--artifact-warning-soft); color: #8a3d08; border-color: rgba(234,88,12,.18); }
-    .badge.short { background: var(--artifact-warning-soft); color: #8a3d08; border-color: rgba(234,88,12,.18); }
-    .badge.extra { background: var(--artifact-info-soft); color: #12306b; border-color: rgba(37,99,235,.18); }
-    .badge.rest { background: var(--artifact-danger-soft); color: #8f1f1f; border-color: rgba(220,38,38,.18); }
-    .badge.leave { background: #eef2f7; color: #475569; border-color: rgba(71,85,105,.18); }
+    .badge.empty, .badge.short { background: var(--artifact-warning-soft); color: #8a3d08; }
+    .badge.extra { background: var(--artifact-info-soft); color: #12306b; }
+    .badge.rest { background: var(--artifact-danger-soft); color: #8f1f1f; }
+    .badge.leave { background: #eef2f7; color: #475569; }
 
     .person {
       display: block;
@@ -686,20 +600,19 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      font-size: clamp(1.08em, 1vw + 0.96em, 1.34em);
+      font-size: clamp(1.08em, 1vw + .96em, 1.34em);
       line-height: 1.08;
       font-weight: 800;
       letter-spacing: .18px;
-      border: 1px solid rgba(0, 0, 0, 0.06);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
-      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0,0,0,.06);
+      box-shadow: 0 2px 6px rgba(0,0,0,.10);
+      text-shadow: 0 1px 0 rgba(0,0,0,.08);
       user-select: none;
       cursor: default;
       background: var(--artifact-surface-muted);
       color: var(--artifact-text-primary);
       transition: opacity .14s ease, transform .14s ease, filter .14s ease, box-shadow .14s ease;
     }
-
     .person.highlight-name {
       position: relative;
       z-index: 2;
@@ -707,29 +620,38 @@
       filter: none !important;
       transform: scale(1.03);
       box-shadow:
-        0 0 0 3px rgba(255, 255, 255, 0.82),
-        0 0 0 6px rgba(15, 118, 110, 0.24),
-        0 10px 18px rgba(0, 0, 0, 0.18);
+        0 0 0 3px rgba(255,255,255,.82),
+        0 0 0 6px rgba(15,118,110,.24),
+        0 10px 18px rgba(0,0,0,.18);
     }
-
     .spotlight-active .person:not(.highlight-name) {
       opacity: var(--artifact-person-dim);
       filter: grayscale(55%) saturate(75%);
     }
-
+    .person.search-match {
+      box-shadow:
+        0 0 0 3px rgba(255,255,255,.82),
+        0 0 0 6px rgba(37,99,235,.28),
+        0 10px 18px rgba(0,0,0,.18);
+    }
+    .person.search-current {
+      transform: scale(1.05);
+      box-shadow:
+        0 0 0 3px rgba(255,255,255,.85),
+        0 0 0 7px rgba(234,88,12,.35),
+        0 12px 22px rgba(0,0,0,.22);
+    }
     .person.unknown-name {
       background: var(--artifact-unknown-bg);
       color: var(--artifact-unknown-text);
       border-style: dashed;
     }
-
     .person.on-leave {
       background: var(--artifact-leave-bg) !important;
       color: var(--artifact-leave-text) !important;
       border-style: dashed !important;
       text-decoration: line-through;
     }
-
     .person.on-leave::after { content: " ⛱️"; font-size: .9em; }
 
     .person.color-אמיר { background: var(--person-אמיר-bg); color: var(--person-אמיר-text); }
@@ -754,51 +676,24 @@
     .person.color-חברוני { background: var(--person-חברוני-bg); color: var(--person-חברוני-text); }
     .person.color-ויקטור { background: var(--person-ויקטור-bg); color: var(--person-ויקטור-text); }
 
-    .person.color-גולן {
-      background-color: var(--artifact-surface);
-      color: #111827;
-      background-image:
-        linear-gradient(45deg, #d32f2f 25%, transparent 25%),
-        linear-gradient(-45deg, #d32f2f 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #d32f2f 75%),
-        linear-gradient(-45deg, transparent 75%, #d32f2f 75%);
-      background-size: 8px 8px;
-      background-position: 0 0, 0 4px, 4px -4px, -4px 0;
-    }
-
-    .warning-text {
-      display: inline-block;
-      margin-top: 4px;
-      color: var(--artifact-danger);
-      font-weight: 800;
-    }
-
-    .summary-table,
-    .exceptions-table {
+    .summary-table, .exceptions-table {
       width: min(1200px, 100%);
       margin: 24px auto;
       border-collapse: separate;
       border-spacing: 0;
       background: var(--artifact-surface);
-      color: var(--artifact-text-primary);
       border: 1px solid var(--artifact-border-light);
       border-radius: 14px;
       overflow: hidden;
       box-shadow: var(--artifact-shadow-soft);
     }
-
-    .summary-table thead { background: var(--artifact-accent); color: #ffffff; }
-    .exceptions-table thead { background: var(--artifact-danger); color: #ffffff; }
-
-    .summary-table th,
-    .summary-table td,
-    .exceptions-table th,
-    .exceptions-table td {
+    .summary-table thead { background: var(--artifact-accent); color: #fff; }
+    .exceptions-table thead { background: var(--artifact-danger); color: #fff; }
+    .summary-table th, .summary-table td, .exceptions-table th, .exceptions-table td {
       padding: 14px 10px;
       text-align: center;
       border-bottom: 1px solid var(--artifact-border-light);
     }
-
     .shifts-5-count { background: var(--artifact-info-soft); color: #12306b; font-weight: 800; }
     .shifts-4-count { background: var(--artifact-success-soft); color: #1b5e20; font-weight: 800; }
     .shifts-3-count { background: #e8f5e9; color: #1b5e20; font-weight: 800; }
@@ -811,73 +706,40 @@
       .toolbar { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
       .summary-bar, .fairness-summary { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
       .fairness-layout { grid-template-columns: 1fr; }
+      .undo-search-bar { grid-template-columns: 1fr 1fr 1fr; }
     }
-
     @media (max-width: 1100px) {
       .guard-grid { grid-template-columns: repeat(4, minmax(110px, 1fr)); }
     }
-
     @media (max-width: 768px) {
       body { padding: 10px; }
       .hero { font-size: 1.48rem; padding: 12px 18px; }
       .row { flex-direction: column; align-items: stretch; }
       .row.mobile-inline { flex-direction: row; align-items: center; }
-      .toolbar, .req-grid, .summary-bar, .fairness-summary { grid-template-columns: 1fr; }
+      .toolbar, .req-grid, .summary-bar, .fairness-summary, .undo-search-bar { grid-template-columns: 1fr; }
       .guard-grid { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
       .schedule-table { min-width: 900px; }
       .fairness-table { min-width: 620px; }
       .time-slot { position: sticky; inset-inline-end: 0; z-index: 1; }
       .person { font-size: 1.18em; padding: 9px 13px; }
-      .spotlight-active .person:not(.highlight-name) {
-        opacity: .45 !important;
-        filter: grayscale(35%);
-      }
+      .spotlight-active .person:not(.highlight-name) { opacity: .45 !important; filter: grayscale(35%); }
     }
-
     @media print {
       body {
         margin: 0;
-        padding: 0.4in 0.6in;
+        padding: .4in .6in;
         background: #fff;
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
       }
-
-      .app-shell, .card, .results-shell, main {
-        max-width: 100% !important;
-        width: 100% !important;
-      }
-
-      section, .card, .hero {
-        break-inside: avoid;
-        margin-bottom: 20px !important;
-      }
-
-      .card {
-        padding: 18px !important;
-        box-shadow: none !important;
-        border: 1px solid rgba(0,0,0,0.08);
-      }
-
-      .toolbar, .row {
-        gap: 10px !important;
-        margin-bottom: 20px !important;
-      }
-
-      table, thead, .list, .summary-bar, .fairness-summary {
-        break-inside: avoid;
-      }
-
+      .app-shell, .card, .results-shell, main { max-width: 100% !important; width: 100% !important; }
+      section, .card, .hero { break-inside: avoid; margin-bottom: 20px !important; }
+      .card { padding: 18px !important; box-shadow: none !important; border: 1px solid rgba(0,0,0,.08); }
+      .toolbar, .row, .undo-search-bar { gap: 10px !important; margin-bottom: 20px !important; }
+      table, thead, .list, .summary-bar, .fairness-summary { break-inside: avoid; }
       .fairness-panel { display: block !important; }
-
-      *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-      }
-
-      button, [role="button"], .interactive-only {
-        display: none !important;
-      }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      button, [role="button"], .interactive-only { display: none !important; }
     }
   </style>
 </head>
@@ -900,6 +762,16 @@
             <button id="btnExcelClear" type="button" class="btn btn-danger">נקה</button>
           </div>
         </div>
+
+        <div class="undo-search-bar">
+          <input id="guardSearchInput" type="text" class="input" placeholder="חפש שומר..." />
+          <button id="searchPrevBtn" class="btn btn-neutral" type="button">הקודם</button>
+          <button id="searchNextBtn" class="btn btn-neutral" type="button">הבא</button>
+          <button id="clearSearchBtn" class="btn btn-neutral" type="button">נקה חיפוש</button>
+          <button id="undoBtn" class="btn btn-neutral" type="button">↶ Undo</button>
+          <button id="redoBtn" class="btn btn-neutral" type="button">↷ Redo</button>
+        </div>
+        <div id="searchStatus" class="search-status">אין חיפוש פעיל</div>
 
         <div class="grid-wrap" style="margin-top:12px;">
           <table id="excel-grid" class="excel-grid" dir="rtl"></table>
@@ -1010,7 +882,8 @@
             WEEK_START: "weekStart",
             SHEET_URL: "googleSheetUrl",
             SHIFT_REQ_SCOPE_WEEK: "shiftReqScopeWeek",
-            LEAVE_SCOPE_WEEK: "leaveScopeWeek"
+            LEAVE_SCOPE_WEEK: "leaveScopeWeek",
+            FULL_STATE: "shift_scheduler_full_state_v2"
           },
           SHIFT_INDEX: Object.freeze({
             NIGHT_2_6: 0,
@@ -1044,7 +917,12 @@
           expectedDays: [],
           excelMatrix: [],
           lockedName: null,
-          statusTimer: null
+          statusTimer: null,
+          isRestoring: false,
+          undoStack: [],
+          redoStack: [],
+          searchMatches: [],
+          currentSearchIndex: -1
         },
 
         el: {},
@@ -1054,11 +932,17 @@
           this.state.expectedDays = this.computeExpectedDays(this.getWeekStartSetting());
           this.initializeData();
           this.ExcelGrid.init();
+          this.restoreFullState();
           this.renderGuardButtons();
           this.buildShiftReqPanel();
           this.buildVacationsPanel();
           this.bindEvents();
           this.updateStartDateLabelBySetting();
+          this.updateUndoRedoButtons();
+          this.updateSearchHighlights();
+          if (this.serializeMatrixToVerticalText().trim()) {
+            this.handleAnalyze();
+          }
         },
 
         cacheDom() {
@@ -1070,7 +954,9 @@
             "weekStartSelect","shiftReqGrid","openVacationsBtn","vacationsPanel",
             "leaveScopeWeek","leaveNameInput","leaveFromInput","leaveToInput",
             "leaveAddBtn","leaveClearBtn","vacationsList","statusBanner","resultsContainer",
-            "excel-grid","toggleFairnessButton","fairnessPanel","fairnessCloseBtn","fairnessContent"
+            "excel-grid","toggleFairnessButton","fairnessPanel","fairnessCloseBtn","fairnessContent",
+            "guardSearchInput","searchPrevBtn","searchNextBtn","clearSearchBtn","searchStatus",
+            "undoBtn","redoBtn"
           ].forEach(id => {
             this.el[id] = document.getElementById(id);
           });
@@ -1080,7 +966,11 @@
           this.el.analyzeButton.addEventListener("click", () => this.handleAnalyze());
           this.el.autoScheduleButton.addEventListener("click", () => this.autoSchedule());
           this.el.btnExcelAuto.addEventListener("click", () => this.autoSchedule());
-          this.el.btnExcelClear.addEventListener("click", () => this.ExcelGrid.clear());
+          this.el.btnExcelClear.addEventListener("click", () => {
+            this.pushUndoSnapshot("clear");
+            this.ExcelGrid.clear();
+            this.persistFullState();
+          });
           this.el.fetchFromSheetButton.addEventListener("click", () => this.fetchFromGoogleSheet());
           this.el.quickFetchButton.addEventListener("click", () => this.fetchFromGoogleSheet());
           this.el.downloadHtmlButton.addEventListener("click", () => this.downloadHtmlTable());
@@ -1088,15 +978,30 @@
 
           this.el.toggleFairnessButton.addEventListener("click", () => {
             this.el.fairnessPanel.style.display = this.el.fairnessPanel.style.display === "block" ? "none" : "block";
+            this.persistFullState();
           });
           this.el.fairnessCloseBtn.addEventListener("click", () => {
             this.el.fairnessPanel.style.display = "none";
+            this.persistFullState();
           });
 
           this.el.startDate.addEventListener("change", () => {
+            this.pushUndoSnapshot("date");
             this.updateStartDateLabelBySetting();
             this.refreshAfterDataChange();
+            this.persistFullState();
           });
+
+          this.el.guardSearchInput.addEventListener("input", () => this.updateSearchHighlights());
+          this.el.searchPrevBtn.addEventListener("click", () => this.navigateSearch(-1));
+          this.el.searchNextBtn.addEventListener("click", () => this.navigateSearch(1));
+          this.el.clearSearchBtn.addEventListener("click", () => {
+            this.el.guardSearchInput.value = "";
+            this.updateSearchHighlights();
+          });
+
+          this.el.undoBtn.addEventListener("click", () => this.undo());
+          this.el.redoBtn.addEventListener("click", () => this.redo());
 
           document.addEventListener("mouseover", e => {
             const bubble = e.target.closest(".person");
@@ -1113,21 +1018,35 @@
               const name = bubble.textContent.trim();
               this.state.lockedName = this.state.lockedName === name ? null : name;
               this.updateHighlights(this.state.lockedName);
+              this.persistFullState();
               return;
             }
             const isUi = !!(e.target.closest("button") || e.target.closest("input") || e.target.closest("select") || e.target.closest("a"));
             if (!isUi) {
               this.state.lockedName = null;
               this.updateHighlights(null);
+              this.persistFullState();
             }
           }, { passive: true });
 
           document.addEventListener("keydown", e => {
+            const mod = e.ctrlKey || e.metaKey;
             if (e.key === "Escape") {
               this.state.lockedName = null;
               this.updateHighlights(null);
+              this.persistFullState();
+              return;
             }
-          }, { passive: true });
+            if (mod && !e.shiftKey && (e.key === "z" || e.key === "Z")) {
+              e.preventDefault();
+              this.undo();
+              return;
+            }
+            if (mod && ((e.key === "y" || e.key === "Y") || (e.shiftKey && (e.key === "z" || e.key === "Z")))) {
+              e.preventDefault();
+              this.redo();
+            }
+          });
 
           document.addEventListener("beforeinput", e => {
             if (e.inputType === "insertParagraph" && e.target?.isContentEditable) {
@@ -1187,6 +1106,142 @@
               if (bCount !== aCount) return bCount - aCount;
               return a.localeCompare(b, "he");
             });
+        },
+
+        makeSnapshot() {
+          return {
+            expectedDays: [...this.state.expectedDays],
+            excelMatrix: this.state.excelMatrix.map(row => [...row]),
+            startDate: this.el.startDate.value,
+            googleSheetUrl: this.el.googleSheetUrl.value,
+            lockedName: this.state.lockedName,
+            fairnessOpen: this.el.fairnessPanel.style.display === "block",
+            weekStart: this.getWeekStartSetting(),
+            priorityGuards: Array.from(this.getPriorityGuardSet()),
+            shiftReqScopeWeek: !!this.el.shiftReqScopeWeek.checked,
+            leaveScopeWeek: !!this.el.leaveScopeWeek.checked,
+            searchQuery: this.el.guardSearchInput.value
+          };
+        },
+
+        applySnapshot(snapshot) {
+          if (!snapshot) return;
+          this.state.isRestoring = true;
+          this.state.expectedDays = Array.isArray(snapshot.expectedDays) && snapshot.expectedDays.length === 7
+            ? [...snapshot.expectedDays]
+            : this.computeExpectedDays(snapshot.weekStart || this.getWeekStartSetting());
+          this.state.excelMatrix = Array.isArray(snapshot.excelMatrix) && snapshot.excelMatrix.length === this.C.TIME_SLOTS.length
+            ? snapshot.excelMatrix.map(row => Array.isArray(row) ? [...row] : this.state.expectedDays.map(() => ""))
+            : this.C.TIME_SLOTS.map(() => this.state.expectedDays.map(() => ""));
+          this.el.startDate.value = snapshot.startDate || this.el.startDate.value;
+          this.el.googleSheetUrl.value = snapshot.googleSheetUrl || this.el.googleSheetUrl.value;
+          this.state.lockedName = snapshot.lockedName || null;
+          this.el.fairnessPanel.style.display = snapshot.fairnessOpen ? "block" : "none";
+          this.el.guardSearchInput.value = snapshot.searchQuery || "";
+          this.ExcelGrid.render();
+          this.renderGuardButtons();
+          const selected = new Set((snapshot.priorityGuards || []).map(x => this.normalizeKey(x)));
+          this.el.guardButtonsContainer.querySelectorAll(".guard-btn").forEach(btn => {
+            btn.classList.toggle("active", selected.has(this.normalizeKey(btn.textContent)));
+          });
+          this.updateStartDateLabelBySetting();
+          this.refreshAfterDataChange();
+          this.updateSearchHighlights();
+          this.state.isRestoring = false;
+        },
+
+        pushUndoSnapshot(reason = "") {
+          if (this.state.isRestoring) return;
+          const snapshot = this.makeSnapshot();
+          this.state.undoStack.push(snapshot);
+          if (this.state.undoStack.length > 60) this.state.undoStack.shift();
+          this.state.redoStack = [];
+          this.updateUndoRedoButtons();
+        },
+
+        updateUndoRedoButtons() {
+          this.el.undoBtn.disabled = this.state.undoStack.length === 0;
+          this.el.redoBtn.disabled = this.state.redoStack.length === 0;
+        },
+
+        undo() {
+          if (!this.state.undoStack.length) return;
+          const current = this.makeSnapshot();
+          const snapshot = this.state.undoStack.pop();
+          this.state.redoStack.push(current);
+          this.applySnapshot(snapshot);
+          this.updateUndoRedoButtons();
+          this.persistFullState();
+          this.showStatus("בוצע Undo", "success");
+        },
+
+        redo() {
+          if (!this.state.redoStack.length) return;
+          const current = this.makeSnapshot();
+          const snapshot = this.state.redoStack.pop();
+          this.state.undoStack.push(current);
+          this.applySnapshot(snapshot);
+          this.updateUndoRedoButtons();
+          this.persistFullState();
+          this.showStatus("בוצע Redo", "success");
+        },
+
+        persistFullState() {
+          if (this.state.isRestoring) return;
+          try {
+            localStorage.setItem(this.C.STORAGE.FULL_STATE, JSON.stringify(this.makeSnapshot()));
+          } catch {}
+        },
+
+        restoreFullState() {
+          try {
+            const raw = localStorage.getItem(this.C.STORAGE.FULL_STATE);
+            if (!raw) return;
+            const parsed = JSON.parse(raw);
+            this.applySnapshot(parsed);
+          } catch {}
+        },
+
+        updateSearchHighlights() {
+          const query = this.normalizeKey(this.el.guardSearchInput.value).toLowerCase();
+          const root = this.el.resultsContainer;
+          this.state.searchMatches = [];
+          this.state.currentSearchIndex = -1;
+
+          if (root) {
+            root.querySelectorAll(".person").forEach(el => {
+              el.classList.remove("search-match", "search-current");
+              if (query && this.normalizeKey(el.textContent).toLowerCase().includes(query)) {
+                el.classList.add("search-match");
+                this.state.searchMatches.push(el);
+              }
+            });
+          }
+
+          if (this.state.searchMatches.length) {
+            this.state.currentSearchIndex = 0;
+            this.focusSearchMatch();
+            this.el.searchStatus.textContent = `${this.state.currentSearchIndex + 1}/${this.state.searchMatches.length}`;
+          } else {
+            this.el.searchStatus.textContent = query ? "לא נמצאו תוצאות" : "אין חיפוש פעיל";
+          }
+          this.persistFullState();
+        },
+
+        focusSearchMatch() {
+          this.state.searchMatches.forEach(el => el.classList.remove("search-current"));
+          if (this.state.currentSearchIndex < 0 || !this.state.searchMatches.length) return;
+          const current = this.state.searchMatches[this.state.currentSearchIndex];
+          if (!current) return;
+          current.classList.add("search-current");
+          current.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+          this.el.searchStatus.textContent = `${this.state.currentSearchIndex + 1}/${this.state.searchMatches.length}`;
+        },
+
+        navigateSearch(step) {
+          if (!this.state.searchMatches.length) return;
+          this.state.currentSearchIndex = (this.state.currentSearchIndex + step + this.state.searchMatches.length) % this.state.searchMatches.length;
+          this.focusSearchMatch();
         },
 
         getWeekStartSetting() {
@@ -1266,19 +1321,16 @@
           lines.forEach(line => {
             const cleaned = this.aggressiveClean(line);
             if (!cleaned) return;
-
             const dayMatch = this.state.expectedDays.find(day => cleaned === day || cleaned.startsWith(day));
             if (dayMatch) {
               currentDay = dayMatch;
               rawDayData[currentDay] = [];
               return;
             }
-
             if (!currentDay) return;
 
             const parts = cleaned.split(/\s{2,}|\t/).map(x => x.trim()).filter(Boolean);
             if (!parts.length) return;
-
             const timePart = parts[0];
             const isTime = this.C.TIME_SLOTS.some(slot => timePart.startsWith(slot.split("(")[0].trim()));
             if (isTime) rawDayData[currentDay].push(parts.slice(1).join(","));
@@ -1338,6 +1390,7 @@
 
         saveShiftRequirements(map) {
           try { localStorage.setItem(this.getShiftReqStorageKey(), JSON.stringify(map)); } catch {}
+          this.persistFullState();
         },
 
         getRequiredPerShift(index) {
@@ -1362,6 +1415,7 @@
 
         saveVacationsMap(map) {
           try { localStorage.setItem(this.getVacationStorageKey(), JSON.stringify(map)); } catch {}
+          this.persistFullState();
         },
 
         isOnVacation(name, isoDate) {
@@ -1420,13 +1474,17 @@
           el.className = `status-banner ${type}`;
           el.textContent = message;
           el.style.display = "block";
-          this.state.statusTimer = setTimeout(() => { el.style.display = "none"; }, 7000);
+          this.state.statusTimer = setTimeout(() => { el.style.display = "none"; }, 4000);
         },
 
         refreshAfterDataChange() {
           this.ExcelGrid.validateAllGridCells();
           const text = this.serializeMatrixToVerticalText();
           if (text.trim()) this.renderScheduleView(this.parseScheduleText(text));
+          else {
+            this.el.resultsContainer.innerHTML = `<p id="initialMessage">הדבק נתונים או משוך אותם מה‑Web App, ואז לחץ על ניתוח או סידור אוטומטי.</p>`;
+            this.el.fairnessContent.innerHTML = `בצע ניתוח כדי לראות הסבר למה כל תא/עובד מסומן.`;
+          }
         },
 
         placeCaretAtEnd(el) {
@@ -1445,13 +1503,11 @@
           const raw = String(cell.innerText || "")
             .replace(/בעיה!?/g, "")
             .replace(/משבצת\s*ריקה/g, "");
-
           const names = Array.from(new Set(raw.split(/[,\n]/).map(v => this.normalizeKey(v)).filter(Boolean)));
-          const dayName = cell.dataset.dayName || cell.getAttribute("data-day") || "";
-          const timeLabel = cell.dataset.time || cell.getAttribute("data-time") || fallbackTime;
+          const dayName = cell.getAttribute("data-day") || "";
+          const timeLabel = cell.getAttribute("data-time") || fallbackTime;
           const dayIndex = this.state.expectedDays.indexOf(dayName);
           const dayIso = dayIndex >= 0 ? this.getIsoDatesForWeek(this.el.startDate.value)[dayIndex] : "";
-
           cell.innerHTML = this.renderPersonBubbles(names, dayName, timeLabel, dayIso);
         },
 
@@ -1501,7 +1557,6 @@
                     }
                   }
                 }
-
                 dailyCheck[day].add(name);
                 allShifts[name] = (allShifts[name] || 0) + 1;
 
@@ -1562,17 +1617,12 @@
           const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
           let emptyCells = 0;
           let underfilled = 0;
-          let overfilled = 0;
-          let leaveCells = 0;
-
           parsed.data.forEach((row, rowIdx) => {
             row.forEach((cell, colIdx) => {
               const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
               const required = this.getRequiredPerShift(rowIdx);
               if (names.length === 0) emptyCells += 1;
               else if (names.length < required) underfilled += 1;
-              else if (names.length > required) overfilled += 1;
-              if (names.some(name => this.isOnVacation(name, isoDates[colIdx]))) leaveCells += 1;
             });
           });
 
@@ -1584,9 +1634,7 @@
             exceptions: insights.exceptions.length,
             underMinimumEmployees,
             nightViolations,
-            underfilled,
-            overfilled,
-            leaveCells
+            underfilled
           };
         },
 
@@ -1704,12 +1752,9 @@
           if (!names.length) badges.push(`<span class="badge empty">ריק</span>`);
           else if (names.length < required) badges.push(`<span class="badge short">חסר</span>`);
           else if (names.length > required) badges.push(`<span class="badge extra">עודף</span>`);
-
           if (names.some(name => this.isOnVacation(name, dayIso))) badges.push(`<span class="badge leave">חופשה</span>`);
-
           const key = `${day}__${slot}`;
           if (cellFlags[key]?.has("rest")) badges.push(`<span class="badge rest">מנוחה</span>`);
-
           return badges.length ? `<div class="cell-badges">${badges.join("")}</div>` : "";
         },
 
@@ -1748,7 +1793,6 @@
           const timeDisplay = slot.replace(" - ", "<br>");
           const required = this.getRequiredPerShift(rowIdx);
           let html = `<tr>${this.renderTimeSlotCell(rowIdx, timeDisplay)}`;
-
           row.forEach((cell, colIdx) => {
             const day = days[colIdx];
             const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
@@ -1759,7 +1803,6 @@
             const title = reasons.length ? this.escapeHtml(reasons.join(" | ")) : "";
             html += `<td class="${this.cx(weekendClass)}" data-day="${this.escapeHtml(day)}" data-time="${this.escapeHtml(slot)}" title="${title}" contenteditable="true">${bubbles}${badges}</td>`;
           });
-
           html += `</tr>`;
           return html;
         },
@@ -1779,9 +1822,8 @@
         },
 
         renderSummaryTable(allShifts, night2to6Count) {
-          let html = `<h3>סיכום הופעות (ללא ליווי)</h3>`;
+          let html = `<h3>סיכום הופעות (רק מי שמשובץ השבוע)</h3>`;
           html += `<table class="summary-table"><thead><tr><th>מס'</th><th>שם העובד</th><th>סה"כ הופעות</th><th>משמרות 02–06</th><th>סטטוס</th></tr></thead><tbody>`;
-
           const sortedNames = this.getScheduledEmployeeNames(allShifts);
 
           if (!sortedNames.length) {
@@ -1836,7 +1878,6 @@
           }
 
           const fair = this.buildFairnessData(parsed, insights);
-
           const employeeRows = fair.employees.map(emp => `
             <tr>
               <td><strong>${this.escapeHtml(emp.name)}</strong></td>
@@ -1863,22 +1904,10 @@
 
           this.el.fairnessContent.innerHTML = `
             <div class="fairness-summary">
-              <div class="fairness-card">
-                <span class="label">עובדים מאוזנים</span>
-                <span class="value">${fair.summary.balanced}</span>
-              </div>
-              <div class="fairness-card">
-                <span class="label">עובדים שדורשים תשומת לב</span>
-                <span class="value">${fair.summary.attention}</span>
-              </div>
-              <div class="fairness-card">
-                <span class="label">עובדים בלי שיבוץ</span>
-                <span class="value">${fair.summary.zeroAssigned}</span>
-              </div>
-              <div class="fairness-card">
-                <span class="label">תאים מסומנים עם הסבר</span>
-                <span class="value">${fair.summary.markedCells}</span>
-              </div>
+              <div class="fairness-card"><span class="label">עובדים מאוזנים</span><span class="value">${fair.summary.balanced}</span></div>
+              <div class="fairness-card"><span class="label">עובדים שדורשים תשומת לב</span><span class="value">${fair.summary.attention}</span></div>
+              <div class="fairness-card"><span class="label">עובדים בלי שיבוץ</span><span class="value">${fair.summary.zeroAssigned}</span></div>
+              <div class="fairness-card"><span class="label">תאים מסומנים עם הסבר</span><span class="value">${fair.summary.markedCells}</span></div>
             </div>
 
             <div class="fairness-layout">
@@ -1887,14 +1916,7 @@
                 <div class="fairness-table-wrap">
                   <table class="fairness-table">
                     <thead>
-                      <tr>
-                        <th>עובד</th>
-                        <th>סה"כ</th>
-                        <th>02–06</th>
-                        <th>ימי חופשה</th>
-                        <th>סטטוס</th>
-                        <th>הסבר</th>
-                      </tr>
+                      <tr><th>עובד</th><th>סה"כ</th><th>02–06</th><th>ימי חופשה</th><th>סטטוס</th><th>הסבר</th></tr>
                     </thead>
                     <tbody>${employeeRows}</tbody>
                   </table>
@@ -1906,14 +1928,7 @@
                 <div class="fairness-table-wrap">
                   <table class="fairness-table">
                     <thead>
-                      <tr>
-                        <th>יום</th>
-                        <th>תאריך</th>
-                        <th>משמרת</th>
-                        <th>שובצו</th>
-                        <th>נדרש</th>
-                        <th>הסבר</th>
-                      </tr>
+                      <tr><th>יום</th><th>תאריך</th><th>משמרת</th><th>שובצו</th><th>נדרש</th><th>הסבר</th></tr>
                     </thead>
                     <tbody>${cellRows}</tbody>
                   </table>
@@ -1969,6 +1984,7 @@
           this.renderFairnessPanel(parsed, insights);
           this.setupScheduleEditors();
           this.updateHighlights(this.state.lockedName);
+          this.updateSearchHighlights();
         },
 
         setupScheduleEditors() {
@@ -1978,6 +1994,7 @@
 
             const enterEditMode = () => {
               if (td.dataset.editing === "1") return;
+              this.pushUndoSnapshot("edit-start");
               const names = Array.from(td.querySelectorAll(".person")).map(el => this.normalizeKey(el.textContent)).filter(Boolean);
               td.dataset.editing = "1";
               td.classList.add("editing-cell");
@@ -1991,6 +2008,7 @@
               td.dataset.editing = "0";
               td.classList.remove("editing-cell");
               this.syncRenderedTableBackToMatrix();
+              this.persistFullState();
             };
 
             td.addEventListener("dblclick", enterEditMode);
@@ -2034,7 +2052,11 @@
             btn.type = "button";
             btn.className = "guard-btn";
             btn.textContent = name;
-            btn.addEventListener("click", () => btn.classList.toggle("active"));
+            btn.addEventListener("click", () => {
+              this.pushUndoSnapshot("priority");
+              btn.classList.toggle("active");
+              this.persistFullState();
+            });
             this.el.guardButtonsContainer.appendChild(btn);
           });
         },
@@ -2070,6 +2092,7 @@
                 opt.className = this.cx("req-opt", Number(map[idx] ?? 1) === value && "active");
                 opt.textContent = String(value);
                 opt.addEventListener("click", () => {
+                  this.pushUndoSnapshot("shift-req");
                   map[idx] = value;
                   this.saveShiftRequirements(map);
                   renderRows();
@@ -2093,14 +2116,14 @@
           });
 
           this.el.shiftReqScopeWeek.addEventListener("change", () => {
-            try {
-              localStorage.setItem(this.C.STORAGE.SHIFT_REQ_SCOPE_WEEK, this.el.shiftReqScopeWeek.checked ? "1" : "0");
-            } catch {}
+            try { localStorage.setItem(this.C.STORAGE.SHIFT_REQ_SCOPE_WEEK, this.el.shiftReqScopeWeek.checked ? "1" : "0"); } catch {}
+            this.persistFullState();
             renderRows();
             this.refreshAfterDataChange();
           });
 
           this.el.weekStartSelect.addEventListener("change", () => {
+            this.pushUndoSnapshot("week-start");
             const val = this.el.weekStartSelect.value === "sun" ? "sun" : "mon";
             try { localStorage.setItem(this.C.STORAGE.WEEK_START, val); } catch {}
             this.state.expectedDays = this.computeExpectedDays(val);
@@ -2108,6 +2131,7 @@
             this.updateStartDateLabelBySetting();
             renderRows();
             this.refreshAfterDataChange();
+            this.persistFullState();
           });
 
           renderRows();
@@ -2155,6 +2179,7 @@
 
             this.el.vacationsList.querySelectorAll(".delete-leave-btn").forEach(btn => {
               btn.addEventListener("click", () => {
+                this.pushUndoSnapshot("leave-delete");
                 const name = btn.dataset.name;
                 const map = this.loadVacationsMap();
                 delete map[name];
@@ -2172,6 +2197,7 @@
 
           this.el.leaveScopeWeek.addEventListener("change", () => {
             try { localStorage.setItem(this.C.STORAGE.LEAVE_SCOPE_WEEK, this.el.leaveScopeWeek.checked ? "1" : "0"); } catch {}
+            this.persistFullState();
             renderList();
             this.refreshAfterDataChange();
           });
@@ -2184,6 +2210,7 @@
               alert("נא למלא שם וטווח תאריכים מלא.");
               return;
             }
+            this.pushUndoSnapshot("leave-add");
             const map = this.loadVacationsMap();
             map[name] = { from, to };
             this.saveVacationsMap(map);
@@ -2197,6 +2224,7 @@
               alert("נא למלא שם למחיקה.");
               return;
             }
+            this.pushUndoSnapshot("leave-clear");
             const map = this.loadVacationsMap();
             delete map[name];
             this.saveVacationsMap(map);
@@ -2210,6 +2238,7 @@
         handleAnalyze() {
           const text = this.serializeMatrixToVerticalText();
           this.renderScheduleView(this.parseScheduleText(text));
+          this.persistFullState();
         },
 
         async fetchFromGoogleSheet() {
@@ -2223,8 +2252,9 @@
             return;
           }
 
-          try { localStorage.setItem(this.C.STORAGE.SHEET_URL, url); } catch {}
+          this.pushUndoSnapshot("fetch");
 
+          try { localStorage.setItem(this.C.STORAGE.SHEET_URL, url); } catch {}
           statusEl.textContent = "טוען נתונים... 🔄";
           statusEl.style.display = "block";
           statusEl.style.color = "var(--artifact-accent)";
@@ -2240,6 +2270,7 @@
             statusEl.textContent = "✅ הנתונים נטענו בהצלחה";
             statusEl.style.color = "var(--artifact-success)";
             this.showStatus("הנתונים נטענו לטבלת הקלט.", "success");
+            this.persistFullState();
           } catch (err) {
             statusEl.textContent = `❌ שגיאה: ${err.message}`;
             statusEl.style.color = "var(--artifact-danger)";
@@ -2251,6 +2282,7 @@
         },
 
         autoSchedule() {
+          this.pushUndoSnapshot("auto-schedule");
           const parsed = this.parseScheduleText(this.serializeMatrixToVerticalText());
           if (parsed.error) {
             this.renderScheduleView(parsed);
@@ -2355,7 +2387,6 @@
               const required = this.getRequiredPerShift(shiftIndex);
               const row = newSchedule[shiftIndex][dayIndex];
               if (row.length >= required) return;
-
               const availSet = availabilityMap[dayIndex]?.[shiftIndex];
               if (!availSet?.size) return;
 
@@ -2374,17 +2405,14 @@
                   const ca = employeeShiftCount[a] || 0;
                   const cb = employeeShiftCount[b] || 0;
                   if (ca !== cb) return ca - cb;
-
                   if (shiftIndex === I.NIGHT_2_6) {
                     const na = night2to6Count[a] || 0;
                     const nb = night2to6Count[b] || 0;
                     if (na !== nb) return na - nb;
                   }
-
                   const pa = priorityGuards.has(a) ? 1 : 0;
                   const pb = priorityGuards.has(b) ? 1 : 0;
                   if (pa !== pb) return pb - pa;
-
                   return a.localeCompare(b, "he");
                 });
 
@@ -2425,14 +2453,13 @@
           shiftsOrder.forEach(({ dayIndex, shiftIndex }) => {
             const required = this.getRequiredPerShift(shiftIndex);
             if (required !== 2) return;
-
             const row = newSchedule[shiftIndex][dayIndex];
             while (row.length < required) {
               const availSet = availabilityMap[dayIndex]?.[shiftIndex];
               if (!availSet?.size) break;
 
               const pool = Array.from(availSet)
-                .filter(name => !row.includes(name) && isLegalAssignment(name, dayIndex, shiftIndex, true))
+                .filter(name => !row.includes(name) && isLegalAssignment(name, dayIndex, shiftIndex))
                 .sort((a, b) => {
                   const ca = employeeShiftCount[a] || 0;
                   const cb = employeeShiftCount[b] || 0;
@@ -2454,6 +2481,7 @@
           this.ExcelGrid.render();
           this.ExcelGrid.validateAllGridCells();
           this.renderScheduleView(this.parseScheduleText(this.serializeMatrixToVerticalText()));
+          this.persistFullState();
 
           const below = allEmployees
             .map(name => ({ name, count: employeeShiftCount[name] || 0 }))
@@ -2531,14 +2559,21 @@
         ExcelGrid: {
           init() {
             const app = App;
-            app.state.excelMatrix = app.C.TIME_SLOTS.map(() => app.state.expectedDays.map(() => ""));
+            if (!app.state.excelMatrix.length) {
+              app.state.excelMatrix = app.C.TIME_SLOTS.map(() => app.state.expectedDays.map(() => ""));
+            }
             this.render();
 
             const wrapper = app.el["excel-grid"].parentElement;
             if (!wrapper.dataset.bound) {
               wrapper.dataset.bound = "1";
 
-              wrapper.addEventListener("paste", e => this.handlePaste(e));
+              wrapper.addEventListener("paste", e => {
+                const cell = e.target.closest("td.cell");
+                if (cell) app.pushUndoSnapshot("paste-grid");
+                this.handlePaste(e);
+                app.persistFullState();
+              });
 
               wrapper.addEventListener("input", e => {
                 const cell = e.target.closest("td.cell");
@@ -2547,6 +2582,7 @@
                 const c = Number(cell.dataset.c);
                 app.state.excelMatrix[r][c] = this.normalizeCellValue(cell.innerText);
                 this.validateCellElement(cell);
+                app.persistFullState();
               });
             }
           },
@@ -2563,7 +2599,7 @@
               const time = slot.split("(")[0].trim();
               html += `<tr><td>${app.escapeHtml(time)}</td>`;
               app.state.expectedDays.forEach((_, c) => {
-                html += `<td class="cell" contenteditable="true" data-r="${r}" data-c="${c}">${app.escapeHtml(app.state.excelMatrix[r][c] || "")}</td>`;
+                html += `<td class="cell" contenteditable="true" data-r="${r}" data-c="${c}">${app.escapeHtml(app.state.excelMatrix[r]?.[c] || "")}</td>`;
               });
               html += "</tr>";
             });
@@ -2702,6 +2738,7 @@
             this.render();
             app.el.resultsContainer.innerHTML = `<p id="initialMessage">הדבק נתונים או משוך אותם מה‑Web App, ואז לחץ על ניתוח או סידור אוטומטי.</p>`;
             app.el.fairnessContent.innerHTML = `בצע ניתוח כדי לראות הסבר למה כל תא/עובד מסומן.`;
+            app.updateSearchHighlights();
           }
         }
       };
