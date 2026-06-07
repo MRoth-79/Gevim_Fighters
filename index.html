@@ -5,7 +5,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>מנתח טבלת משמרות 📅</title>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root {
       --artifact-background: var(--theme-background, #ffffff);
@@ -53,8 +52,8 @@
       --artifact-toolbar-analyze: linear-gradient(135deg, #00b09b, #96c93d);
       --artifact-toolbar-download: linear-gradient(135deg, #0ea5e9, #0284c7);
       --artifact-toolbar-sheet: linear-gradient(135deg, #22c55e, #16a34a);
-      --artifact-toolbar-csv: linear-gradient(135deg, #7c3aed, #5b21b6);
-      --artifact-toolbar-xlsx: linear-gradient(135deg, #15803d, #166534);
+      --artifact-toolbar-lock: linear-gradient(135deg, #f59e0b, #d97706);
+      --artifact-toolbar-rules: linear-gradient(135deg, #0f766e, #115e59);
 
       --artifact-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
       --artifact-shadow-soft: 0 4px 12px rgba(15, 23, 42, 0.06);
@@ -907,8 +906,22 @@
         <button id="analyzeButton" class="tool-btn tool-analyze"><span class="icon">🔍</span><span>נתח נתונים</span></button>
         <button id="downloadHtmlButton" class="tool-btn tool-download"><span class="icon">💾</span><span>הורד HTML</span></button>
         <button id="openSheetButton" class="tool-btn tool-sheet"><span class="icon">📄</span><span>פתח גיליון נתונים</span></button>
-        <button id="exportCsvButton" class="tool-btn tool-csv"><span class="icon">🧾</span><span>Export CSV</span></button>
-        <button id="exportXlsxButton" class="tool-btn tool-xlsx"><span class="icon">📗</span><span>Export XLSX</span></button>
+        <button id="toggleLockModeButton" class="tool-btn tool-lock"><span class="icon">🔒</span><span>מצב נעילה</span></button>
+        <button id="showRulesButton" class="tool-btn tool-rules"><span class="icon">📏</span><span>חוקי מערכת</span></button>
+      </div>
+
+      <div id="rulesPanel" class="card collapsible">
+        <div class="row between">
+          <div class="label-strong">חוקי מערכת</div>
+          <button id="rulesCloseBtn" type="button" class="btn btn-neutral">סגור</button>
+        </div>
+        <div class="list" style="margin-top:12px;">
+          <div class="list-item"><strong>מינימום משמרות:</strong><span>3</span></div>
+          <div class="list-item"><strong>מקסימום משמרות:</strong><span>5</span></div>
+          <div class="list-item"><strong>מקסימום 02:00–06:00:</strong><span>2</span></div>
+          <div class="list-item"><strong>חוק מנוחה:</strong><span>לפחות 8 שעות בין משמרות קרובות</span></div>
+          <div class="list-item"><strong>מצב נעילה:</strong><span>תא נעול לא יידרס בסידור אוטומטי</span></div>
+        </div>
       </div>
 
       <div class="row center" style="margin-top:14px;">
@@ -1015,7 +1028,9 @@
           expectedDays: [],
           excelMatrix: [],
           lockedName: null,
-          statusTimer: null
+          statusTimer: null,
+          lockMode: false,
+          lockedCells: {}
         },
 
         el: {},
