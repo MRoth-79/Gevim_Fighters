@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>מנתח טבלת משמרות 📅</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root {
       --artifact-background: var(--theme-background, #ffffff);
@@ -13,8 +14,6 @@
       --artifact-border-light: var(--theme-border-light, #e5e5e5);
       --artifact-border-dark: var(--theme-border-dark, #cfcfcf);
       --artifact-primary-highlight: var(--theme-primary-highlight, #1b1b1b);
-      --artifact-primary-hover: var(--theme-primary-hover, #404040);
-      --artifact-selected: var(--theme-selected, #ececec);
       --artifact-text-primary: var(--theme-text-primary, #1b1b1b);
       --artifact-text-secondary: var(--theme-text-secondary, #727272);
 
@@ -38,7 +37,6 @@
 
       --artifact-weekend-bg: #ffd9c5;
       --artifact-weekend-text: #7a3e1d;
-      --artifact-weekend-hover: #ffc8af;
 
       --artifact-unknown-bg: #fff8e1;
       --artifact-unknown-text: #5d4037;
@@ -55,14 +53,17 @@
       --artifact-toolbar-analyze: linear-gradient(135deg, #00b09b, #96c93d);
       --artifact-toolbar-download: linear-gradient(135deg, #0ea5e9, #0284c7);
       --artifact-toolbar-sheet: linear-gradient(135deg, #22c55e, #16a34a);
+      --artifact-toolbar-csv: linear-gradient(135deg, #7c3aed, #5b21b6);
+      --artifact-toolbar-xlsx: linear-gradient(135deg, #15803d, #166534);
 
       --artifact-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
       --artifact-shadow-soft: 0 4px 12px rgba(15, 23, 42, 0.06);
+
       --artifact-person-dim: 0.22;
       --artifact-radius: 18px;
-      --artifact-max-width: 1480px;
-      --artifact-time-col-width: 116px;
-      --artifact-table-min-width: 1080px;
+      --artifact-max-width: 1520px;
+      --artifact-time-col-width: 120px;
+      --artifact-table-min-width: 1100px;
 
       --person-אמיר-bg: linear-gradient(135deg, #3b82f6, #2563eb); --person-אמיר-text: #ffffff;
       --person-נמרוד-bg: linear-gradient(135deg, #22d3ee, #0891b2); --person-נמרוד-text: #083344;
@@ -222,7 +223,7 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: repeat(5, minmax(140px, 1fr));
+      grid-template-columns: repeat(7, minmax(120px, 1fr));
       gap: 12px;
       margin-top: 10px;
     }
@@ -252,6 +253,8 @@
     .tool-analyze { background: var(--artifact-toolbar-analyze); }
     .tool-download { background: var(--artifact-toolbar-download); }
     .tool-sheet { background: var(--artifact-toolbar-sheet); }
+    .tool-csv { background: var(--artifact-toolbar-csv); }
+    .tool-xlsx { background: var(--artifact-toolbar-xlsx); }
 
     .grid-wrap {
       overflow: auto;
@@ -462,6 +465,41 @@
       margin-bottom: 14px;
     }
 
+    .summary-bar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 12px;
+      margin: 0 0 16px;
+    }
+
+    .summary-card {
+      background: var(--artifact-surface);
+      border: 1px solid var(--artifact-border-light);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: var(--artifact-shadow-soft);
+    }
+
+    .summary-card .label {
+      display: block;
+      font-size: .88rem;
+      color: var(--artifact-text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .summary-card .value {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--artifact-text-primary);
+    }
+
+    .summary-card.is-empty { background: var(--artifact-warning-soft); }
+    .summary-card.is-exceptions { background: var(--artifact-danger-soft); }
+    .summary-card.is-under { background: var(--artifact-info-soft); }
+    .summary-card.is-nights { background: var(--artifact-success-soft); }
+
     .schedule-table {
       width: 100%;
       min-width: var(--artifact-table-min-width);
@@ -570,6 +608,33 @@
       opacity: 0.96;
       line-height: 1.05;
     }
+
+    .cell-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 22px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: .74rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .badge.empty { background: var(--artifact-warning-soft); color: #8a3d08; border-color: rgba(234,88,12,.18); }
+    .badge.short { background: var(--artifact-warning-soft); color: #8a3d08; border-color: rgba(234,88,12,.18); }
+    .badge.extra { background: var(--artifact-info-soft); color: #12306b; border-color: rgba(37,99,235,.18); }
+    .badge.rest { background: var(--artifact-danger-soft); color: #8f1f1f; border-color: rgba(220,38,38,.18); }
+    .badge.leave { background: #eef2f7; color: #475569; border-color: rgba(71,85,105,.18); }
 
     .person {
       display: block;
@@ -713,8 +778,12 @@
     .night-limit-ok { color: var(--artifact-success); font-weight: 800; }
     .night-limit-fail { color: var(--artifact-danger); font-weight: 800; }
 
+    @media (max-width: 1280px) {
+      .toolbar { grid-template-columns: repeat(4, minmax(120px, 1fr)); }
+      .summary-bar { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+    }
+
     @media (max-width: 1100px) {
-      .toolbar { grid-template-columns: repeat(2, minmax(140px, 1fr)); }
       .guard-grid { grid-template-columns: repeat(4, minmax(110px, 1fr)); }
     }
 
@@ -726,6 +795,7 @@
       .toolbar { grid-template-columns: 1fr; }
       .guard-grid { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
       .req-grid { grid-template-columns: 1fr; }
+      .summary-bar { grid-template-columns: 1fr; }
       .schedule-table { min-width: 900px; }
       .time-slot {
         position: sticky;
@@ -772,7 +842,7 @@
         margin-bottom: 20px !important;
       }
 
-      table, thead, .list {
+      table, thead, .list, .summary-bar {
         break-inside: avoid;
       }
 
@@ -837,6 +907,8 @@
         <button id="analyzeButton" class="tool-btn tool-analyze"><span class="icon">🔍</span><span>נתח נתונים</span></button>
         <button id="downloadHtmlButton" class="tool-btn tool-download"><span class="icon">💾</span><span>הורד HTML</span></button>
         <button id="openSheetButton" class="tool-btn tool-sheet"><span class="icon">📄</span><span>פתח גיליון נתונים</span></button>
+        <button id="exportCsvButton" class="tool-btn tool-csv"><span class="icon">🧾</span><span>Export CSV</span></button>
+        <button id="exportXlsxButton" class="tool-btn tool-xlsx"><span class="icon">📗</span><span>Export XLSX</span></button>
       </div>
 
       <div class="row center" style="margin-top:14px;">
@@ -969,7 +1041,7 @@
             "weekStartSelect","shiftReqGrid","openVacationsBtn","vacationsPanel",
             "leaveScopeWeek","leaveNameInput","leaveFromInput","leaveToInput",
             "leaveAddBtn","leaveClearBtn","vacationsList","statusBanner","resultsContainer",
-            "excel-grid"
+            "excel-grid","exportCsvButton","exportXlsxButton"
           ].forEach(id => {
             this.el[id] = document.getElementById(id);
           });
@@ -984,6 +1056,8 @@
           this.el.quickFetchButton.addEventListener("click", () => this.fetchFromGoogleSheet());
           this.el.downloadHtmlButton.addEventListener("click", () => this.downloadHtmlTable());
           this.el.openSheetButton.addEventListener("click", () => window.open(this.C.SHEET_URL, "_blank", "noopener,noreferrer"));
+          this.el.exportCsvButton.addEventListener("click", () => this.exportCsv());
+          this.el.exportXlsxButton.addEventListener("click", () => this.exportXlsx());
           this.el.startDate.addEventListener("change", () => {
             this.updateStartDateLabelBySetting();
             this.refreshAfterDataChange();
@@ -1284,6 +1358,234 @@
           }).join("");
         },
 
+        updateHighlights(name) {
+          const root = this.el.resultsContainer;
+          if (!root) return;
+          if (name) root.classList.add("spotlight-active");
+          else root.classList.remove("spotlight-active");
+          root.querySelectorAll(".person").forEach(el => {
+            el.classList.toggle("highlight-name", el.textContent.trim() === name);
+          });
+        },
+
+        showStatus(message, type = "success") {
+          const el = this.el.statusBanner;
+          clearTimeout(this.state.statusTimer);
+          el.className = `status-banner ${type}`;
+          el.textContent = message;
+          el.style.display = "block";
+          this.state.statusTimer = setTimeout(() => { el.style.display = "none"; }, 7000);
+        },
+
+        refreshAfterDataChange() {
+          this.ExcelGrid.validateAllGridCells();
+          const text = this.serializeMatrixToVerticalText();
+          if (text.trim()) this.renderScheduleView(this.parseScheduleText(text));
+        },
+
+        placeCaretAtEnd(el) {
+          try {
+            el.focus();
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+          } catch {}
+        },
+
+        convertEditableCellToBubbles(cell, fallbackTime = "") {
+          const raw = String(cell.innerText || "")
+            .replace(/בעיה!?/g, "")
+            .replace(/משבצת\s*ריקה/g, "");
+
+          const names = Array.from(new Set(raw.split(/[,\n]/).map(v => this.normalizeKey(v)).filter(Boolean)));
+          const dayName = cell.dataset.dayName || cell.getAttribute("data-day") || "";
+          const timeLabel = cell.dataset.time || cell.getAttribute("data-time") || fallbackTime;
+          const dayIndex = this.state.expectedDays.indexOf(dayName);
+          const dayIso = dayIndex >= 0 ? this.getIsoDatesForWeek(this.el.startDate.value)[dayIndex] : "";
+
+          cell.innerHTML = this.renderPersonBubbles(names, dayName, timeLabel, dayIso);
+        },
+
+        nextAllowedSameDayAfter(index) {
+          const I = this.C.SHIFT_INDEX;
+          switch (index) {
+            case I.NIGHT_2_6: return I.AFTERNOON_14_18;
+            case I.MORNING_6_10: return I.EVENING_18_22;
+            case I.MORNING_10_14: return I.NIGHT_22_2;
+            default: return Infinity;
+          }
+        },
+
+        isLessThan8SameDay(prevIdx, curIdx) {
+          return curIdx < this.nextAllowedSameDayAfter(prevIdx);
+        },
+
+        calculateScheduleInsights(scheduleData, days) {
+          const I = this.C.SHIFT_INDEX;
+          const allShifts = {};
+          const night2to6Count = {};
+          const dailyCheck = {};
+          const exceptions = [];
+          const cellFlags = {};
+
+          const markCellFlag = (day, slot, flag) => {
+            const key = `${day}__${slot}`;
+            cellFlags[key] ||= new Set();
+            cellFlags[key].add(flag);
+          };
+
+          scheduleData.forEach((row, rowIdx) => {
+            row.forEach((cell, colIdx) => {
+              const day = days[colIdx];
+              const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
+              const slot = this.C.TIME_SLOTS[rowIdx].replace(" (Night)", "");
+              dailyCheck[day] ||= new Set();
+
+              names.forEach(name => {
+                if (dailyCheck[day].has(name)) {
+                  for (let prev = 0; prev < rowIdx; prev++) {
+                    const prevNames = String(scheduleData[prev][colIdx] || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
+                    if (prevNames.includes(name) && this.isLessThan8SameDay(prev, rowIdx)) {
+                      exceptions.push({ day, slot: this.C.TIME_SLOTS[rowIdx], name, msg: "פחות מ־8 שעות מנוחה בין משמרות באותו יום" });
+                      markCellFlag(day, slot, "rest");
+                      break;
+                    }
+                  }
+                }
+
+                dailyCheck[day].add(name);
+                allShifts[name] = (allShifts[name] || 0) + 1;
+
+                if (rowIdx === I.NIGHT_2_6) {
+                  night2to6Count[name] = (night2to6Count[name] || 0) + 1;
+                  if (night2to6Count[name] > this.C.MAX_NIGHT_2_6) {
+                    exceptions.push({
+                      day: "סיכום שבועי",
+                      slot: "02:00 - 06:00",
+                      name,
+                      msg: `חריגה: ${night2to6Count[name]} לילות (מקסימום ${this.C.MAX_NIGHT_2_6})`
+                    });
+                  }
+                }
+              });
+
+              if (colIdx > 0 && rowIdx === I.MORNING_6_10) {
+                const prevNight = String(scheduleData[I.NIGHT_22_2][colIdx - 1] || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
+                names.forEach(name => {
+                  if (prevNight.includes(name)) {
+                    exceptions.push({ day, slot: this.C.TIME_SLOTS[rowIdx], name, msg: "פחות מ־8 שעות: 22–02 אתמול → 06–10 היום" });
+                    markCellFlag(day, slot, "rest");
+                  }
+                });
+              }
+
+              if (rowIdx === I.MORNING_6_10 || rowIdx === I.MORNING_10_14) {
+                const nightNames = String(scheduleData[I.NIGHT_2_6][colIdx] || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
+                names.forEach(name => {
+                  if (nightNames.includes(name)) {
+                    exceptions.push({ day, slot: this.C.TIME_SLOTS[rowIdx], name, msg: "פחות מ־8 שעות: 02–06 → מוקדם מדי באותו יום" });
+                    markCellFlag(day, slot, "rest");
+                  }
+                });
+              }
+
+              if (rowIdx === I.NIGHT_2_6 && colIdx > 0) {
+                const prevNight = String(scheduleData[I.NIGHT_22_2][colIdx - 1] || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
+                const prevEvening = String(scheduleData[I.EVENING_18_22][colIdx - 1] || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
+                names.forEach(name => {
+                  if (prevNight.includes(name)) {
+                    exceptions.push({ day, slot: this.C.TIME_SLOTS[rowIdx], name, msg: "אסור רצף לילות: 22–02 אתמול → 02–06 היום" });
+                    markCellFlag(day, slot, "rest");
+                  }
+                  if (prevEvening.includes(name)) {
+                    exceptions.push({ day, slot: this.C.TIME_SLOTS[rowIdx], name, msg: "פחות מ־8 שעות: 18–22 אתמול → 02–06 היום" });
+                    markCellFlag(day, slot, "rest");
+                  }
+                });
+              }
+            });
+          });
+
+          return { allShifts, night2to6Count, exceptions, cellFlags };
+        },
+
+        buildDashboardSummary(parsed, insights) {
+          const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
+          let emptyCells = 0;
+          let underfilled = 0;
+          let overfilled = 0;
+          let leaveCells = 0;
+
+          parsed.data.forEach((row, rowIdx) => {
+            row.forEach((cell, colIdx) => {
+              const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
+              const required = this.getRequiredPerShift(rowIdx);
+              if (names.length === 0) emptyCells += 1;
+              else if (names.length < required) underfilled += 1;
+              else if (names.length > required) overfilled += 1;
+
+              if (names.some(name => this.isOnVacation(name, isoDates[colIdx]))) leaveCells += 1;
+            });
+          });
+
+          const underMinimumEmployees = Object.values(insights.allShifts).filter(count => count < this.C.MIN_REQUIRED).length;
+          const nightViolations = Object.values(insights.night2to6Count).filter(count => count > this.C.MAX_NIGHT_2_6).length;
+
+          return {
+            emptyCells,
+            exceptions: insights.exceptions.length,
+            underMinimumEmployees,
+            nightViolations,
+            underfilled,
+            overfilled,
+            leaveCells
+          };
+        },
+
+        renderSummaryBar(summary) {
+          return `
+            <div class="summary-bar">
+              <div class="summary-card is-empty">
+                <span class="label">תאים ריקים / חסרים</span>
+                <span class="value">${summary.emptyCells + summary.underfilled}</span>
+              </div>
+              <div class="summary-card is-exceptions">
+                <span class="label">סה״כ חריגות</span>
+                <span class="value">${summary.exceptions}</span>
+              </div>
+              <div class="summary-card is-under">
+                <span class="label">עובדים מתחת למינימום</span>
+                <span class="value">${summary.underMinimumEmployees}</span>
+              </div>
+              <div class="summary-card is-nights">
+                <span class="label">חריגות לילה 02–06</span>
+                <span class="value">${summary.nightViolations}</span>
+              </div>
+            </div>
+          `;
+        },
+
+        renderCellBadges(day, slot, names, required, dayIso, cellFlags) {
+          const badges = [];
+          if (!names.length) badges.push(`<span class="badge empty">ריק</span>`);
+          else if (names.length < required) badges.push(`<span class="badge short">חסר</span>`);
+          else if (names.length > required) badges.push(`<span class="badge extra">עודף</span>`);
+
+          if (names.some(name => this.isOnVacation(name, dayIso))) {
+            badges.push(`<span class="badge leave">חופשה</span>`);
+          }
+
+          const key = `${day}__${slot}`;
+          if (cellFlags[key]?.has("rest")) {
+            badges.push(`<span class="badge rest">מנוחה</span>`);
+          }
+
+          return badges.length ? `<div class="cell-badges">${badges.join("")}</div>` : "";
+        },
+
         renderTimeSlotCell(rowIdx, timeDisplay) {
           const icon = this.C.SLOT_ICONS[rowIdx] || "😂";
           return `
@@ -1319,35 +1621,21 @@
           return html;
         },
 
-        renderScheduleRow(row, rowIdx, days, isoDates) {
+        renderScheduleRow(row, rowIdx, days, isoDates, cellFlags) {
           const timeFull = this.C.TIME_SLOTS[rowIdx];
-          const timeDisplay = timeFull.replace(" (Night)", "").replace(" - ", "<br>");
+          const slot = timeFull.replace(" (Night)", "");
+          const timeDisplay = slot.replace(" - ", "<br>");
           const required = this.getRequiredPerShift(rowIdx);
           let html = `<tr>${this.renderTimeSlotCell(rowIdx, timeDisplay)}`;
 
           row.forEach((cell, colIdx) => {
             const day = days[colIdx];
             const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
-            const count = names.length;
             const weekendClass = day.includes("שישי") ? "friday-col" : day.includes("שבת") ? "saturday-col" : "";
-            const bubbles = this.renderPersonBubbles(names, day, timeFull.replace(" (Night)", ""), isoDates[colIdx]);
-
-            let warning = "";
-            let extraClass = "";
-
-            if (count === 0) {
-              warning = `<span class="warning-text">משבצת ריקה</span>`;
-              extraClass = "needs-selection";
-            } else if (count < required) {
-              warning = `<span class="warning-text">חסר שומר נוסף (נדרש ${required})</span>`;
-              extraClass = "needs-selection";
-            } else if (count > required) {
-              warning = `<span class="warning-text">עודף עובדים (${count}). נדרש: ${required}</span>`;
-              extraClass = "needs-selection";
-            }
-
-            const tdClass = this.cx(weekendClass, extraClass);
-            html += `<td class="${tdClass}" data-day="${this.escapeHtml(day)}" data-time="${this.escapeHtml(timeFull.replace(" (Night)", ""))}" contenteditable="true">${bubbles}${warning}</td>`;
+            const bubbles = this.renderPersonBubbles(names, day, slot, isoDates[colIdx]);
+            const badges = this.renderCellBadges(day, slot, names, required, isoDates[colIdx], cellFlags);
+            const tdClass = this.cx(weekendClass);
+            html += `<td class="${tdClass}" data-day="${this.escapeHtml(day)}" data-time="${this.escapeHtml(slot)}" contenteditable="true">${bubbles}${badges}</td>`;
           });
 
           html += `</tr>`;
@@ -1418,85 +1706,15 @@
           return html;
         },
 
-        renderMainScheduleTable(parsed, datesForWeek, isoDates) {
-          const days = parsed.days;
+        renderMainScheduleTable(parsed, datesForWeek, isoDates, cellFlags) {
           let html = `<table id="scheduleTable" class="schedule-table" role="table">`;
-          html += this.renderScheduleHeader(days, datesForWeek);
+          html += this.renderScheduleHeader(parsed.days, datesForWeek);
           html += `<tbody>`;
           parsed.data.forEach((row, rowIdx) => {
-            html += this.renderScheduleRow(row, rowIdx, days, isoDates);
+            html += this.renderScheduleRow(row, rowIdx, parsed.days, isoDates, cellFlags);
           });
           html += `</tbody></table>`;
           return html;
-        },
-
-        calculateScheduleInsights(scheduleData, days) {
-          const I = this.C.SHIFT_INDEX;
-          const allShifts = {};
-          const night2to6Count = {};
-          const dailyCheck = {};
-          const exceptions = [];
-
-          scheduleData.forEach((row, rowIdx) => {
-            row.forEach((cell, colIdx) => {
-              const day = days[colIdx];
-              const names = String(cell || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
-
-              dailyCheck[day] ||= new Set();
-
-              names.forEach(name => {
-                if (dailyCheck[day].has(name)) {
-                  for (let prev = 0; prev < rowIdx; prev++) {
-                    const prevNames = String(scheduleData[prev][colIdx] || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
-                    if (prevNames.includes(name) && this.isLessThan8SameDay(prev, rowIdx)) {
-                      exceptions.push({ day, slot: this.C.TIME_SLOTS[rowIdx], name, msg: "פחות מ־8 שעות מנוחה בין משמרות באותו יום" });
-                      break;
-                    }
-                  }
-                }
-
-                dailyCheck[day].add(name);
-                allShifts[name] = (allShifts[name] || 0) + 1;
-
-                if (rowIdx === I.NIGHT_2_6) {
-                  night2to6Count[name] = (night2to6Count[name] || 0) + 1;
-                  if (night2to6Count[name] > this.C.MAX_NIGHT_2_6) {
-                    exceptions.push({
-                      day: "סיכום שבועי",
-                      slot: "02:00 - 06:00",
-                      name,
-                      msg: `חריגה: ${night2to6Count[name]} לילות (מקסימום ${this.C.MAX_NIGHT_2_6})`
-                    });
-                  }
-                }
-              });
-
-              if (colIdx > 0 && rowIdx === I.MORNING_6_10) {
-                const prevNight = String(scheduleData[I.NIGHT_22_2][colIdx - 1] || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
-                names.forEach(name => {
-                  if (prevNight.includes(name)) exceptions.push({ day, slot: this.C.TIME_SLOTS[rowIdx], name, msg: "פחות מ־8 שעות: 22–02 אתמול → 06–10 היום" });
-                });
-              }
-
-              if (rowIdx === I.MORNING_6_10 || rowIdx === I.MORNING_10_14) {
-                const nightNames = String(scheduleData[I.NIGHT_2_6][colIdx] || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
-                names.forEach(name => {
-                  if (nightNames.includes(name)) exceptions.push({ day, slot: this.C.TIME_SLOTS[rowIdx], name, msg: "פחות מ־8 שעות: 02–06 → מוקדם מדי באותו יום" });
-                });
-              }
-
-              if (rowIdx === I.NIGHT_2_6 && colIdx > 0) {
-                const prevNight = String(scheduleData[I.NIGHT_22_2][colIdx - 1] || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
-                const prevEvening = String(scheduleData[I.EVENING_18_22][colIdx - 1] || "").split(",").map(n => this.normalizeKey(n)).filter(Boolean);
-                names.forEach(name => {
-                  if (prevNight.includes(name)) exceptions.push({ day, slot: this.C.TIME_SLOTS[rowIdx], name, msg: "אסור רצף לילות: 22–02 אתמול → 02–06 היום" });
-                  if (prevEvening.includes(name)) exceptions.push({ day, slot: this.C.TIME_SLOTS[rowIdx], name, msg: "פחות מ־8 שעות: 18–22 אתמול → 02–06 היום" });
-                });
-              }
-            });
-          });
-
-          return { allShifts, night2to6Count, exceptions };
         },
 
         renderScheduleView(parsed) {
@@ -1510,10 +1728,10 @@
             return;
           }
 
-          const days = parsed.days;
           const datesForWeek = this.getDatesForWeek(this.el.startDate.value);
           const isoDates = this.getIsoDatesForWeek(this.el.startDate.value);
-          const insights = this.calculateScheduleInsights(parsed.data, days);
+          const insights = this.calculateScheduleInsights(parsed.data, parsed.days);
+          const dashboard = this.buildDashboardSummary(parsed, insights);
 
           const doubleShifts = this.C.TIME_SLOTS
             .map((slot, idx) => ({ idx, label: slot.replace(" (Night)", "") }))
@@ -1522,8 +1740,9 @@
             .join(", ");
 
           let html = `<h3>טבלת משמרות</h3>`;
+          html += this.renderSummaryBar(dashboard);
           html += `<div class="results-info">${doubleShifts ? `משמרות עם 2 שומרים: ${doubleShifts}.` : "כל המשמרות = 1 שומר."} מינימום ${this.C.MIN_REQUIRED} לעובד.</div>`;
-          html += this.renderMainScheduleTable(parsed, datesForWeek, isoDates);
+          html += this.renderMainScheduleTable(parsed, datesForWeek, isoDates, insights.cellFlags);
           html += this.renderExceptionsTable(insights.exceptions);
           html += this.renderSummaryTable(insights.allShifts, insights.night2to6Count);
 
@@ -1584,13 +1803,11 @@
 
           this.ExcelGrid.render();
           this.ExcelGrid.validateAllGridCells();
+          this.renderScheduleView(this.parseScheduleText(this.serializeMatrixToVerticalText()));
         },
 
         renderGuardButtons() {
-          const names = Object.keys(this.C.COLOR_MAP)
-            .map(name => name.replace("_", " "))
-            .sort((a, b) => a.localeCompare(b, "he"));
-
+          const names = Object.keys(this.C.COLOR_MAP).map(name => name.replace("_", " ")).sort((a, b) => a.localeCompare(b, "he"));
           this.el.guardButtonsContainer.innerHTML = "";
           names.forEach(name => {
             const btn = document.createElement("button");
@@ -1928,13 +2145,11 @@
                 if (!baseCandidates.length) break;
 
                 const primary = baseCandidates.filter(name =>
-                  (employeeShiftCount[name] || 0) < roundTarget &&
-                  isLegalAssignment(name, dayIndex, shiftIndex)
+                  (employeeShiftCount[name] || 0) < roundTarget && isLegalAssignment(name, dayIndex, shiftIndex)
                 );
 
                 const pool = (primary.length ? primary : baseCandidates.filter(name =>
-                  (employeeShiftCount[name] || 0) < this.C.MAX_ALLOWED &&
-                  isLegalAssignment(name, dayIndex, shiftIndex)
+                  (employeeShiftCount[name] || 0) < this.C.MAX_ALLOWED && isLegalAssignment(name, dayIndex, shiftIndex)
                 )).sort((a, b) => {
                   const ca = employeeShiftCount[a] || 0;
                   const cb = employeeShiftCount[b] || 0;
@@ -2029,6 +2244,62 @@
           } else {
             this.showStatus(`⚠️ ${below.length} עובדים עדיין מתחת למינימום: ${below.map(x => `${x.name} (${x.count})`).join(", ")}`, "warning");
           }
+        },
+
+        exportCsv() {
+          if (!this.el.startDate.value) {
+            this.showStatus("בחר תאריך ונתח טבלה לפני הייצוא.", "warning");
+            return;
+          }
+
+          const dates = this.getDatesForWeek(this.el.startDate.value);
+          const header = ["שעות / יום", ...this.state.expectedDays.map((day, idx) => `${day} ${dates[idx]}`)];
+          const rows = this.C.TIME_SLOTS.map((slot, rowIdx) => [
+            slot.replace(" (Night)", ""),
+            ...this.state.expectedDays.map((_, dayIdx) => this.state.excelMatrix[rowIdx][dayIdx] || "")
+          ]);
+
+          const csv = [header, ...rows]
+            .map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(","))
+            .join("\n");
+
+          const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `sidur_${this.el.startDate.value}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          this.showStatus("קובץ CSV נוצר.", "success");
+        },
+
+        exportXlsx() {
+          if (typeof XLSX === "undefined") {
+            this.showStatus("ספריית XLSX לא נטענה.", "error");
+            return;
+          }
+
+          if (!this.el.startDate.value) {
+            this.showStatus("בחר תאריך ונתח טבלה לפני הייצוא.", "warning");
+            return;
+          }
+
+          const dates = this.getDatesForWeek(this.el.startDate.value);
+          const data = [
+            ["שעות / יום", ...this.state.expectedDays.map((day, idx) => `${day} ${dates[idx]}`)],
+            ...this.C.TIME_SLOTS.map((slot, rowIdx) => [
+              slot.replace(" (Night)", ""),
+              ...this.state.expectedDays.map((_, dayIdx) => this.state.excelMatrix[rowIdx][dayIdx] || "")
+            ])
+          ];
+
+          const ws = XLSX.utils.aoa_to_sheet(data);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "Shifts");
+          XLSX.writeFile(wb, `sidur_${this.el.startDate.value}.xlsx`);
+          this.showStatus("קובץ XLSX נוצר.", "success");
         },
 
         downloadHtmlTable() {
